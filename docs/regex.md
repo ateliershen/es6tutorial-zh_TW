@@ -1,68 +1,68 @@
-# 正则的扩展
+# 正則的擴充套件
 
-## RegExp 构造函数
+## RegExp 建構函式
 
-在 ES5 中，`RegExp`构造函数的参数有两种情况。
+在 ES5 中，`RegExp`建構函式的引數有兩種情況。
 
-第一种情况是，参数是字符串，这时第二个参数表示正则表达式的修饰符（flag）。
+第一種情況是，引數是字串，這時第二個引數表示正則表示式的修飾符（flag）。
 
 ```javascript
 var regex = new RegExp('xyz', 'i');
-// 等价于
+// 等價於
 var regex = /xyz/i;
 ```
 
-第二种情况是，参数是一个正则表示式，这时会返回一个原有正则表达式的拷贝。
+第二種情況是，引數是一個正則表示式，這時會返回一個原有正則表示式的複製。
 
 ```javascript
 var regex = new RegExp(/xyz/i);
-// 等价于
+// 等價於
 var regex = /xyz/i;
 ```
 
-但是，ES5 不允许此时使用第二个参数添加修饰符，否则会报错。
+但是，ES5 不允許此時使用第二個引數新增修飾符，否則會報錯。
 
 ```javascript
 var regex = new RegExp(/xyz/, 'i');
 // Uncaught TypeError: Cannot supply flags when constructing one RegExp from another
 ```
 
-ES6 改变了这种行为。如果`RegExp`构造函数第一个参数是一个正则对象，那么可以使用第二个参数指定修饰符。而且，返回的正则表达式会忽略原有的正则表达式的修饰符，只使用新指定的修饰符。
+ES6 改變了這種行為。如果`RegExp`建構函式第一個引數是一個正則物件，那麼可以使用第二個引數指定修飾符。而且，返回的正則表示式會忽略原有的正則表示式的修飾符，只使用新指定的修飾符。
 
 ```javascript
 new RegExp(/abc/ig, 'i').flags
 // "i"
 ```
 
-上面代码中，原有正则对象的修饰符是`ig`，它会被第二个参数`i`覆盖。
+上面程式碼中，原有正則物件的修飾符是`ig`，它會被第二個引數`i`覆蓋。
 
-## 字符串的正则方法
+## 字串的正則方法
 
-ES6 出现之前，字符串对象共有 4 个方法，可以使用正则表达式：`match()`、`replace()`、`search()`和`split()`。
+ES6 出現之前，字串物件共有 4 個方法，可以使用正則表示式：`match()`、`replace()`、`search()`和`split()`。
 
-ES6 将这 4 个方法，在语言内部全部调用`RegExp`的实例方法，从而做到所有与正则相关的方法，全都定义在`RegExp`对象上。
+ES6 將這 4 個方法，在語言內部全部呼叫`RegExp`的例項方法，從而做到所有與正則相關的方法，全都定義在`RegExp`物件上。
 
-- `String.prototype.match` 调用 `RegExp.prototype[Symbol.match]`
-- `String.prototype.replace` 调用 `RegExp.prototype[Symbol.replace]`
-- `String.prototype.search` 调用 `RegExp.prototype[Symbol.search]`
-- `String.prototype.split` 调用 `RegExp.prototype[Symbol.split]`
+- `String.prototype.match` 呼叫 `RegExp.prototype[Symbol.match]`
+- `String.prototype.replace` 呼叫 `RegExp.prototype[Symbol.replace]`
+- `String.prototype.search` 呼叫 `RegExp.prototype[Symbol.search]`
+- `String.prototype.split` 呼叫 `RegExp.prototype[Symbol.split]`
 
-## u 修饰符
+## u 修飾符
 
-ES6 对正则表达式添加了`u`修饰符，含义为“Unicode 模式”，用来正确处理大于`\uFFFF`的 Unicode 字符。也就是说，会正确处理四个字节的 UTF-16 编码。
+ES6 對正則表示式添加了`u`修飾符，含義為“Unicode 模式”，用來正確處理大於`\uFFFF`的 Unicode 字元。也就是說，會正確處理四個位元組的 UTF-16 編碼。
 
 ```javascript
 /^\uD83D/u.test('\uD83D\uDC2A') // false
 /^\uD83D/.test('\uD83D\uDC2A') // true
 ```
 
-上面代码中，`\uD83D\uDC2A`是一个四个字节的 UTF-16 编码，代表一个字符。但是，ES5 不支持四个字节的 UTF-16 编码，会将其识别为两个字符，导致第二行代码结果为`true`。加了`u`修饰符以后，ES6 就会识别其为一个字符，所以第一行代码结果为`false`。
+上面程式碼中，`\uD83D\uDC2A`是一個四個位元組的 UTF-16 編碼，代表一個字元。但是，ES5 不支援四個位元組的 UTF-16 編碼，會將其識別為兩個字元，導致第二行程式碼結果為`true`。加了`u`修飾符以後，ES6 就會識別其為一個字元，所以第一行程式碼結果為`false`。
 
-一旦加上`u`修饰符号，就会修改下面这些正则表达式的行为。
+一旦加上`u`修飾符號，就會修改下面這些正則表示式的行為。
 
-**（1）点字符**
+**（1）點字元**
 
-点（`.`）字符在正则表达式中，含义是除了换行符以外的任意单个字符。对于码点大于`0xFFFF`的 Unicode 字符，点字符不能识别，必须加上`u`修饰符。
+點（`.`）字元在正則表示式中，含義是除了換行符以外的任意單個字元。對於碼點大於`0xFFFF`的 Unicode 字元，點字元不能識別，必須加上`u`修飾符。
 
 ```javascript
 var s = '𠮷';
@@ -71,11 +71,11 @@ var s = '𠮷';
 /^.$/u.test(s) // true
 ```
 
-上面代码表示，如果不添加`u`修饰符，正则表达式就会认为字符串为两个字符，从而匹配失败。
+上面程式碼表示，如果不新增`u`修飾符，正則表示式就會認為字串為兩個字元，從而匹配失敗。
 
-**（2）Unicode 字符表示法**
+**（2）Unicode 字元表示法**
 
-ES6 新增了使用大括号表示 Unicode 字符，这种表示法在正则表达式中必须加上`u`修饰符，才能识别当中的大括号，否则会被解读为量词。
+ES6 新增了使用大括號表示 Unicode 字元，這種表示法在正則表示式中必須加上`u`修飾符，才能識別當中的大括號，否則會被解讀為量詞。
 
 ```javascript
 /\u{61}/.test('a') // false
@@ -83,11 +83,11 @@ ES6 新增了使用大括号表示 Unicode 字符，这种表示法在正则表�
 /\u{20BB7}/u.test('𠮷') // true
 ```
 
-上面代码表示，如果不加`u`修饰符，正则表达式无法识别`\u{61}`这种表示法，只会认为这匹配 61 个连续的`u`。
+上面程式碼表示，如果不加`u`修飾符，正則表示式無法識別`\u{61}`這種表示法，只會認為這匹配 61 個連續的`u`。
 
-**（3）量词**
+**（3）量詞**
 
-使用`u`修饰符后，所有量词都会正确识别码点大于`0xFFFF`的 Unicode 字符。
+使用`u`修飾符後，所有量詞都會正確識別碼點大於`0xFFFF`的 Unicode 字元。
 
 ```javascript
 /a{2}/.test('aa') // true
@@ -96,18 +96,18 @@ ES6 新增了使用大括号表示 Unicode 字符，这种表示法在正则表�
 /𠮷{2}/u.test('𠮷𠮷') // true
 ```
 
-**（4）预定义模式**
+**（4）預定義模式**
 
-`u`修饰符也影响到预定义模式，能否正确识别码点大于`0xFFFF`的 Unicode 字符。
+`u`修飾符也影響到預定義模式，能否正確識別碼點大於`0xFFFF`的 Unicode 字元。
 
 ```javascript
 /^\S$/.test('𠮷') // false
 /^\S$/u.test('𠮷') // true
 ```
 
-上面代码的`\S`是预定义模式，匹配所有非空白字符。只有加了`u`修饰符，它才能正确匹配码点大于`0xFFFF`的 Unicode 字符。
+上面程式碼的`\S`是預定義模式，匹配所有非空白字元。只有加了`u`修飾符，它才能正確匹配碼點大於`0xFFFF`的 Unicode 字元。
 
-利用这一点，可以写出一个正确返回字符串长度的函数。
+利用這一點，可以寫出一個正確返回字串長度的函式。
 
 ```javascript
 function codePointLength(text) {
@@ -121,31 +121,31 @@ s.length // 4
 codePointLength(s) // 2
 ```
 
-**（5）i 修饰符**
+**（5）i 修飾符**
 
-有些 Unicode 字符的编码不同，但是字型很相近，比如，`\u004B`与`\u212A`都是大写的`K`。
+有些 Unicode 字元的編碼不同，但是字型很相近，比如，`\u004B`與`\u212A`都是大寫的`K`。
 
 ```javascript
 /[a-z]/i.test('\u212A') // false
 /[a-z]/iu.test('\u212A') // true
 ```
 
-上面代码中，不加`u`修饰符，就无法识别非规范的`K`字符。
+上面程式碼中，不加`u`修飾符，就無法識別非規範的`K`字元。
 
-**（6）转义**
+**（6）轉義**
 
-没有`u`修饰符的情况下，正则中没有定义的转义（如逗号的转义`\,`）无效，而在`u`模式会报错。
+沒有`u`修飾符的情況下，正則中沒有定義的轉義（如逗號的轉義`\,`）無效，而在`u`模式會報錯。
 
 ```javascript
 /\,/ // /\,/
-/\,/u // 报错
+/\,/u // 報錯
 ```
 
-上面代码中，没有`u`修饰符时，逗号前面的反斜杠是无效的，加了`u`修饰符就报错。
+上面程式碼中，沒有`u`修飾符時，逗號前面的反斜槓是無效的，加了`u`修飾符就報錯。
 
-## RegExp.prototype.unicode 属性
+## RegExp.prototype.unicode 屬性
 
-正则实例对象新增`unicode`属性，表示是否设置了`u`修饰符。
+正則例項物件新增`unicode`屬性，表示是否設定了`u`修飾符。
 
 ```javascript
 const r1 = /hello/;
@@ -155,13 +155,13 @@ r1.unicode // false
 r2.unicode // true
 ```
 
-上面代码中，正则表达式是否设置了`u`修饰符，可以从`unicode`属性看出来。
+上面程式碼中，正則表示式是否設定了`u`修飾符，可以從`unicode`屬性看出來。
 
-## y 修饰符
+## y 修飾符
 
-除了`u`修饰符，ES6 还为正则表达式添加了`y`修饰符，叫做“粘连”（sticky）修饰符。
+除了`u`修飾符，ES6 還為正則表示式添加了`y`修飾符，叫做“粘連”（sticky）修飾符。
 
-`y`修饰符的作用与`g`修饰符类似，也是全局匹配，后一次匹配都从上一次匹配成功的下一个位置开始。不同之处在于，`g`修饰符只要剩余位置中存在匹配就可，而`y`修饰符确保匹配必须从剩余的第一个位置开始，这也就是“粘连”的涵义。
+`y`修飾符的作用與`g`修飾符類似，也是全域性匹配，後一次匹配都從上一次匹配成功的下一個位置開始。不同之處在於，`g`修飾符只要剩餘位置中存在匹配就可，而`y`修飾符確保匹配必須從剩餘的第一個位置開始，這也就是“粘連”的涵義。
 
 ```javascript
 var s = 'aaa_aa_a';
@@ -175,9 +175,9 @@ r1.exec(s) // ["aa"]
 r2.exec(s) // null
 ```
 
-上面代码有两个正则表达式，一个使用`g`修饰符，另一个使用`y`修饰符。这两个正则表达式各执行了两次，第一次执行的时候，两者行为相同，剩余字符串都是`_aa_a`。由于`g`修饰没有位置要求，所以第二次执行会返回结果，而`y`修饰符要求匹配必须从头部开始，所以返回`null`。
+上面程式碼有兩個正則表示式，一個使用`g`修飾符，另一個使用`y`修飾符。這兩個正則表示式各執行了兩次，第一次執行的時候，兩者行為相同，剩餘字串都是`_aa_a`。由於`g`修飾沒有位置要求，所以第二次執行會返回結果，而`y`修飾符要求匹配必須從頭部開始，所以返回`null`。
 
-如果改一下正则表达式，保证每次都能头部匹配，`y`修饰符就会返回结果了。
+如果改一下正則表示式，保證每次都能頭部匹配，`y`修飾符就會返回結果了。
 
 ```javascript
 var s = 'aaa_aa_a';
@@ -187,77 +187,77 @@ r.exec(s) // ["aaa_"]
 r.exec(s) // ["aa_"]
 ```
 
-上面代码每次匹配，都是从剩余字符串的头部开始。
+上面程式碼每次匹配，都是從剩餘字串的頭部開始。
 
-使用`lastIndex`属性，可以更好地说明`y`修饰符。
+使用`lastIndex`屬性，可以更好地說明`y`修飾符。
 
 ```javascript
 const REGEX = /a/g;
 
-// 指定从2号位置（y）开始匹配
+// 指定從2號位置（y）開始匹配
 REGEX.lastIndex = 2;
 
 // 匹配成功
 const match = REGEX.exec('xaya');
 
-// 在3号位置匹配成功
+// 在3號位置匹配成功
 match.index // 3
 
-// 下一次匹配从4号位开始
+// 下一次匹配從4號位開始
 REGEX.lastIndex // 4
 
-// 4号位开始匹配失败
+// 4號位開始匹配失敗
 REGEX.exec('xaya') // null
 ```
 
-上面代码中，`lastIndex`属性指定每次搜索的开始位置，`g`修饰符从这个位置开始向后搜索，直到发现匹配为止。
+上面程式碼中，`lastIndex`屬性指定每次搜尋的開始位置，`g`修飾符從這個位置開始向後搜尋，直到發現匹配為止。
 
-`y`修饰符同样遵守`lastIndex`属性，但是要求必须在`lastIndex`指定的位置发现匹配。
+`y`修飾符同樣遵守`lastIndex`屬性，但是要求必須在`lastIndex`指定的位置發現匹配。
 
 ```javascript
 const REGEX = /a/y;
 
-// 指定从2号位置开始匹配
+// 指定從2號位置開始匹配
 REGEX.lastIndex = 2;
 
-// 不是粘连，匹配失败
+// 不是粘連，匹配失敗
 REGEX.exec('xaya') // null
 
-// 指定从3号位置开始匹配
+// 指定從3號位置開始匹配
 REGEX.lastIndex = 3;
 
-// 3号位置是粘连，匹配成功
+// 3號位置是粘連，匹配成功
 const match = REGEX.exec('xaya');
 match.index // 3
 REGEX.lastIndex // 4
 ```
 
-实际上，`y`修饰符号隐含了头部匹配的标志`^`。
+實際上，`y`修飾符號隱含了頭部匹配的標誌`^`。
 
 ```javascript
 /b/y.exec('aba')
 // null
 ```
 
-上面代码由于不能保证头部匹配，所以返回`null`。`y`修饰符的设计本意，就是让头部匹配的标志`^`在全局匹配中都有效。
+上面程式碼由於不能保證頭部匹配，所以返回`null`。`y`修飾符的設計本意，就是讓頭部匹配的標誌`^`在全域性匹配中都有效。
 
-下面是字符串对象的`replace`方法的例子。
+下面是字串物件的`replace`方法的例子。
 
 ```javascript
 const REGEX = /a/gy;
 'aaxa'.replace(REGEX, '-') // '--xa'
 ```
 
-上面代码中，最后一个`a`因为不是出现在下一次匹配的头部，所以不会被替换。
+上面程式碼中，最後一個`a`因為不是出現在下一次匹配的頭部，所以不會被替換。
 
-单单一个`y`修饰符对`match`方法，只能返回第一个匹配，必须与`g`修饰符联用，才能返回所有匹配。
+單單一個`y`修飾符對`match`方法，只能返回第一個匹配，必須與`g`修飾符聯用，才能返回所有匹配。
 
 ```javascript
 'a1a2a3'.match(/a\d/y) // ["a1"]
 'a1a2a3'.match(/a\d/gy) // ["a1", "a2", "a3"]
 ```
 
-`y`修饰符的一个应用，是从字符串提取 token（词元），`y`修饰符确保了匹配之间不会有漏掉的字符。
+`y`修飾符的一個應用，是從字串提取 token（詞元），`y`修飾符確保了匹配之間不會有漏掉的字元。
 
 ```javascript
 const TOKEN_Y = /\s*(\+|[0-9]+)\s*/y;
@@ -278,7 +278,7 @@ function tokenize(TOKEN_REGEX, str) {
 }
 ```
 
-上面代码中，如果字符串里面没有非法字符，`y`修饰符与`g`修饰符的提取结果是一样的。但是，一旦出现非法字符，两者的行为就不一样了。
+上面程式碼中，如果字串裡面沒有非法字元，`y`修飾符與`g`修飾符的提取結果是一樣的。但是，一旦出現非法字元，兩者的行為就不一樣了。
 
 ```javascript
 tokenize(TOKEN_Y, '3x + 4')
@@ -287,41 +287,41 @@ tokenize(TOKEN_G, '3x + 4')
 // [ '3', '+', '4' ]
 ```
 
-上面代码中，`g`修饰符会忽略非法字符，而`y`修饰符不会，这样就很容易发现错误。
+上面程式碼中，`g`修飾符會忽略非法字元，而`y`修飾符不會，這樣就很容易發現錯誤。
 
-## RegExp.prototype.sticky 属性
+## RegExp.prototype.sticky 屬性
 
-与`y`修饰符相匹配，ES6 的正则实例对象多了`sticky`属性，表示是否设置了`y`修饰符。
+與`y`修飾符相匹配，ES6 的正則例項物件多了`sticky`屬性，表示是否設定了`y`修飾符。
 
 ```javascript
 var r = /hello\d/y;
 r.sticky // true
 ```
 
-## RegExp.prototype.flags 属性
+## RegExp.prototype.flags 屬性
 
-ES6 为正则表达式新增了`flags`属性，会返回正则表达式的修饰符。
+ES6 為正則表示式新增了`flags`屬性，會返回正則表示式的修飾符。
 
 ```javascript
-// ES5 的 source 属性
-// 返回正则表达式的正文
+// ES5 的 source 屬性
+// 返回正則表示式的正文
 /abc/ig.source
 // "abc"
 
-// ES6 的 flags 属性
-// 返回正则表达式的修饰符
+// ES6 的 flags 屬性
+// 返回正則表示式的修飾符
 /abc/ig.flags
 // 'gi'
 ```
 
-## s 修饰符：dotAll 模式
+## s 修飾符：dotAll 模式
 
-正则表达式中，点（`.`）是一个特殊字符，代表任意的单个字符，但是有两个例外。一个是四个字节的 UTF-16 字符，这个可以用`u`修饰符解决；另一个是行终止符（line terminator character）。
+正則表示式中，點（`.`）是一個特殊字元，代表任意的單個字元，但是有兩個例外。一個是四個位元組的 UTF-16 字元，這個可以用`u`修飾符解決；另一個是行終止符（line terminator character）。
 
-所谓行终止符，就是该字符表示一行的终结。以下四个字符属于“行终止符”。
+所謂行終止符，就是該字元表示一行的終結。以下四個字元屬於“行終止符”。
 
-- U+000A 换行符（`\n`）
-- U+000D 回车符（`\r`）
+- U+000A 換行符（`\n`）
+- U+000D 回車符（`\r`）
 - U+2028 行分隔符（line separator）
 - U+2029 段分隔符（paragraph separator）
 
@@ -330,26 +330,26 @@ ES6 为正则表达式新增了`flags`属性，会返回正则表达式的修饰
 // false
 ```
 
-上面代码中，因为`.`不匹配`\n`，所以正则表达式返回`false`。
+上面程式碼中，因為`.`不匹配`\n`，所以正則表示式返回`false`。
 
-但是，很多时候我们希望匹配的是任意单个字符，这时有一种变通的写法。
+但是，很多時候我們希望匹配的是任意單個字元，這時有一種變通的寫法。
 
 ```javascript
 /foo[^]bar/.test('foo\nbar')
 // true
 ```
 
-这种解决方案毕竟不太符合直觉，ES2018 [引入](https://github.com/tc39/proposal-regexp-dotall-flag)`s`修饰符，使得`.`可以匹配任意单个字符。
+這種解決方案畢竟不太符合直覺，ES2018 [引入](https://github.com/tc39/proposal-regexp-dotall-flag)`s`修飾符，使得`.`可以匹配任意單個字元。
 
 ```javascript
 /foo.bar/s.test('foo\nbar') // true
 ```
 
-这被称为`dotAll`模式，即点（dot）代表一切字符。所以，正则表达式还引入了一个`dotAll`属性，返回一个布尔值，表示该正则表达式是否处在`dotAll`模式。
+這被稱為`dotAll`模式，即點（dot）代表一切字元。所以，正則表示式還引入了一個`dotAll`屬性，返回一個布林值，表示該正則表示式是否處在`dotAll`模式。
 
 ```javascript
 const re = /foo.bar/s;
-// 另一种写法
+// 另一種寫法
 // const re = new RegExp('foo.bar', 's');
 
 re.test('foo\nbar') // true
@@ -357,31 +357,31 @@ re.dotAll // true
 re.flags // 's'
 ```
 
-`/s`修饰符和多行修饰符`/m`不冲突，两者一起使用的情况下，`.`匹配所有字符，而`^`和`$`匹配每一行的行首和行尾。
+`/s`修飾符和多行修飾符`/m`不衝突，兩者一起使用的情況下，`.`匹配所有字元，而`^`和`$`匹配每一行的行首和行尾。
 
-## 后行断言
+## 後行斷言
 
-JavaScript 语言的正则表达式，只支持先行断言（lookahead）和先行否定断言（negative lookahead），不支持后行断言（lookbehind）和后行否定断言（negative lookbehind）。ES2018 引入[后行断言](https://github.com/tc39/proposal-regexp-lookbehind)，V8 引擎 4.9 版（Chrome 62）已经支持。
+JavaScript 語言的正則表示式，只支援先行斷言（lookahead）和先行否定斷言（negative lookahead），不支援後行斷言（lookbehind）和後行否定斷言（negative lookbehind）。ES2018 引入[後行斷言](https://github.com/tc39/proposal-regexp-lookbehind)，V8 引擎 4.9 版（Chrome 62）已經支援。
 
-“先行断言”指的是，`x`只有在`y`前面才匹配，必须写成`/x(?=y)/`。比如，只匹配百分号之前的数字，要写成`/\d+(?=%)/`。“先行否定断言”指的是，`x`只有不在`y`前面才匹配，必须写成`/x(?!y)/`。比如，只匹配不在百分号之前的数字，要写成`/\d+(?!%)/`。
+“先行斷言”指的是，`x`只有在`y`前面才匹配，必須寫成`/x(?=y)/`。比如，只匹配百分號之前的數字，要寫成`/\d+(?=%)/`。“先行否定斷言”指的是，`x`只有不在`y`前面才匹配，必須寫成`/x(?!y)/`。比如，只匹配不在百分號之前的數字，要寫成`/\d+(?!%)/`。
 
 ```javascript
 /\d+(?=%)/.exec('100% of US presidents have been male')  // ["100"]
 /\d+(?!%)/.exec('that’s all 44 of them')                 // ["44"]
 ```
 
-上面两个字符串，如果互换正则表达式，就不会得到相同结果。另外，还可以看到，“先行断言”括号之中的部分（`(?=%)`），是不计入返回结果的。
+上面兩個字串，如果互換正則表示式，就不會得到相同結果。另外，還可以看到，“先行斷言”括號之中的部分（`(?=%)`），是不計入返回結果的。
 
-“后行断言”正好与“先行断言”相反，`x`只有在`y`后面才匹配，必须写成`/(?<=y)x/`。比如，只匹配美元符号之后的数字，要写成`/(?<=\$)\d+/`。“后行否定断言”则与“先行否定断言”相反，`x`只有不在`y`后面才匹配，必须写成`/(?<!y)x/`。比如，只匹配不在美元符号后面的数字，要写成`/(?<!\$)\d+/`。
+“後行斷言”正好與“先行斷言”相反，`x`只有在`y`後面才匹配，必須寫成`/(?<=y)x/`。比如，只匹配美元符號之後的數字，要寫成`/(?<=\$)\d+/`。“後行否定斷言”則與“先行否定斷言”相反，`x`只有不在`y`後面才匹配，必須寫成`/(?<!y)x/`。比如，只匹配不在美元符號後面的數字，要寫成`/(?<!\$)\d+/`。
 
 ```javascript
 /(?<=\$)\d+/.exec('Benjamin Franklin is on the $100 bill')  // ["100"]
 /(?<!\$)\d+/.exec('it’s is worth about €90')                // ["90"]
 ```
 
-上面的例子中，“后行断言”的括号之中的部分（`(?<=\$)`），也是不计入返回结果。
+上面的例子中，“後行斷言”的括號之中的部分（`(?<=\$)`），也是不計入返回結果。
 
-下面的例子是使用后行断言进行字符串替换。
+下面的例子是使用後行斷言進行字串替換。
 
 ```javascript
 const RE_DOLLAR_PREFIX = /(?<=\$)foo/g;
@@ -389,69 +389,69 @@ const RE_DOLLAR_PREFIX = /(?<=\$)foo/g;
 // '$bar %foo foo'
 ```
 
-上面代码中，只有在美元符号后面的`foo`才会被替换。
+上面程式碼中，只有在美元符號後面的`foo`才會被替換。
 
-“后行断言”的实现，需要先匹配`/(?<=y)x/`的`x`，然后再回到左边，匹配`y`的部分。这种“先右后左”的执行顺序，与所有其他正则操作相反，导致了一些不符合预期的行为。
+“後行斷言”的實現，需要先匹配`/(?<=y)x/`的`x`，然後再回到左邊，匹配`y`的部分。這種“先右後左”的執行順序，與所有其他正則操作相反，導致了一些不符合預期的行為。
 
-首先，后行断言的组匹配，与正常情况下结果是不一样的。
+首先，後行斷言的組匹配，與正常情況下結果是不一樣的。
 
 ```javascript
 /(?<=(\d+)(\d+))$/.exec('1053') // ["", "1", "053"]
 /^(\d+)(\d+)$/.exec('1053') // ["1053", "105", "3"]
 ```
 
-上面代码中，需要捕捉两个组匹配。没有“后行断言”时，第一个括号是贪婪模式，第二个括号只能捕获一个字符，所以结果是`105`和`3`。而“后行断言”时，由于执行顺序是从右到左，第二个括号是贪婪模式，第一个括号只能捕获一个字符，所以结果是`1`和`053`。
+上面程式碼中，需要捕捉兩個組匹配。沒有“後行斷言”時，第一個括號是貪婪模式，第二個括號只能捕獲一個字元，所以結果是`105`和`3`。而“後行斷言”時，由於執行順序是從右到左，第二個括號是貪婪模式，第一個括號只能捕獲一個字元，所以結果是`1`和`053`。
 
-其次，“后行断言”的反斜杠引用，也与通常的顺序相反，必须放在对应的那个括号之前。
+其次，“後行斷言”的反斜槓引用，也與通常的順序相反，必須放在對應的那個括號之前。
 
 ```javascript
 /(?<=(o)d\1)r/.exec('hodor')  // null
 /(?<=\1d(o))r/.exec('hodor')  // ["r", "o"]
 ```
 
-上面代码中，如果后行断言的反斜杠引用（`\1`）放在括号的后面，就不会得到匹配结果，必须放在前面才可以。因为后行断言是先从左到右扫描，发现匹配以后再回过头，从右到左完成反斜杠引用。
+上面程式碼中，如果後行斷言的反斜槓引用（`\1`）放在括號的後面，就不會得到匹配結果，必須放在前面才可以。因為後行斷言是先從左到右掃描，發現匹配以後再回過頭，從右到左完成反斜槓引用。
 
-## Unicode 属性类
+## Unicode 屬性類
 
-ES2018 [引入](https://github.com/tc39/proposal-regexp-unicode-property-escapes)了一种新的类的写法`\p{...}`和`\P{...}`，允许正则表达式匹配符合 Unicode 某种属性的所有字符。
+ES2018 [引入](https://github.com/tc39/proposal-regexp-unicode-property-escapes)了一種新的類的寫法`\p{...}`和`\P{...}`，允許正則表示式匹配符合 Unicode 某種屬性的所有字元。
 
 ```javascript
 const regexGreekSymbol = /\p{Script=Greek}/u;
 regexGreekSymbol.test('π') // true
 ```
 
-上面代码中，`\p{Script=Greek}`指定匹配一个希腊文字母，所以匹配`π`成功。
+上面程式碼中，`\p{Script=Greek}`指定匹配一個希臘文字母，所以匹配`π`成功。
 
-Unicode 属性类要指定属性名和属性值。
+Unicode 屬性類要指定屬性名和屬性值。
 
 ```javascript
 \p{UnicodePropertyName=UnicodePropertyValue}
 ```
 
-对于某些属性，可以只写属性名，或者只写属性值。
+對於某些屬性，可以只寫屬性名，或者只寫屬性值。
 
 ```javascript
 \p{UnicodePropertyName}
 \p{UnicodePropertyValue}
 ```
 
-`\P{…}`是`\p{…}`的反向匹配，即匹配不满足条件的字符。
+`\P{…}`是`\p{…}`的反向匹配，即匹配不滿足條件的字元。
 
-注意，这两种类只对 Unicode 有效，所以使用的时候一定要加上`u`修饰符。如果不加`u`修饰符，正则表达式使用`\p`和`\P`会报错，ECMAScript 预留了这两个类。
+注意，這兩種類只對 Unicode 有效，所以使用的時候一定要加上`u`修飾符。如果不加`u`修飾符，正則表示式使用`\p`和`\P`會報錯，ECMAScript 預留了這兩個類。
 
-由于 Unicode 的各种属性非常多，所以这种新的类的表达能力非常强。
+由於 Unicode 的各種屬性非常多，所以這種新的類的表達能力非常強。
 
 ```javascript
 const regex = /^\p{Decimal_Number}+$/u;
 regex.test('𝟏𝟐𝟑𝟜𝟝𝟞𝟩𝟪𝟫𝟬𝟭𝟮𝟯𝟺𝟻𝟼') // true
 ```
 
-上面代码中，属性类指定匹配所有十进制字符，可以看到各种字型的十进制字符都会匹配成功。
+上面程式碼中，屬性類指定匹配所有十進位制字元，可以看到各種字型的十進位制字元都會匹配成功。
 
-`\p{Number}`甚至能匹配罗马数字。
+`\p{Number}`甚至能匹配羅馬數字。
 
 ```javascript
-// 匹配所有数字
+// 匹配所有數字
 const regex = /^\p{Number}+$/u;
 regex.test('²³¹¼½¾') // true
 regex.test('㉛㉜㉝') // true
@@ -464,31 +464,31 @@ regex.test('ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩⅪⅫ') // true
 // 匹配所有空格
 \p{White_Space}
 
-// 匹配各种文字的所有字母，等同于 Unicode 版的 \w
+// 匹配各種文字的所有字母，等同於 Unicode 版的 \w
 [\p{Alphabetic}\p{Mark}\p{Decimal_Number}\p{Connector_Punctuation}\p{Join_Control}]
 
-// 匹配各种文字的所有非字母的字符，等同于 Unicode 版的 \W
+// 匹配各種文字的所有非字母的字元，等同於 Unicode 版的 \W
 [^\p{Alphabetic}\p{Mark}\p{Decimal_Number}\p{Connector_Punctuation}\p{Join_Control}]
 
 // 匹配 Emoji
 /\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu
 
-// 匹配所有的箭头字符
+// 匹配所有的箭頭字元
 const regexArrows = /^\p{Block=Arrows}+$/u;
 regexArrows.test('←↑→↓↔↕↖↗↘↙⇏⇐⇑⇒⇓⇔⇕⇖⇗⇘⇙⇧⇩') // true
 ```
 
-## 具名组匹配
+## 具名組匹配
 
-### 简介
+### 簡介
 
-正则表达式使用圆括号进行组匹配。
+正則表示式使用圓括號進行組匹配。
 
 ```javascript
 const RE_DATE = /(\d{4})-(\d{2})-(\d{2})/;
 ```
 
-上面代码中，正则表达式里面有三组圆括号。使用`exec`方法，就可以将这三组匹配结果提取出来。
+上面程式碼中，正則表示式裡面有三組圓括號。使用`exec`方法，就可以將這三組匹配結果提取出來。
 
 ```javascript
 const RE_DATE = /(\d{4})-(\d{2})-(\d{2})/;
@@ -499,9 +499,9 @@ const month = matchObj[2]; // 12
 const day = matchObj[3]; // 31
 ```
 
-组匹配的一个问题是，每一组的匹配含义不容易看出来，而且只能用数字序号（比如`matchObj[1]`）引用，要是组的顺序变了，引用的时候就必须修改序号。
+組匹配的一個問題是，每一組的匹配含義不容易看出來，而且只能用數字序號（比如`matchObj[1]`）引用，要是組的順序變了，引用的時候就必須修改序號。
 
-ES2018 引入了[具名组匹配](https://github.com/tc39/proposal-regexp-named-groups)（Named Capture Groups），允许为每一个组匹配指定一个名字，既便于阅读代码，又便于引用。
+ES2018 引入了[具名組匹配](https://github.com/tc39/proposal-regexp-named-groups)（Named Capture Groups），允許為每一個組匹配指定一個名字，既便於閱讀程式碼，又便於引用。
 
 ```javascript
 const RE_DATE = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/;
@@ -512,11 +512,11 @@ const month = matchObj.groups.month; // "12"
 const day = matchObj.groups.day; // "31"
 ```
 
-上面代码中，“具名组匹配”在圆括号内部，模式的头部添加“问号 + 尖括号 + 组名”（`?<year>`），然后就可以在`exec`方法返回结果的`groups`属性上引用该组名。同时，数字序号（`matchObj[1]`）依然有效。
+上面程式碼中，“具名組匹配”在圓括號內部，模式的頭部新增“問號 + 尖括號 + 組名”（`?<year>`），然後就可以在`exec`方法返回結果的`groups`屬性上引用該組名。同時，數字序號（`matchObj[1]`）依然有效。
 
-具名组匹配等于为每一组匹配加上了 ID，便于描述匹配的目的。如果组的顺序变了，也不用改变匹配后的处理代码。
+具名組匹配等於為每一組匹配加上了 ID，便於描述匹配的目的。如果組的順序變了，也不用改變匹配後的處理程式碼。
 
-如果具名组没有匹配，那么对应的`groups`对象属性会是`undefined`。
+如果具名組沒有匹配，那麼對應的`groups`物件屬性會是`undefined`。
 
 ```javascript
 const RE_OPT_A = /^(?<as>a+)?$/;
@@ -526,11 +526,11 @@ matchObj.groups.as // undefined
 'as' in matchObj.groups // true
 ```
 
-上面代码中，具名组`as`没有找到匹配，那么`matchObj.groups.as`属性值就是`undefined`，并且`as`这个键名在`groups`是始终存在的。
+上面程式碼中，具名組`as`沒有找到匹配，那麼`matchObj.groups.as`屬性值就是`undefined`，並且`as`這個鍵名在`groups`是始終存在的。
 
-### 解构赋值和替换
+### 解構賦值和替換
 
-有了具名组匹配以后，可以使用解构赋值直接从匹配结果上为变量赋值。
+有了具名組匹配以後，可以使用解構賦值直接從匹配結果上為變數賦值。
 
 ```javascript
 let {groups: {one, two}} = /^(?<one>.*):(?<two>.*)$/u.exec('foo:bar');
@@ -538,7 +538,7 @@ one  // foo
 two  // bar
 ```
 
-字符串替换时，使用`$<组名>`引用具名组。
+字串替換時，使用`$<組名>`引用具名組。
 
 ```javascript
 let re = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/u;
@@ -547,30 +547,30 @@ let re = /(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})/u;
 // '02/01/2015'
 ```
 
-上面代码中，`replace`方法的第二个参数是一个字符串，而不是正则表达式。
+上面程式碼中，`replace`方法的第二個引數是一個字串，而不是正則表示式。
 
-`replace`方法的第二个参数也可以是函数，该函数的参数序列如下。
+`replace`方法的第二個引數也可以是函式，該函式的引數序列如下。
 
 ```javascript
 '2015-01-02'.replace(re, (
-   matched, // 整个匹配结果 2015-01-02
-   capture1, // 第一个组匹配 2015
-   capture2, // 第二个组匹配 01
-   capture3, // 第三个组匹配 02
-   position, // 匹配开始的位置 0
-   S, // 原字符串 2015-01-02
-   groups // 具名组构成的一个对象 {year, month, day}
+   matched, // 整個匹配結果 2015-01-02
+   capture1, // 第一個組匹配 2015
+   capture2, // 第二個組匹配 01
+   capture3, // 第三個組匹配 02
+   position, // 匹配開始的位置 0
+   S, // 原字串 2015-01-02
+   groups // 具名組構成的一個物件 {year, month, day}
  ) => {
  let {day, month, year} = groups;
  return `${day}/${month}/${year}`;
 });
 ```
 
-具名组匹配在原来的基础上，新增了最后一个函数参数：具名组构成的一个对象。函数内部可以直接对这个对象进行解构赋值。
+具名組匹配在原來的基礎上，新增了最後一個函式引數：具名組構成的一個物件。函式內部可以直接對這個物件進行解構賦值。
 
 ### 引用
 
-如果要在正则表达式内部引用某个“具名组匹配”，可以使用`\k<组名>`的写法。
+如果要在正則表示式內部引用某個“具名組匹配”，可以使用`\k<組名>`的寫法。
 
 ```javascript
 const RE_TWICE = /^(?<word>[a-z]+)!\k<word>$/;
@@ -578,7 +578,7 @@ RE_TWICE.test('abc!abc') // true
 RE_TWICE.test('abc!ab') // false
 ```
 
-数字引用（`\1`）依然有效。
+數字引用（`\1`）依然有效。
 
 ```javascript
 const RE_TWICE = /^(?<word>[a-z]+)!\1$/;
@@ -586,7 +586,7 @@ RE_TWICE.test('abc!abc') // true
 RE_TWICE.test('abc!ab') // false
 ```
 
-这两种引用语法还可以同时使用。
+這兩種引用語法還可以同時使用。
 
 ```javascript
 const RE_TWICE = /^(?<word>[a-z]+)!\k<word>!\1$/;
@@ -594,11 +594,11 @@ RE_TWICE.test('abc!abc!abc') // true
 RE_TWICE.test('abc!abc!ab') // false
 ```
 
-## 正则匹配索引
+## 正則匹配索引
 
-正则匹配结果的开始位置和结束位置，目前获取并不是很方便。正则实例的`exec()`方法，返回结果有一个`index`属性，可以获取整个匹配结果的开始位置，但是如果包含组匹配，每个组匹配的开始位置，很难拿到。
+正則匹配結果的開始位置和結束位置，目前獲取並不是很方便。正則例項的`exec()`方法，返回結果有一個`index`屬性，可以獲取整個匹配結果的開始位置，但是如果包含組匹配，每個組匹配的開始位置，很難拿到。
 
-现在有一个[第三阶段提案](https://github.com/tc39/proposal-regexp-match-Indices)，为`exec()`方法的返回结果加上`indices`属性，在这个属性上面可以拿到匹配的开始位置和结束位置。
+現在有一個[第三階段提案](https://github.com/tc39/proposal-regexp-match-Indices)，為`exec()`方法的返回結果加上`indices`屬性，在這個屬性上面可以拿到匹配的開始位置和結束位置。
 
 ```javascript
 const text = 'zabbcdef';
@@ -609,11 +609,11 @@ result.index // 1
 result.indices // [ [1, 3] ]
 ```
 
-上面例子中，`exec()`方法的返回结果`result`，它的`index`属性是整个匹配结果（`ab`）的开始位置，而它的`indices`属性是一个数组，成员是每个匹配的开始位置和结束位置的数组。由于该例子的正则表达式没有组匹配，所以`indices`数组只有一个成员，表示整个匹配的开始位置是`1`，结束位置是`3`。
+上面例子中，`exec()`方法的返回結果`result`，它的`index`屬性是整個匹配結果（`ab`）的開始位置，而它的`indices`屬性是一個數組，成員是每個匹配的開始位置和結束位置的陣列。由於該例子的正則表示式沒有組匹配，所以`indices`陣列只有一個成員，表示整個匹配的開始位置是`1`，結束位置是`3`。
 
-注意，开始位置包含在匹配结果之中，但是结束位置不包含在匹配结果之中。比如，匹配结果为`ab`，分别是原始字符串的第1位和第2位，那么结束位置就是第3位。
+注意，開始位置包含在匹配結果之中，但是結束位置不包含在匹配結果之中。比如，匹配結果為`ab`，分別是原始字串的第1位和第2位，那麼結束位置就是第3位。
 
-如果正则表达式包含组匹配，那么`indices`属性对应的数组就会包含多个成员，提供每个组匹配的开始位置和结束位置。
+如果正則表示式包含組匹配，那麼`indices`屬性對應的陣列就會包含多個成員，提供每個組匹配的開始位置和結束位置。
 
 ```javascript
 const text = 'zabbcdef';
@@ -623,9 +623,9 @@ const result = re.exec(text);
 result.indices // [ [ 1, 6 ], [ 4, 6 ] ]
 ```
 
-上面例子中，正则表达式包含一个组匹配，那么`indices`属性数组就有两个成员，第一个成员是整个匹配结果（`abbcd`）的开始位置和结束位置，第二个成员是组匹配（`cd`）的开始位置和结束位置。
+上面例子中，正則表示式包含一個組匹配，那麼`indices`屬性陣列就有兩個成員，第一個成員是整個匹配結果（`abbcd`）的開始位置和結束位置，第二個成員是組匹配（`cd`）的開始位置和結束位置。
 
-下面是多个组匹配的例子。
+下面是多個組匹配的例子。
 
 ```javascript
 const text = 'zabbcdef';
@@ -635,9 +635,9 @@ const result = re.exec(text);
 result.indices // [ [1, 8], [4, 8], [6, 8] ]
 ```
 
-上面例子中，正则表达式包含两个组匹配，所以`indices`属性数组就有三个成员。
+上面例子中，正則表示式包含兩個組匹配，所以`indices`屬性陣列就有三個成員。
 
-如果正则表达式包含具名组匹配，`indices`属性数组还会有一个`groups`属性。该属性是一个对象，可以从该对象获取具名组匹配的开始位置和结束位置。
+如果正則表示式包含具名組匹配，`indices`屬性陣列還會有一個`groups`屬性。該屬性是一個物件，可以從該物件獲取具名組匹配的開始位置和結束位置。
 
 ```javascript
 const text = 'zabbcdef';
@@ -647,9 +647,9 @@ const result = re.exec(text);
 result.indices.groups // { Z: [ 4, 6 ] }
 ```
 
-上面例子中，`exec()`方法返回结果的`indices.groups`属性是一个对象，提供具名组匹配`Z`的开始位置和结束位置。
+上面例子中，`exec()`方法返回結果的`indices.groups`屬性是一個物件，提供具名組匹配`Z`的開始位置和結束位置。
 
-如果获取组匹配不成功，`indices`属性数组的对应成员则为`undefined`，`indices.groups`属性对象的对应成员也是`undefined`。
+如果獲取組匹配不成功，`indices`屬性陣列的對應成員則為`undefined`，`indices.groups`屬性物件的對應成員也是`undefined`。
 
 ```javascript
 const text = 'zabbcdef';
@@ -660,11 +660,11 @@ result.indices[1] // undefined
 result.indices.groups['Z'] // undefined
 ```
 
-上面例子中，由于组匹配不成功，所以`indices`属性数组和`indices.groups`属性对象对应的组匹配成员都是`undefined`。
+上面例子中，由於組匹配不成功，所以`indices`屬性陣列和`indices.groups`屬性物件對應的組匹配成員都是`undefined`。
 
 ## String.prototype.matchAll()
 
-如果一个正则表达式在字符串里面有多个匹配，现在一般使用`g`修饰符或`y`修饰符，在循环里面逐一取出。
+如果一個正則表示式在字串裡面有多個匹配，現在一般使用`g`修飾符或`y`修飾符，在迴圈裡面逐一取出。
 
 ```javascript
 var regex = /t(e)(st(\d?))/g;
@@ -684,9 +684,9 @@ matches
 // ]
 ```
 
-上面代码中，`while`循环取出每一轮的正则匹配，一共三轮。
+上面程式碼中，`while`迴圈取出每一輪的正則匹配，一共三輪。
 
-[ES2020](https://github.com/tc39/proposal-string-matchall) 增加了`String.prototype.matchAll()`方法，可以一次性取出所有匹配。不过，它返回的是一个遍历器（Iterator），而不是数组。
+[ES2020](https://github.com/tc39/proposal-string-matchall) 增加了`String.prototype.matchAll()`方法，可以一次性取出所有匹配。不過，它返回的是一個遍歷器（Iterator），而不是陣列。
 
 ```javascript
 const string = 'test1test2test3';
@@ -700,15 +700,15 @@ for (const match of string.matchAll(regex)) {
 // ["test3", "e", "st3", "3", index: 10, input: "test1test2test3"]
 ```
 
-上面代码中，由于`string.matchAll(regex)`返回的是遍历器，所以可以用`for...of`循环取出。相对于返回数组，返回遍历器的好处在于，如果匹配结果是一个很大的数组，那么遍历器比较节省资源。
+上面程式碼中，由於`string.matchAll(regex)`返回的是遍歷器，所以可以用`for...of`迴圈取出。相對於返回陣列，返回遍歷器的好處在於，如果匹配結果是一個很大的陣列，那麼遍歷器比較節省資源。
 
-遍历器转为数组是非常简单的，使用`...`运算符和`Array.from()`方法就可以了。
+遍歷器轉為陣列是非常簡單的，使用`...`運算子和`Array.from()`方法就可以了。
 
 ```javascript
-// 转为数组的方法一
+// 轉為陣列的方法一
 [...string.matchAll(regex)]
 
-// 转为数组的方法二
+// 轉為陣列的方法二
 Array.from(string.matchAll(regex))
 ```
 

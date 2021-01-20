@@ -1,16 +1,16 @@
-# Generator 函数的语法
+# Generator 函式的語法
 
-## 简介
+## 簡介
 
 ### 基本概念
 
-Generator 函数是 ES6 提供的一种异步编程解决方案，语法行为与传统函数完全不同。本章详细介绍 Generator 函数的语法和 API，它的异步编程应用请看《Generator 函数的异步应用》一章。
+Generator 函式是 ES6 提供的一種非同步程式設計解決方案，語法行為與傳統函式完全不同。本章詳細介紹 Generator 函式的語法和 API，它的非同步程式設計應用請看《Generator 函式的非同步應用》一章。
 
-Generator 函数有多种理解角度。语法上，首先可以把它理解成，Generator 函数是一个状态机，封装了多个内部状态。
+Generator 函式有多種理解角度。語法上，首先可以把它理解成，Generator 函式是一個狀態機，封裝了多個內部狀態。
 
-执行 Generator 函数会返回一个遍历器对象，也就是说，Generator 函数除了状态机，还是一个遍历器对象生成函数。返回的遍历器对象，可以依次遍历 Generator 函数内部的每一个状态。
+執行 Generator 函式會返回一個遍歷器物件，也就是說，Generator 函式除了狀態機，還是一個遍歷器物件生成函式。返回的遍歷器物件，可以依次遍歷 Generator 函式內部的每一個狀態。
 
-形式上，Generator 函数是一个普通函数，但是有两个特征。一是，`function`关键字与函数名之间有一个星号；二是，函数体内部使用`yield`表达式，定义不同的内部状态（`yield`在英语里的意思就是“产出”）。
+形式上，Generator 函式是一個普通函式，但是有兩個特徵。一是，`function`關鍵字與函式名之間有一個星號；二是，函式體內部使用`yield`表示式，定義不同的內部狀態（`yield`在英語裡的意思就是“產出”）。
 
 ```javascript
 function* helloWorldGenerator() {
@@ -22,11 +22,11 @@ function* helloWorldGenerator() {
 var hw = helloWorldGenerator();
 ```
 
-上面代码定义了一个 Generator 函数`helloWorldGenerator`，它内部有两个`yield`表达式（`hello`和`world`），即该函数有三个状态：hello，world 和 return 语句（结束执行）。
+上面程式碼定義了一個 Generator 函式`helloWorldGenerator`，它內部有兩個`yield`表示式（`hello`和`world`），即該函式有三個狀態：hello，world 和 return 語句（結束執行）。
 
-然后，Generator 函数的调用方法与普通函数一样，也是在函数名后面加上一对圆括号。不同的是，调用 Generator 函数后，该函数并不执行，返回的也不是函数运行结果，而是一个指向内部状态的指针对象，也就是上一章介绍的遍历器对象（Iterator Object）。
+然後，Generator 函式的呼叫方法與普通函式一樣，也是在函式名後面加上一對圓括號。不同的是，呼叫 Generator 函式後，該函式並不執行，返回的也不是函式執行結果，而是一個指向內部狀態的指標物件，也就是上一章介紹的遍歷器物件（Iterator Object）。
 
-下一步，必须调用遍历器对象的`next`方法，使得指针移向下一个状态。也就是说，每次调用`next`方法，内部指针就从函数头部或上一次停下来的地方开始执行，直到遇到下一个`yield`表达式（或`return`语句）为止。换言之，Generator 函数是分段执行的，`yield`表达式是暂停执行的标记，而`next`方法可以恢复执行。
+下一步，必須呼叫遍歷器物件的`next`方法，使得指標移向下一個狀態。也就是說，每次呼叫`next`方法，內部指標就從函式頭部或上一次停下來的地方開始執行，直到遇到下一個`yield`表示式（或`return`語句）為止。換言之，Generator 函式是分段執行的，`yield`表示式是暫停執行的標記，而`next`方法可以恢復執行。
 
 ```javascript
 hw.next()
@@ -42,19 +42,19 @@ hw.next()
 // { value: undefined, done: true }
 ```
 
-上面代码一共调用了四次`next`方法。
+上面程式碼一共呼叫了四次`next`方法。
 
-第一次调用，Generator 函数开始执行，直到遇到第一个`yield`表达式为止。`next`方法返回一个对象，它的`value`属性就是当前`yield`表达式的值`hello`，`done`属性的值`false`，表示遍历还没有结束。
+第一次呼叫，Generator 函式開始執行，直到遇到第一個`yield`表示式為止。`next`方法返回一個物件，它的`value`屬性就是當前`yield`表示式的值`hello`，`done`屬性的值`false`，表示遍歷還沒有結束。
 
-第二次调用，Generator 函数从上次`yield`表达式停下的地方，一直执行到下一个`yield`表达式。`next`方法返回的对象的`value`属性就是当前`yield`表达式的值`world`，`done`属性的值`false`，表示遍历还没有结束。
+第二次呼叫，Generator 函式從上次`yield`表示式停下的地方，一直執行到下一個`yield`表示式。`next`方法返回的物件的`value`屬性就是當前`yield`表示式的值`world`，`done`屬性的值`false`，表示遍歷還沒有結束。
 
-第三次调用，Generator 函数从上次`yield`表达式停下的地方，一直执行到`return`语句（如果没有`return`语句，就执行到函数结束）。`next`方法返回的对象的`value`属性，就是紧跟在`return`语句后面的表达式的值（如果没有`return`语句，则`value`属性的值为`undefined`），`done`属性的值`true`，表示遍历已经结束。
+第三次呼叫，Generator 函式從上次`yield`表示式停下的地方，一直執行到`return`語句（如果沒有`return`語句，就執行到函式結束）。`next`方法返回的物件的`value`屬性，就是緊跟在`return`語句後面的表示式的值（如果沒有`return`語句，則`value`屬性的值為`undefined`），`done`屬性的值`true`，表示遍歷已經結束。
 
-第四次调用，此时 Generator 函数已经运行完毕，`next`方法返回对象的`value`属性为`undefined`，`done`属性为`true`。以后再调用`next`方法，返回的都是这个值。
+第四次呼叫，此時 Generator 函式已經執行完畢，`next`方法返回物件的`value`屬性為`undefined`，`done`屬性為`true`。以後再呼叫`next`方法，返回的都是這個值。
 
-总结一下，调用 Generator 函数，返回一个遍历器对象，代表 Generator 函数的内部指针。以后，每次调用遍历器对象的`next`方法，就会返回一个有着`value`和`done`两个属性的对象。`value`属性表示当前的内部状态的值，是`yield`表达式后面那个表达式的值；`done`属性是一个布尔值，表示是否遍历结束。
+總結一下，呼叫 Generator 函式，返回一個遍歷器物件，代表 Generator 函式的內部指標。以後，每次呼叫遍歷器物件的`next`方法，就會返回一個有著`value`和`done`兩個屬性的物件。`value`屬性表示當前的內部狀態的值，是`yield`表示式後面那個表示式的值；`done`屬性是一個布林值，表示是否遍歷結束。
 
-ES6 没有规定，`function`关键字与函数名之间的星号，写在哪个位置。这导致下面的写法都能通过。
+ES6 沒有規定，`function`關鍵字與函式名之間的星號，寫在哪個位置。這導致下面的寫法都能透過。
 
 ```javascript
 function * foo(x, y) { ··· }
@@ -63,23 +63,23 @@ function* foo(x, y) { ··· }
 function*foo(x, y) { ··· }
 ```
 
-由于 Generator 函数仍然是普通函数，所以一般的写法是上面的第三种，即星号紧跟在`function`关键字后面。本书也采用这种写法。
+由於 Generator 函式仍然是普通函式，所以一般的寫法是上面的第三種，即星號緊跟在`function`關鍵字後面。本書也採用這種寫法。
 
-### yield 表达式
+### yield 表示式
 
-由于 Generator 函数返回的遍历器对象，只有调用`next`方法才会遍历下一个内部状态，所以其实提供了一种可以暂停执行的函数。`yield`表达式就是暂停标志。
+由於 Generator 函式返回的遍歷器物件，只有呼叫`next`方法才會遍歷下一個內部狀態，所以其實提供了一種可以暫停執行的函式。`yield`表示式就是暫停標誌。
 
-遍历器对象的`next`方法的运行逻辑如下。
+遍歷器物件的`next`方法的執行邏輯如下。
 
-（1）遇到`yield`表达式，就暂停执行后面的操作，并将紧跟在`yield`后面的那个表达式的值，作为返回的对象的`value`属性值。
+（1）遇到`yield`表示式，就暫停執行後面的操作，並將緊跟在`yield`後面的那個表示式的值，作為返回的物件的`value`屬性值。
 
-（2）下一次调用`next`方法时，再继续往下执行，直到遇到下一个`yield`表达式。
+（2）下一次呼叫`next`方法時，再繼續往下執行，直到遇到下一個`yield`表示式。
 
-（3）如果没有再遇到新的`yield`表达式，就一直运行到函数结束，直到`return`语句为止，并将`return`语句后面的表达式的值，作为返回的对象的`value`属性值。
+（3）如果沒有再遇到新的`yield`表示式，就一直執行到函式結束，直到`return`語句為止，並將`return`語句後面的表示式的值，作為返回的物件的`value`屬性值。
 
-（4）如果该函数没有`return`语句，则返回的对象的`value`属性值为`undefined`。
+（4）如果該函式沒有`return`語句，則返回的物件的`value`屬性值為`undefined`。
 
-需要注意的是，`yield`表达式后面的表达式，只有当调用`next`方法、内部指针指向该语句时才会执行，因此等于为 JavaScript 提供了手动的“惰性求值”（Lazy Evaluation）的语法功能。
+需要注意的是，`yield`表示式後面的表示式，只有當呼叫`next`方法、內部指標指向該語句時才會執行，因此等於為 JavaScript 提供了手動的“惰性求值”（Lazy Evaluation）的語法功能。
 
 ```javascript
 function* gen() {
@@ -87,15 +87,15 @@ function* gen() {
 }
 ```
 
-上面代码中，`yield`后面的表达式`123 + 456`，不会立即求值，只会在`next`方法将指针移到这一句时，才会求值。
+上面程式碼中，`yield`後面的表示式`123 + 456`，不會立即求值，只會在`next`方法將指標移到這一句時，才會求值。
 
-`yield`表达式与`return`语句既有相似之处，也有区别。相似之处在于，都能返回紧跟在语句后面的那个表达式的值。区别在于每次遇到`yield`，函数暂停执行，下一次再从该位置继续向后执行，而`return`语句不具备位置记忆的功能。一个函数里面，只能执行一次（或者说一个）`return`语句，但是可以执行多次（或者说多个）`yield`表达式。正常函数只能返回一个值，因为只能执行一次`return`；Generator 函数可以返回一系列的值，因为可以有任意多个`yield`。从另一个角度看，也可以说 Generator 生成了一系列的值，这也就是它的名称的来历（英语中，generator 这个词是“生成器”的意思）。
+`yield`表示式與`return`語句既有相似之處，也有區別。相似之處在於，都能返回緊跟在語句後面的那個表示式的值。區別在於每次遇到`yield`，函式暫停執行，下一次再從該位置繼續向後執行，而`return`語句不具備位置記憶的功能。一個函式裡面，只能執行一次（或者說一個）`return`語句，但是可以執行多次（或者說多個）`yield`表示式。正常函式只能返回一個值，因為只能執行一次`return`；Generator 函式可以返回一系列的值，因為可以有任意多個`yield`。從另一個角度看，也可以說 Generator 生成了一系列的值，這也就是它的名稱的來歷（英語中，generator 這個詞是“生成器”的意思）。
 
-Generator 函数可以不用`yield`表达式，这时就变成了一个单纯的暂缓执行函数。
+Generator 函式可以不用`yield`表示式，這時就變成了一個單純的暫緩執行函式。
 
 ```javascript
 function* f() {
-  console.log('执行了！')
+  console.log('執行了！')
 }
 
 var generator = f();
@@ -105,9 +105,9 @@ setTimeout(function () {
 }, 2000);
 ```
 
-上面代码中，函数`f`如果是普通函数，在为变量`generator`赋值时就会执行。但是，函数`f`是一个 Generator 函数，就变成只有调用`next`方法时，函数`f`才会执行。
+上面程式碼中，函式`f`如果是普通函式，在為變數`generator`賦值時就會執行。但是，函式`f`是一個 Generator 函式，就變成只有呼叫`next`方法時，函式`f`才會執行。
 
-另外需要注意，`yield`表达式只能用在 Generator 函数里面，用在其他地方都会报错。
+另外需要注意，`yield`表示式只能用在 Generator 函式裡面，用在其他地方都會報錯。
 
 ```javascript
 (function (){
@@ -116,9 +116,9 @@ setTimeout(function () {
 // SyntaxError: Unexpected number
 ```
 
-上面代码在一个普通函数中使用`yield`表达式，结果产生一个句法错误。
+上面程式碼在一個普通函式中使用`yield`表示式，結果產生一個句法錯誤。
 
-下面是另外一个例子。
+下面是另外一個例子。
 
 ```javascript
 var arr = [1, [[2, 3], 4], [5, 6]];
@@ -138,7 +138,7 @@ for (var f of flat(arr)){
 }
 ```
 
-上面代码也会产生句法错误，因为`forEach`方法的参数是一个普通函数，但是在里面使用了`yield`表达式（这个函数里面还使用了`yield*`表达式，详细介绍见后文）。一种修改方法是改用`for`循环。
+上面程式碼也會產生句法錯誤，因為`forEach`方法的引數是一個普通函式，但是在裡面使用了`yield`表示式（這個函式裡面還使用了`yield*`表示式，詳細介紹見後文）。一種修改方法是改用`for`迴圈。
 
 ```javascript
 var arr = [1, [[2, 3], 4], [5, 6]];
@@ -161,7 +161,7 @@ for (var f of flat(arr)) {
 // 1, 2, 3, 4, 5, 6
 ```
 
-另外，`yield`表达式如果用在另一个表达式之中，必须放在圆括号里面。
+另外，`yield`表示式如果用在另一個表示式之中，必須放在圓括號裡面。
 
 ```javascript
 function* demo() {
@@ -173,7 +173,7 @@ function* demo() {
 }
 ```
 
-`yield`表达式用作函数参数或放在赋值表达式的右边，可以不加括号。
+`yield`表示式用作函式引數或放在賦值表示式的右邊，可以不加括號。
 
 ```javascript
 function* demo() {
@@ -182,11 +182,11 @@ function* demo() {
 }
 ```
 
-### 与 Iterator 接口的关系
+### 與 Iterator 介面的關係
 
-上一章说过，任意一个对象的`Symbol.iterator`方法，等于该对象的遍历器生成函数，调用该函数会返回该对象的一个遍历器对象。
+上一章說過，任意一個物件的`Symbol.iterator`方法，等於該物件的遍歷器生成函式，呼叫該函式會返回該物件的一個遍歷器物件。
 
-由于 Generator 函数就是遍历器生成函数，因此可以把 Generator 赋值给对象的`Symbol.iterator`属性，从而使得该对象具有 Iterator 接口。
+由於 Generator 函式就是遍歷器生成函式，因此可以把 Generator 賦值給物件的`Symbol.iterator`屬性，從而使得該物件具有 Iterator 介面。
 
 ```javascript
 var myIterable = {};
@@ -199,9 +199,9 @@ myIterable[Symbol.iterator] = function* () {
 [...myIterable] // [1, 2, 3]
 ```
 
-上面代码中，Generator 函数赋值给`Symbol.iterator`属性，从而使得`myIterable`对象具有了 Iterator 接口，可以被`...`运算符遍历了。
+上面程式碼中，Generator 函式賦值給`Symbol.iterator`屬性，從而使得`myIterable`物件具有了 Iterator 介面，可以被`...`運算子遍歷了。
 
-Generator 函数执行后，返回一个遍历器对象。该对象本身也具有`Symbol.iterator`属性，执行后返回自身。
+Generator 函式執行後，返回一個遍歷器物件。該物件本身也具有`Symbol.iterator`屬性，執行後返回自身。
 
 ```javascript
 function* gen(){
@@ -214,11 +214,11 @@ g[Symbol.iterator]() === g
 // true
 ```
 
-上面代码中，`gen`是一个 Generator 函数，调用它会生成一个遍历器对象`g`。它的`Symbol.iterator`属性，也是一个遍历器对象生成函数，执行后返回它自己。
+上面程式碼中，`gen`是一個 Generator 函式，呼叫它會生成一個遍歷器物件`g`。它的`Symbol.iterator`屬性，也是一個遍歷器物件生成函式，執行後返回它自己。
 
-## next 方法的参数
+## next 方法的引數
 
-`yield`表达式本身没有返回值，或者说总是返回`undefined`。`next`方法可以带一个参数，该参数就会被当作上一个`yield`表达式的返回值。
+`yield`表示式本身沒有返回值，或者說總是返回`undefined`。`next`方法可以帶一個引數，該引數就會被當作上一個`yield`表示式的返回值。
 
 ```javascript
 function* f() {
@@ -235,11 +235,11 @@ g.next() // { value: 1, done: false }
 g.next(true) // { value: 0, done: false }
 ```
 
-上面代码先定义了一个可以无限运行的 Generator 函数`f`，如果`next`方法没有参数，每次运行到`yield`表达式，变量`reset`的值总是`undefined`。当`next`方法带一个参数`true`时，变量`reset`就被重置为这个参数（即`true`），因此`i`会等于`-1`，下一轮循环就会从`-1`开始递增。
+上面程式碼先定義了一個可以無限執行的 Generator 函式`f`，如果`next`方法沒有引數，每次執行到`yield`表示式，變數`reset`的值總是`undefined`。當`next`方法帶一個引數`true`時，變數`reset`就被重置為這個引數（即`true`），因此`i`會等於`-1`，下一輪迴圈就會從`-1`開始遞增。
 
-这个功能有很重要的语法意义。Generator 函数从暂停状态到恢复运行，它的上下文状态（context）是不变的。通过`next`方法的参数，就有办法在 Generator 函数开始运行之后，继续向函数体内部注入值。也就是说，可以在 Generator 函数运行的不同阶段，从外部向内部注入不同的值，从而调整函数行为。
+這個功能有很重要的語法意義。Generator 函式從暫停狀態到恢復執行，它的上下文狀態（context）是不變的。透過`next`方法的引數，就有辦法在 Generator 函式開始執行之後，繼續向函式體內部注入值。也就是說，可以在 Generator 函式執行的不同階段，從外部向內部注入不同的值，從而調整函式行為。
 
-再看一个例子。
+再看一個例子。
 
 ```javascript
 function* foo(x) {
@@ -259,13 +259,13 @@ b.next(12) // { value:8, done:false }
 b.next(13) // { value:42, done:true }
 ```
 
-上面代码中，第二次运行`next`方法的时候不带参数，导致 y 的值等于`2 * undefined`（即`NaN`），除以 3 以后还是`NaN`，因此返回对象的`value`属性也等于`NaN`。第三次运行`Next`方法的时候不带参数，所以`z`等于`undefined`，返回对象的`value`属性等于`5 + NaN + undefined`，即`NaN`。
+上面程式碼中，第二次執行`next`方法的時候不帶引數，導致 y 的值等於`2 * undefined`（即`NaN`），除以 3 以後還是`NaN`，因此返回物件的`value`屬性也等於`NaN`。第三次執行`Next`方法的時候不帶引數，所以`z`等於`undefined`，返回物件的`value`屬性等於`5 + NaN + undefined`，即`NaN`。
 
-如果向`next`方法提供参数，返回结果就完全不一样了。上面代码第一次调用`b`的`next`方法时，返回`x+1`的值`6`；第二次调用`next`方法，将上一次`yield`表达式的值设为`12`，因此`y`等于`24`，返回`y / 3`的值`8`；第三次调用`next`方法，将上一次`yield`表达式的值设为`13`，因此`z`等于`13`，这时`x`等于`5`，`y`等于`24`，所以`return`语句的值等于`42`。
+如果向`next`方法提供引數，返回結果就完全不一樣了。上面程式碼第一次呼叫`b`的`next`方法時，返回`x+1`的值`6`；第二次呼叫`next`方法，將上一次`yield`表示式的值設為`12`，因此`y`等於`24`，返回`y / 3`的值`8`；第三次呼叫`next`方法，將上一次`yield`表示式的值設為`13`，因此`z`等於`13`，這時`x`等於`5`，`y`等於`24`，所以`return`語句的值等於`42`。
 
-注意，由于`next`方法的参数表示上一个`yield`表达式的返回值，所以在第一次使用`next`方法时，传递参数是无效的。V8 引擎直接忽略第一次使用`next`方法时的参数，只有从第二次使用`next`方法开始，参数才是有效的。从语义上讲，第一个`next`方法用来启动遍历器对象，所以不用带有参数。
+注意，由於`next`方法的引數表示上一個`yield`表示式的返回值，所以在第一次使用`next`方法時，傳遞引數是無效的。V8 引擎直接忽略第一次使用`next`方法時的引數，只有從第二次使用`next`方法開始，引數才是有效的。從語義上講，第一個`next`方法用來啟動遍歷器物件，所以不用帶有引數。
 
-再看一个通过`next`方法的参数，向 Generator 函数内部输入值的例子。
+再看一個透過`next`方法的引數，向 Generator 函式內部輸入值的例子。
 
 ```javascript
 function* dataConsumer() {
@@ -284,9 +284,9 @@ genObj.next('b')
 // 2. b
 ```
 
-上面代码是一个很直观的例子，每次通过`next`方法向 Generator 函数输入值，然后打印出来。
+上面程式碼是一個很直觀的例子，每次透過`next`方法向 Generator 函式輸入值，然後打印出來。
 
-如果想要第一次调用`next`方法时，就能够输入值，可以在 Generator 函数外面再包一层。
+如果想要第一次呼叫`next`方法時，就能夠輸入值，可以在 Generator 函式外面再包一層。
 
 ```javascript
 function wrapper(generatorFunction) {
@@ -306,11 +306,11 @@ wrapped().next('hello!')
 // First input: hello!
 ```
 
-上面代码中，Generator 函数如果不用`wrapper`先包一层，是无法第一次调用`next`方法，就输入参数的。
+上面程式碼中，Generator 函式如果不用`wrapper`先包一層，是無法第一次呼叫`next`方法，就輸入引數的。
 
-## for...of 循环
+## for...of 迴圈
 
-`for...of`循环可以自动遍历 Generator 函数运行时生成的`Iterator`对象，且此时不再需要调用`next`方法。
+`for...of`迴圈可以自動遍歷 Generator 函式執行時生成的`Iterator`物件，且此時不再需要呼叫`next`方法。
 
 ```javascript
 function* foo() {
@@ -328,9 +328,9 @@ for (let v of foo()) {
 // 1 2 3 4 5
 ```
 
-上面代码使用`for...of`循环，依次显示 5 个`yield`表达式的值。这里需要注意，一旦`next`方法的返回对象的`done`属性为`true`，`for...of`循环就会中止，且不包含该返回对象，所以上面代码的`return`语句返回的`6`，不包括在`for...of`循环之中。
+上面程式碼使用`for...of`迴圈，依次顯示 5 個`yield`表示式的值。這裡需要注意，一旦`next`方法的返回物件的`done`屬性為`true`，`for...of`迴圈就會中止，且不包含該返回物件，所以上面程式碼的`return`語句返回的`6`，不包括在`for...of`迴圈之中。
 
-下面是一个利用 Generator 函数和`for...of`循环，实现斐波那契数列的例子。
+下面是一個利用 Generator 函式和`for...of`迴圈，實現斐波那契數列的例子。
 
 ```javascript
 function* fibonacci() {
@@ -347,9 +347,9 @@ for (let n of fibonacci()) {
 }
 ```
 
-从上面代码可见，使用`for...of`语句时不需要使用`next`方法。
+從上面程式碼可見，使用`for...of`語句時不需要使用`next`方法。
 
-利用`for...of`循环，可以写出遍历任意对象（object）的方法。原生的 JavaScript 对象没有遍历接口，无法使用`for...of`循环，通过 Generator 函数为它加上这个接口，就可以用了。
+利用`for...of`迴圈，可以寫出遍歷任意物件（object）的方法。原生的 JavaScript 物件沒有遍歷介面，無法使用`for...of`迴圈，透過 Generator 函式為它加上這個介面，就可以用了。
 
 ```javascript
 function* objectEntries(obj) {
@@ -369,7 +369,7 @@ for (let [key, value] of objectEntries(jane)) {
 // last: Doe
 ```
 
-上面代码中，对象`jane`原生不具备 Iterator 接口，无法用`for...of`遍历。这时，我们通过 Generator 函数`objectEntries`为它加上遍历器接口，就可以用`for...of`遍历了。加上遍历器接口的另一种写法是，将 Generator 函数加到对象的`Symbol.iterator`属性上面。
+上面程式碼中，物件`jane`原生不具備 Iterator 介面，無法用`for...of`遍歷。這時，我們透過 Generator 函式`objectEntries`為它加上遍歷器介面，就可以用`for...of`遍歷了。加上遍歷器介面的另一種寫法是，將 Generator 函式加到物件的`Symbol.iterator`屬性上面。
 
 ```javascript
 function* objectEntries() {
@@ -391,7 +391,7 @@ for (let [key, value] of jane) {
 // last: Doe
 ```
 
-除了`for...of`循环以外，扩展运算符（`...`）、解构赋值和`Array.from`方法内部调用的，都是遍历器接口。这意味着，它们都可以将 Generator 函数返回的 Iterator 对象，作为参数。
+除了`for...of`迴圈以外，擴充套件運算子（`...`）、解構賦值和`Array.from`方法內部呼叫的，都是遍歷器介面。這意味著，它們都可以將 Generator 函式返回的 Iterator 物件，作為引數。
 
 ```javascript
 function* numbers () {
@@ -401,18 +401,18 @@ function* numbers () {
   yield 4
 }
 
-// 扩展运算符
+// 擴充套件運算子
 [...numbers()] // [1, 2]
 
 // Array.from 方法
 Array.from(numbers()) // [1, 2]
 
-// 解构赋值
+// 解構賦值
 let [x, y] = numbers();
 x // 1
 y // 2
 
-// for...of 循环
+// for...of 迴圈
 for (let n of numbers()) {
   console.log(n)
 }
@@ -422,14 +422,14 @@ for (let n of numbers()) {
 
 ## Generator.prototype.throw()
 
-Generator 函数返回的遍历器对象，都有一个`throw`方法，可以在函数体外抛出错误，然后在 Generator 函数体内捕获。
+Generator 函式返回的遍歷器物件，都有一個`throw`方法，可以在函式體外丟擲錯誤，然後在 Generator 函式體內捕獲。
 
 ```javascript
 var g = function* () {
   try {
     yield;
   } catch (e) {
-    console.log('内部捕获', e);
+    console.log('內部捕獲', e);
   }
 };
 
@@ -440,15 +440,15 @@ try {
   i.throw('a');
   i.throw('b');
 } catch (e) {
-  console.log('外部捕获', e);
+  console.log('外部捕獲', e);
 }
-// 内部捕获 a
-// 外部捕获 b
+// 內部捕獲 a
+// 外部捕獲 b
 ```
 
-上面代码中，遍历器对象`i`连续抛出两个错误。第一个错误被 Generator 函数体内的`catch`语句捕获。`i`第二次抛出错误，由于 Generator 函数内部的`catch`语句已经执行过了，不会再捕捉到这个错误了，所以这个错误就被抛出了 Generator 函数体，被函数体外的`catch`语句捕获。
+上面程式碼中，遍歷器物件`i`連續丟擲兩個錯誤。第一個錯誤被 Generator 函式體內的`catch`語句捕獲。`i`第二次丟擲錯誤，由於 Generator 函式內部的`catch`語句已經執行過了，不會再捕捉到這個錯誤了，所以這個錯誤就被丟擲了 Generator 函式體，被函式體外的`catch`語句捕獲。
 
-`throw`方法可以接受一个参数，该参数会被`catch`语句接收，建议抛出`Error`对象的实例。
+`throw`方法可以接受一個引數，該引數會被`catch`語句接收，建議丟擲`Error`物件的例項。
 
 ```javascript
 var g = function* () {
@@ -461,11 +461,11 @@ var g = function* () {
 
 var i = g();
 i.next();
-i.throw(new Error('出错了！'));
-// Error: 出错了！(…)
+i.throw(new Error('出錯了！'));
+// Error: 出錯了！(…)
 ```
 
-注意，不要混淆遍历器对象的`throw`方法和全局的`throw`命令。上面代码的错误，是用遍历器对象的`throw`方法抛出的，而不是用`throw`命令抛出的。后者只能被函数体外的`catch`语句捕获。
+注意，不要混淆遍歷器物件的`throw`方法和全域性的`throw`命令。上面程式碼的錯誤，是用遍歷器物件的`throw`方法丟擲的，而不是用`throw`命令丟擲的。後者只能被函式體外的`catch`語句捕獲。
 
 ```javascript
 var g = function* () {
@@ -474,7 +474,7 @@ var g = function* () {
       yield;
     } catch (e) {
       if (e != 'a') throw e;
-      console.log('内部捕获', e);
+      console.log('內部捕獲', e);
     }
   }
 };
@@ -486,20 +486,20 @@ try {
   throw new Error('a');
   throw new Error('b');
 } catch (e) {
-  console.log('外部捕获', e);
+  console.log('外部捕獲', e);
 }
-// 外部捕获 [Error: a]
+// 外部捕獲 [Error: a]
 ```
 
-上面代码之所以只捕获了`a`，是因为函数体外的`catch`语句块，捕获了抛出的`a`错误以后，就不会再继续`try`代码块里面剩余的语句了。
+上面程式碼之所以只捕獲了`a`，是因為函式體外的`catch`語句塊，捕獲了丟擲的`a`錯誤以後，就不會再繼續`try`程式碼塊裡面剩餘的語句了。
 
-如果 Generator 函数内部没有部署`try...catch`代码块，那么`throw`方法抛出的错误，将被外部`try...catch`代码块捕获。
+如果 Generator 函式內部沒有部署`try...catch`程式碼塊，那麼`throw`方法丟擲的錯誤，將被外部`try...catch`程式碼塊捕獲。
 
 ```javascript
 var g = function* () {
   while (true) {
     yield;
-    console.log('内部捕获', e);
+    console.log('內部捕獲', e);
   }
 };
 
@@ -510,14 +510,14 @@ try {
   i.throw('a');
   i.throw('b');
 } catch (e) {
-  console.log('外部捕获', e);
+  console.log('外部捕獲', e);
 }
-// 外部捕获 a
+// 外部捕獲 a
 ```
 
-上面代码中，Generator 函数`g`内部没有部署`try...catch`代码块，所以抛出的错误直接被外部`catch`代码块捕获。
+上面程式碼中，Generator 函式`g`內部沒有部署`try...catch`程式碼塊，所以丟擲的錯誤直接被外部`catch`程式碼塊捕獲。
 
-如果 Generator 函数内部和外部，都没有部署`try...catch`代码块，那么程序将报错，直接中断执行。
+如果 Generator 函式內部和外部，都沒有部署`try...catch`程式碼塊，那麼程式將報錯，直接中斷執行。
 
 ```javascript
 var gen = function* gen(){
@@ -532,16 +532,16 @@ g.throw();
 // Uncaught undefined
 ```
 
-上面代码中，`g.throw`抛出错误以后，没有任何`try...catch`代码块可以捕获这个错误，导致程序报错，中断执行。
+上面程式碼中，`g.throw`丟擲錯誤以後，沒有任何`try...catch`程式碼塊可以捕獲這個錯誤，導致程式報錯，中斷執行。
 
-`throw`方法抛出的错误要被内部捕获，前提是必须至少执行过一次`next`方法。
+`throw`方法丟擲的錯誤要被內部捕獲，前提是必須至少執行過一次`next`方法。
 
 ```javascript
 function* gen() {
   try {
     yield 1;
   } catch (e) {
-    console.log('内部捕获');
+    console.log('內部捕獲');
   }
 }
 
@@ -550,9 +550,9 @@ g.throw(1);
 // Uncaught 1
 ```
 
-上面代码中，`g.throw(1)`执行时，`next`方法一次都没有执行过。这时，抛出的错误不会被内部捕获，而是直接在外部抛出，导致程序出错。这种行为其实很好理解，因为第一次执行`next`方法，等同于启动执行 Generator 函数的内部代码，否则 Generator 函数还没有开始执行，这时`throw`方法抛错只可能抛出在函数外部。
+上面程式碼中，`g.throw(1)`執行時，`next`方法一次都沒有執行過。這時，丟擲的錯誤不會被內部捕獲，而是直接在外部丟擲，導致程式出錯。這種行為其實很好理解，因為第一次執行`next`方法，等同於啟動執行 Generator 函式的內部程式碼，否則 Generator 函式還沒有開始執行，這時`throw`方法拋錯只可能丟擲在函式外部。
 
-`throw`方法被捕获以后，会附带执行下一条`yield`表达式。也就是说，会附带执行一次`next`方法。
+`throw`方法被捕獲以後，會附帶執行下一條`yield`表示式。也就是說，會附帶執行一次`next`方法。
 
 ```javascript
 var gen = function* gen(){
@@ -571,9 +571,9 @@ g.throw() // b
 g.next() // c
 ```
 
-上面代码中，`g.throw`方法被捕获以后，自动执行了一次`next`方法，所以会打印`b`。另外，也可以看到，只要 Generator 函数内部部署了`try...catch`代码块，那么遍历器的`throw`方法抛出的错误，不影响下一次遍历。
+上面程式碼中，`g.throw`方法被捕獲以後，自動執行了一次`next`方法，所以會列印`b`。另外，也可以看到，只要 Generator 函式內部部署了`try...catch`程式碼塊，那麼遍歷器的`throw`方法丟擲的錯誤，不影響下一次遍歷。
 
-另外，`throw`命令与`g.throw`方法是无关的，两者互不影响。
+另外，`throw`命令與`g.throw`方法是無關的，兩者互不影響。
 
 ```javascript
 var gen = function* gen(){
@@ -593,11 +593,11 @@ try {
 // world
 ```
 
-上面代码中，`throw`命令抛出的错误不会影响到遍历器的状态，所以两次执行`next`方法，都进行了正确的操作。
+上面程式碼中，`throw`命令丟擲的錯誤不會影響到遍歷器的狀態，所以兩次執行`next`方法，都進行了正確的操作。
 
-这种函数体内捕获错误的机制，大大方便了对错误的处理。多个`yield`表达式，可以只用一个`try...catch`代码块来捕获错误。如果使用回调函数的写法，想要捕获多个错误，就不得不为每个函数内部写一个错误处理语句，现在只在 Generator 函数内部写一次`catch`语句就可以了。
+這種函式體內捕獲錯誤的機制，大大方便了對錯誤的處理。多個`yield`表示式，可以只用一個`try...catch`程式碼塊來捕獲錯誤。如果使用回撥函式的寫法，想要捕獲多個錯誤，就不得不為每個函式內部寫一個錯誤處理語句，現在只在 Generator 函式內部寫一次`catch`語句就可以了。
 
-Generator 函数体外抛出的错误，可以在函数体内捕获；反过来，Generator 函数体内抛出的错误，也可以被函数体外的`catch`捕获。
+Generator 函式體外丟擲的錯誤，可以在函式體內捕獲；反過來，Generator 函式體內丟擲的錯誤，也可以被函式體外的`catch`捕獲。
 
 ```javascript
 function* foo() {
@@ -617,9 +617,9 @@ try {
 }
 ```
 
-上面代码中，第二个`next`方法向函数体内传入一个参数 42，数值是没有`toUpperCase`方法的，所以会抛出一个 TypeError 错误，被函数体外的`catch`捕获。
+上面程式碼中，第二個`next`方法向函式體內傳入一個引數 42，數值是沒有`toUpperCase`方法的，所以會丟擲一個 TypeError 錯誤，被函式體外的`catch`捕獲。
 
-一旦 Generator 执行过程中抛出错误，且没有被内部捕获，就不会再执行下去了。如果此后还调用`next`方法，将返回一个`value`属性等于`undefined`、`done`属性等于`true`的对象，即 JavaScript 引擎认为这个 Generator 已经运行结束了。
+一旦 Generator 執行過程中丟擲錯誤，且沒有被內部捕獲，就不會再執行下去了。如果此後還呼叫`next`方法，將返回一個`value`屬性等於`undefined`、`done`屬性等於`true`的物件，即 JavaScript 引擎認為這個 Generator 已經執行結束了。
 
 ```javascript
 function* g() {
@@ -635,39 +635,39 @@ function log(generator) {
   console.log('starting generator');
   try {
     v = generator.next();
-    console.log('第一次运行next方法', v);
+    console.log('第一次執行next方法', v);
   } catch (err) {
-    console.log('捕捉错误', v);
+    console.log('捕捉錯誤', v);
   }
   try {
     v = generator.next();
-    console.log('第二次运行next方法', v);
+    console.log('第二次執行next方法', v);
   } catch (err) {
-    console.log('捕捉错误', v);
+    console.log('捕捉錯誤', v);
   }
   try {
     v = generator.next();
-    console.log('第三次运行next方法', v);
+    console.log('第三次執行next方法', v);
   } catch (err) {
-    console.log('捕捉错误', v);
+    console.log('捕捉錯誤', v);
   }
   console.log('caller done');
 }
 
 log(g());
 // starting generator
-// 第一次运行next方法 { value: 1, done: false }
+// 第一次執行next方法 { value: 1, done: false }
 // throwing an exception
-// 捕捉错误 { value: 1, done: false }
-// 第三次运行next方法 { value: undefined, done: true }
+// 捕捉錯誤 { value: 1, done: false }
+// 第三次執行next方法 { value: undefined, done: true }
 // caller done
 ```
 
-上面代码一共三次运行`next`方法，第二次运行的时候会抛出错误，然后第三次运行的时候，Generator 函数就已经结束了，不再执行下去了。
+上面程式碼一共三次執行`next`方法，第二次執行的時候會丟擲錯誤，然後第三次執行的時候，Generator 函式就已經結束了，不再執行下去了。
 
 ## Generator.prototype.return()
 
-Generator 函数返回的遍历器对象，还有一个`return()`方法，可以返回给定的值，并且终结遍历 Generator 函数。
+Generator 函式返回的遍歷器物件，還有一個`return()`方法，可以返回給定的值，並且終結遍歷 Generator 函式。
 
 ```javascript
 function* gen() {
@@ -683,9 +683,9 @@ g.return('foo') // { value: "foo", done: true }
 g.next()        // { value: undefined, done: true }
 ```
 
-上面代码中，遍历器对象`g`调用`return()`方法后，返回值的`value`属性就是`return()`方法的参数`foo`。并且，Generator 函数的遍历就终止了，返回值的`done`属性为`true`，以后再调用`next()`方法，`done`属性总是返回`true`。
+上面程式碼中，遍歷器物件`g`呼叫`return()`方法後，返回值的`value`屬性就是`return()`方法的引數`foo`。並且，Generator 函式的遍歷就終止了，返回值的`done`屬性為`true`，以後再呼叫`next()`方法，`done`屬性總是返回`true`。
 
-如果`return()`方法调用时，不提供参数，则返回值的`value`属性为`undefined`。
+如果`return()`方法呼叫時，不提供引數，則返回值的`value`屬性為`undefined`。
 
 ```javascript
 function* gen() {
@@ -700,7 +700,7 @@ g.next()        // { value: 1, done: false }
 g.return() // { value: undefined, done: true }
 ```
 
-如果 Generator 函数内部有`try...finally`代码块，且正在执行`try`代码块，那么`return()`方法会导致立刻进入`finally`代码块，执行完以后，整个函数才会结束。
+如果 Generator 函式內部有`try...finally`程式碼塊，且正在執行`try`程式碼塊，那麼`return()`方法會導致立刻進入`finally`程式碼塊，執行完以後，整個函式才會結束。
 
 ```javascript
 function* numbers () {
@@ -722,13 +722,13 @@ g.next() // { value: 5, done: false }
 g.next() // { value: 7, done: true }
 ```
 
-上面代码中，调用`return()`方法后，就开始执行`finally`代码块，不执行`try`里面剩下的代码了，然后等到`finally`代码块执行完，再返回`return()`方法指定的返回值。
+上面程式碼中，呼叫`return()`方法後，就開始執行`finally`程式碼塊，不執行`try`裡面剩下的程式碼了，然後等到`finally`程式碼塊執行完，再返回`return()`方法指定的返回值。
 
-## next()、throw()、return() 的共同点
+## next()、throw()、return() 的共同點
 
-`next()`、`throw()`、`return()`这三个方法本质上是同一件事，可以放在一起理解。它们的作用都是让 Generator 函数恢复执行，并且使用不同的语句替换`yield`表达式。
+`next()`、`throw()`、`return()`這三個方法本質上是同一件事，可以放在一起理解。它們的作用都是讓 Generator 函式恢復執行，並且使用不同的語句替換`yield`表示式。
 
-`next()`是将`yield`表达式替换成一个值。
+`next()`是將`yield`表示式替換成一個值。
 
 ```javascript
 const g = function* (x, y) {
@@ -740,31 +740,31 @@ const gen = g(1, 2);
 gen.next(); // Object {value: 3, done: false}
 
 gen.next(1); // Object {value: 1, done: true}
-// 相当于将 let result = yield x + y
-// 替换成 let result = 1;
+// 相當於將 let result = yield x + y
+// 替換成 let result = 1;
 ```
 
-上面代码中，第二个`next(1)`方法就相当于将`yield`表达式替换成一个值`1`。如果`next`方法没有参数，就相当于替换成`undefined`。
+上面程式碼中，第二個`next(1)`方法就相當於將`yield`表示式替換成一個值`1`。如果`next`方法沒有引數，就相當於替換成`undefined`。
 
-`throw()`是将`yield`表达式替换成一个`throw`语句。
+`throw()`是將`yield`表示式替換成一個`throw`語句。
 
 ```javascript
-gen.throw(new Error('出错了')); // Uncaught Error: 出错了
-// 相当于将 let result = yield x + y
-// 替换成 let result = throw(new Error('出错了'));
+gen.throw(new Error('出錯了')); // Uncaught Error: 出錯了
+// 相當於將 let result = yield x + y
+// 替換成 let result = throw(new Error('出錯了'));
 ```
 
-`return()`是将`yield`表达式替换成一个`return`语句。
+`return()`是將`yield`表示式替換成一個`return`語句。
 
 ```javascript
 gen.return(2); // Object {value: 2, done: true}
-// 相当于将 let result = yield x + y
-// 替换成 let result = return 2;
+// 相當於將 let result = yield x + y
+// 替換成 let result = return 2;
 ```
 
-## yield\* 表达式
+## yield\* 表示式
 
-如果在 Generator 函数内部，调用另一个 Generator 函数。需要在前者的函数体内部，自己手动完成遍历。
+如果在 Generator 函式內部，呼叫另一個 Generator 函式。需要在前者的函式體內部，自己手動完成遍歷。
 
 ```javascript
 function* foo() {
@@ -774,7 +774,7 @@ function* foo() {
 
 function* bar() {
   yield 'x';
-  // 手动遍历 foo()
+  // 手動遍歷 foo()
   for (let i of foo()) {
     console.log(i);
   }
@@ -790,9 +790,9 @@ for (let v of bar()){
 // y
 ```
 
-上面代码中，`foo`和`bar`都是 Generator 函数，在`bar`里面调用`foo`，就需要手动遍历`foo`。如果有多个 Generator 函数嵌套，写起来就非常麻烦。
+上面程式碼中，`foo`和`bar`都是 Generator 函式，在`bar`裡面呼叫`foo`，就需要手動遍歷`foo`。如果有多個 Generator 函式巢狀，寫起來就非常麻煩。
 
-ES6 提供了`yield*`表达式，作为解决办法，用来在一个 Generator 函数里面执行另一个 Generator 函数。
+ES6 提供了`yield*`表示式，作為解決辦法，用來在一個 Generator 函式裡面執行另一個 Generator 函式。
 
 ```javascript
 function* bar() {
@@ -801,7 +801,7 @@ function* bar() {
   yield 'y';
 }
 
-// 等同于
+// 等同於
 function* bar() {
   yield 'x';
   yield 'a';
@@ -809,7 +809,7 @@ function* bar() {
   yield 'y';
 }
 
-// 等同于
+// 等同於
 function* bar() {
   yield 'x';
   for (let v of foo()) {
@@ -827,7 +827,7 @@ for (let v of bar()){
 // "y"
 ```
 
-再来看一个对比的例子。
+再來看一個對比的例子。
 
 ```javascript
 function* inner() {
@@ -842,7 +842,7 @@ function* outer1() {
 
 var gen = outer1()
 gen.next().value // "open"
-gen.next().value // 返回一个遍历器对象
+gen.next().value // 返回一個遍歷器物件
 gen.next().value // "close"
 
 function* outer2() {
@@ -857,9 +857,9 @@ gen.next().value // "hello!"
 gen.next().value // "close"
 ```
 
-上面例子中，`outer2`使用了`yield*`，`outer1`没使用。结果就是，`outer1`返回一个遍历器对象，`outer2`返回该遍历器对象的内部值。
+上面例子中，`outer2`使用了`yield*`，`outer1`沒使用。結果就是，`outer1`返回一個遍歷器物件，`outer2`返回該遍歷器物件的內部值。
 
-从语法角度看，如果`yield`表达式后面跟的是一个遍历器对象，需要在`yield`表达式后面加上星号，表明它返回的是一个遍历器对象。这被称为`yield*`表达式。
+從語法角度看，如果`yield`表示式後面跟的是一個遍歷器物件，需要在`yield`表示式後面加上星號，表明它返回的是一個遍歷器物件。這被稱為`yield*`表示式。
 
 ```javascript
 let delegatedIterator = (function* () {
@@ -882,9 +882,9 @@ for(let value of delegatingIterator) {
 // "Ok, bye."
 ```
 
-上面代码中，`delegatingIterator`是代理者，`delegatedIterator`是被代理者。由于`yield* delegatedIterator`语句得到的值，是一个遍历器，所以要用星号表示。运行结果就是使用一个遍历器，遍历了多个 Generator 函数，有递归的效果。
+上面程式碼中，`delegatingIterator`是代理者，`delegatedIterator`是被代理者。由於`yield* delegatedIterator`語句得到的值，是一個遍歷器，所以要用星號表示。執行結果就是使用一個遍歷器，遍歷了多個 Generator 函式，有遞迴的效果。
 
-`yield*`后面的 Generator 函数（没有`return`语句时），等同于在 Generator 函数内部，部署一个`for...of`循环。
+`yield*`後面的 Generator 函式（沒有`return`語句時），等同於在 Generator 函式內部，部署一個`for...of`迴圈。
 
 ```javascript
 function* concat(iter1, iter2) {
@@ -892,7 +892,7 @@ function* concat(iter1, iter2) {
   yield* iter2;
 }
 
-// 等同于
+// 等同於
 
 function* concat(iter1, iter2) {
   for (var value of iter1) {
@@ -904,9 +904,9 @@ function* concat(iter1, iter2) {
 }
 ```
 
-上面代码说明，`yield*`后面的 Generator 函数（没有`return`语句时），不过是`for...of`的一种简写形式，完全可以用后者替代前者。反之，在有`return`语句时，则需要用`var value = yield* iterator`的形式获取`return`语句的值。
+上面程式碼說明，`yield*`後面的 Generator 函式（沒有`return`語句時），不過是`for...of`的一種簡寫形式，完全可以用後者替代前者。反之，在有`return`語句時，則需要用`var value = yield* iterator`的形式獲取`return`語句的值。
 
-如果`yield*`后面跟着一个数组，由于数组原生支持遍历器，因此就会遍历数组成员。
+如果`yield*`後面跟著一個數組，由於陣列原生支援遍歷器，因此就會遍歷陣列成員。
 
 ```javascript
 function* gen(){
@@ -916,9 +916,9 @@ function* gen(){
 gen().next() // { value:"a", done:false }
 ```
 
-上面代码中，`yield`命令后面如果不加星号，返回的是整个数组，加了星号就表示返回的是数组的遍历器对象。
+上面程式碼中，`yield`命令後面如果不加星號，返回的是整個陣列，加了星號就表示返回的是陣列的遍歷器物件。
 
-实际上，任何数据结构只要有 Iterator 接口，就可以被`yield*`遍历。
+實際上，任何資料結構只要有 Iterator 介面，就可以被`yield*`遍歷。
 
 ```javascript
 let read = (function* () {
@@ -930,9 +930,9 @@ read.next().value // "hello"
 read.next().value // "h"
 ```
 
-上面代码中，`yield`表达式返回整个字符串，`yield*`语句返回单个字符。因为字符串具有 Iterator 接口，所以被`yield*`遍历。
+上面程式碼中，`yield`表示式返回整個字串，`yield*`語句返回單個字元。因為字串具有 Iterator 介面，所以被`yield*`遍歷。
 
-如果被代理的 Generator 函数有`return`语句，那么就可以向代理它的 Generator 函数返回数据。
+如果被代理的 Generator 函式有`return`語句，那麼就可以向代理它的 Generator 函式返回資料。
 
 ```javascript
 function* foo() {
@@ -963,9 +963,9 @@ it.next()
 // {value: undefined, done: true}
 ```
 
-上面代码在第四次调用`next`方法的时候，屏幕上会有输出，这是因为函数`foo`的`return`语句，向函数`bar`提供了返回值。
+上面程式碼在第四次呼叫`next`方法的時候，螢幕上會有輸出，這是因為函式`foo`的`return`語句，向函式`bar`提供了返回值。
 
-再看一个例子。
+再看一個例子。
 
 ```javascript
 function* genFuncWithReturn() {
@@ -980,12 +980,12 @@ function* logReturned(genObj) {
 
 [...logReturned(genFuncWithReturn())]
 // The result
-// 值为 [ 'a', 'b' ]
+// 值為 [ 'a', 'b' ]
 ```
 
-上面代码中，存在两次遍历。第一次是扩展运算符遍历函数`logReturned`返回的遍历器对象，第二次是`yield*`语句遍历函数`genFuncWithReturn`返回的遍历器对象。这两次遍历的效果是叠加的，最终表现为扩展运算符遍历函数`genFuncWithReturn`返回的遍历器对象。所以，最后的数据表达式得到的值等于`[ 'a', 'b' ]`。但是，函数`genFuncWithReturn`的`return`语句的返回值`The result`，会返回给函数`logReturned`内部的`result`变量，因此会有终端输出。
+上面程式碼中，存在兩次遍歷。第一次是擴充套件運算子遍歷函式`logReturned`返回的遍歷器物件，第二次是`yield*`語句遍歷函式`genFuncWithReturn`返回的遍歷器物件。這兩次遍歷的效果是疊加的，最終表現為擴充套件運算子遍歷函式`genFuncWithReturn`返回的遍歷器物件。所以，最後的資料表示式得到的值等於`[ 'a', 'b' ]`。但是，函式`genFuncWithReturn`的`return`語句的返回值`The result`，會返回給函式`logReturned`內部的`result`變數，因此會有終端輸出。
 
-`yield*`命令可以很方便地取出嵌套数组的所有成员。
+`yield*`命令可以很方便地取出巢狀陣列的所有成員。
 
 ```javascript
 function* iterTree(tree) {
@@ -1010,26 +1010,26 @@ for(let x of iterTree(tree)) {
 // e
 ```
 
-由于扩展运算符`...`默认调用 Iterator 接口，所以上面这个函数也可以用于嵌套数组的平铺。
+由於擴充套件運算子`...`預設呼叫 Iterator 介面，所以上面這個函式也可以用於巢狀陣列的平鋪。
 
 ```javascript
 [...iterTree(tree)] // ["a", "b", "c", "d", "e"]
 ```
 
-下面是一个稍微复杂的例子，使用`yield*`语句遍历完全二叉树。
+下面是一個稍微複雜的例子，使用`yield*`語句遍歷完全二叉樹。
 
 ```javascript
-// 下面是二叉树的构造函数，
-// 三个参数分别是左树、当前节点和右树
+// 下面是二叉樹的建構函式，
+// 三個引數分別是左樹、當前節點和右樹
 function Tree(left, label, right) {
   this.left = left;
   this.label = label;
   this.right = right;
 }
 
-// 下面是中序（inorder）遍历函数。
-// 由于返回的是一个遍历器，所以要用generator函数。
-// 函数体内采用递归算法，所以左树和右树要用yield*遍历
+// 下面是中序（inorder）遍歷函式。
+// 由於返回的是一個遍歷器，所以要用generator函式。
+// 函式體內採用遞迴演算法，所以左樹和右樹要用yield*遍歷
 function* inorder(t) {
   if (t) {
     yield* inorder(t.left);
@@ -1038,15 +1038,15 @@ function* inorder(t) {
   }
 }
 
-// 下面生成二叉树
+// 下面生成二叉樹
 function make(array) {
-  // 判断是否为叶节点
+  // 判斷是否為葉節點
   if (array.length == 1) return new Tree(null, array[0], null);
   return new Tree(make(array[0]), array[1], make(array[2]));
 }
 let tree = make([[['a'], 'b', ['c']], 'd', [['e'], 'f', ['g']]]);
 
-// 遍历二叉树
+// 遍歷二叉樹
 var result = [];
 for (let node of inorder(tree)) {
   result.push(node);
@@ -1056,9 +1056,9 @@ result
 // ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 ```
 
-## 作为对象属性的 Generator 函数
+## 作為物件屬性的 Generator 函式
 
-如果一个对象的属性是 Generator 函数，可以简写成下面的形式。
+如果一個物件的屬性是 Generator 函式，可以簡寫成下面的形式。
 
 ```javascript
 let obj = {
@@ -1068,9 +1068,9 @@ let obj = {
 };
 ```
 
-上面代码中，`myGeneratorMethod`属性前面有一个星号，表示这个属性是一个 Generator 函数。
+上面程式碼中，`myGeneratorMethod`屬性前面有一個星號，表示這個屬性是一個 Generator 函式。
 
-它的完整形式如下，与上面的写法是等价的。
+它的完整形式如下，與上面的寫法是等價的。
 
 ```javascript
 let obj = {
@@ -1080,9 +1080,9 @@ let obj = {
 };
 ```
 
-## Generator 函数的`this`
+## Generator 函式的`this`
 
-Generator 函数总是返回一个遍历器，ES6 规定这个遍历器是 Generator 函数的实例，也继承了 Generator 函数的`prototype`对象上的方法。
+Generator 函式總是返回一個遍歷器，ES6 規定這個遍歷器是 Generator 函式的例項，也繼承了 Generator 函式的`prototype`物件上的方法。
 
 ```javascript
 function* g() {}
@@ -1097,7 +1097,7 @@ obj instanceof g // true
 obj.hello() // 'hi!'
 ```
 
-上面代码表明，Generator 函数`g`返回的遍历器`obj`，是`g`的实例，而且继承了`g.prototype`。但是，如果把`g`当作普通的构造函数，并不会生效，因为`g`返回的总是遍历器对象，而不是`this`对象。
+上面程式碼表明，Generator 函式`g`返回的遍歷器`obj`，是`g`的例項，而且繼承了`g.prototype`。但是，如果把`g`當作普通的建構函式，並不會生效，因為`g`返回的總是遍歷器物件，而不是`this`物件。
 
 ```javascript
 function* g() {
@@ -1109,9 +1109,9 @@ obj.next();
 obj.a // undefined
 ```
 
-上面代码中，Generator 函数`g`在`this`对象上面添加了一个属性`a`，但是`obj`对象拿不到这个属性。
+上面程式碼中，Generator 函式`g`在`this`物件上面添加了一個屬性`a`，但是`obj`物件拿不到這個屬性。
 
-Generator 函数也不能跟`new`命令一起用，会报错。
+Generator 函式也不能跟`new`命令一起用，會報錯。
 
 ```javascript
 function* F() {
@@ -1123,11 +1123,11 @@ new F()
 // TypeError: F is not a constructor
 ```
 
-上面代码中，`new`命令跟构造函数`F`一起使用，结果报错，因为`F`不是构造函数。
+上面程式碼中，`new`命令跟建構函式`F`一起使用，結果報錯，因為`F`不是建構函式。
 
-那么，有没有办法让 Generator 函数返回一个正常的对象实例，既可以用`next`方法，又可以获得正常的`this`？
+那麼，有沒有辦法讓 Generator 函式返回一個正常的物件例項，既可以用`next`方法，又可以獲得正常的`this`？
 
-下面是一个变通方法。首先，生成一个空对象，使用`call`方法绑定 Generator 函数内部的`this`。这样，构造函数调用以后，这个空对象就是 Generator 函数的实例对象了。
+下面是一個變通方法。首先，生成一個空物件，使用`call`方法繫結 Generator 函式內部的`this`。這樣，建構函式呼叫以後，這個空物件就是 Generator 函式的例項物件了。
 
 ```javascript
 function* F() {
@@ -1147,11 +1147,11 @@ obj.b // 2
 obj.c // 3
 ```
 
-上面代码中，首先是`F`内部的`this`对象绑定`obj`对象，然后调用它，返回一个 Iterator 对象。这个对象执行三次`next`方法（因为`F`内部有两个`yield`表达式），完成 F 内部所有代码的运行。这时，所有内部属性都绑定在`obj`对象上了，因此`obj`对象也就成了`F`的实例。
+上面程式碼中，首先是`F`內部的`this`物件繫結`obj`物件，然後呼叫它，返回一個 Iterator 物件。這個物件執行三次`next`方法（因為`F`內部有兩個`yield`表示式），完成 F 內部所有程式碼的執行。這時，所有內部屬性都繫結在`obj`物件上了，因此`obj`物件也就成了`F`的例項。
 
-上面代码中，执行的是遍历器对象`f`，但是生成的对象实例是`obj`，有没有办法将这两个对象统一呢？
+上面程式碼中，執行的是遍歷器物件`f`，但是生成的物件例項是`obj`，有沒有辦法將這兩個物件統一呢？
 
-一个办法就是将`obj`换成`F.prototype`。
+一個辦法就是將`obj`換成`F.prototype`。
 
 ```javascript
 function* F() {
@@ -1170,7 +1170,7 @@ f.b // 2
 f.c // 3
 ```
 
-再将`F`改成构造函数，就可以对它执行`new`命令了。
+再將`F`改成建構函式，就可以對它執行`new`命令了。
 
 ```javascript
 function* gen() {
@@ -1194,11 +1194,11 @@ f.b // 2
 f.c // 3
 ```
 
-## 含义
+## 含義
 
-### Generator 与状态机
+### Generator 與狀態機
 
-Generator 是实现状态机的最佳结构。比如，下面的`clock`函数就是一个状态机。
+Generator 是實現狀態機的最佳結構。比如，下面的`clock`函式就是一個狀態機。
 
 ```javascript
 var ticking = true;
@@ -1211,7 +1211,7 @@ var clock = function() {
 }
 ```
 
-上面代码的`clock`函数一共有两种状态（`Tick`和`Tock`），每运行一次，就改变一次状态。这个函数如果用 Generator 实现，就是下面这样。
+上面程式碼的`clock`函式一共有兩種狀態（`Tick`和`Tock`），每執行一次，就改變一次狀態。這個函式如果用 Generator 實現，就是下面這樣。
 
 ```javascript
 var clock = function* () {
@@ -1224,35 +1224,35 @@ var clock = function* () {
 };
 ```
 
-上面的 Generator 实现与 ES5 实现对比，可以看到少了用来保存状态的外部变量`ticking`，这样就更简洁，更安全（状态不会被非法篡改）、更符合函数式编程的思想，在写法上也更优雅。Generator 之所以可以不用外部变量保存状态，是因为它本身就包含了一个状态信息，即目前是否处于暂停态。
+上面的 Generator 實現與 ES5 實現對比，可以看到少了用來儲存狀態的外部變數`ticking`，這樣就更簡潔，更安全（狀態不會被非法篡改）、更符合函數語言程式設計的思想，在寫法上也更優雅。Generator 之所以可以不用外部變數儲存狀態，是因為它本身就包含了一個狀態資訊，即目前是否處於暫停態。
 
-### Generator 与协程
+### Generator 與協程
 
-协程（coroutine）是一种程序运行的方式，可以理解成“协作的线程”或“协作的函数”。协程既可以用单线程实现，也可以用多线程实现。前者是一种特殊的子例程，后者是一种特殊的线程。
+協程（coroutine）是一種程式執行的方式，可以理解成“協作的執行緒”或“協作的函式”。協程既可以用單執行緒實現，也可以用多執行緒實現。前者是一種特殊的子例程，後者是一種特殊的執行緒。
 
-**（1）协程与子例程的差异**
+**（1）協程與子例程的差異**
 
-传统的“子例程”（subroutine）采用堆栈式“后进先出”的执行方式，只有当调用的子函数完全执行完毕，才会结束执行父函数。协程与其不同，多个线程（单线程情况下，即多个函数）可以并行执行，但是只有一个线程（或函数）处于正在运行的状态，其他线程（或函数）都处于暂停态（suspended），线程（或函数）之间可以交换执行权。也就是说，一个线程（或函数）执行到一半，可以暂停执行，将执行权交给另一个线程（或函数），等到稍后收回执行权的时候，再恢复执行。这种可以并行执行、交换执行权的线程（或函数），就称为协程。
+傳統的“子例程”（subroutine）採用堆疊式“後進先出”的執行方式，只有當呼叫的子函式完全執行完畢，才會結束執行父函式。協程與其不同，多個執行緒（單執行緒情況下，即多個函式）可以並行執行，但是隻有一個執行緒（或函式）處於正在執行的狀態，其他執行緒（或函式）都處於暫停態（suspended），執行緒（或函式）之間可以交換執行權。也就是說，一個執行緒（或函式）執行到一半，可以暫停執行，將執行權交給另一個執行緒（或函式），等到稍後收回執行權的時候，再恢復執行。這種可以並行執行、交換執行權的執行緒（或函式），就稱為協程。
 
-从实现上看，在内存中，子例程只使用一个栈（stack），而协程是同时存在多个栈，但只有一个栈是在运行状态，也就是说，协程是以多占用内存为代价，实现多任务的并行。
+從實現上看，在記憶體中，子例程只使用一個棧（stack），而協程是同時存在多個棧，但只有一個棧是在執行狀態，也就是說，協程是以多佔用記憶體為代價，實現多工的並行。
 
-**（2）协程与普通线程的差异**
+**（2）協程與普通執行緒的差異**
 
-不难看出，协程适合用于多任务运行的环境。在这个意义上，它与普通的线程很相似，都有自己的执行上下文、可以分享全局变量。它们的不同之处在于，同一时间可以有多个线程处于运行状态，但是运行的协程只能有一个，其他协程都处于暂停状态。此外，普通的线程是抢先式的，到底哪个线程优先得到资源，必须由运行环境决定，但是协程是合作式的，执行权由协程自己分配。
+不難看出，協程適合用於多工執行的環境。在這個意義上，它與普通的執行緒很相似，都有自己的執行上下文、可以分享全域性變數。它們的不同之處在於，同一時間可以有多個執行緒處於執行狀態，但是執行的協程只能有一個，其他協程都處於暫停狀態。此外，普通的執行緒是搶先式的，到底哪個執行緒優先得到資源，必須由執行環境決定，但是協程是合作式的，執行權由協程自己分配。
 
-由于 JavaScript 是单线程语言，只能保持一个调用栈。引入协程以后，每个任务可以保持自己的调用栈。这样做的最大好处，就是抛出错误的时候，可以找到原始的调用栈。不至于像异步操作的回调函数那样，一旦出错，原始的调用栈早就结束。
+由於 JavaScript 是單執行緒語言，只能保持一個呼叫棧。引入協程以後，每個任務可以保持自己的呼叫棧。這樣做的最大好處，就是丟擲錯誤的時候，可以找到原始的呼叫棧。不至於像非同步操作的回撥函式那樣，一旦出錯，原始的呼叫棧早就結束。
 
-Generator 函数是 ES6 对协程的实现，但属于不完全实现。Generator 函数被称为“半协程”（semi-coroutine），意思是只有 Generator 函数的调用者，才能将程序的执行权还给 Generator 函数。如果是完全执行的协程，任何函数都可以让暂停的协程继续执行。
+Generator 函式是 ES6 對協程的實現，但屬於不完全實現。Generator 函式被稱為“半協程”（semi-coroutine），意思是隻有 Generator 函式的呼叫者，才能將程式的執行權還給 Generator 函式。如果是完全執行的協程，任何函式都可以讓暫停的協程繼續執行。
 
-如果将 Generator 函数当作协程，完全可以将多个需要互相协作的任务写成 Generator 函数，它们之间使用`yield`表达式交换控制权。
+如果將 Generator 函式當作協程，完全可以將多個需要互相協作的任務寫成 Generator 函式，它們之間使用`yield`表示式交換控制權。
 
-### Generator 与上下文
+### Generator 與上下文
 
-JavaScript 代码运行时，会产生一个全局的上下文环境（context，又称运行环境），包含了当前所有的变量和对象。然后，执行函数（或块级代码）的时候，又会在当前上下文环境的上层，产生一个函数运行的上下文，变成当前（active）的上下文，由此形成一个上下文环境的堆栈（context stack）。
+JavaScript 程式碼執行時，會產生一個全域性的上下文環境（context，又稱執行環境），包含了當前所有的變數和物件。然後，執行函式（或塊級程式碼）的時候，又會在當前上下文環境的上層，產生一個函式執行的上下文，變成當前（active）的上下文，由此形成一個上下文環境的堆疊（context stack）。
 
-这个堆栈是“后进先出”的数据结构，最后产生的上下文环境首先执行完成，退出堆栈，然后再执行完成它下层的上下文，直至所有代码执行完成，堆栈清空。
+這個堆疊是“後進先出”的資料結構，最後產生的上下文環境首先執行完成，退出堆疊，然後再執行完成它下層的上下文，直至所有程式碼執行完成，堆疊清空。
 
-Generator 函数不是这样，它执行产生的上下文环境，一旦遇到`yield`命令，就会暂时退出堆栈，但是并不消失，里面的所有变量和对象会冻结在当前状态。等到对它执行`next`命令时，这个上下文环境又会重新加入调用栈，冻结的变量和对象恢复执行。
+Generator 函式不是這樣，它執行產生的上下文環境，一旦遇到`yield`命令，就會暫時退出堆疊，但是並不消失，裡面的所有變數和物件會凍結在當前狀態。等到對它執行`next`命令時，這個上下文環境又會重新加入呼叫棧，凍結的變數和物件恢復執行。
 
 ```javascript
 function* gen() {
@@ -1268,15 +1268,15 @@ console.log(
 );
 ```
 
-上面代码中，第一次执行`g.next()`时，Generator 函数`gen`的上下文会加入堆栈，即开始运行`gen`内部的代码。等遇到`yield 1`时，`gen`上下文退出堆栈，内部状态冻结。第二次执行`g.next()`时，`gen`上下文重新加入堆栈，变成当前的上下文，重新恢复执行。
+上面程式碼中，第一次執行`g.next()`時，Generator 函式`gen`的上下文會加入堆疊，即開始執行`gen`內部的程式碼。等遇到`yield 1`時，`gen`上下文退出堆疊，內部狀態凍結。第二次執行`g.next()`時，`gen`上下文重新加入堆疊，變成當前的上下文，重新恢復執行。
 
-## 应用
+## 應用
 
-Generator 可以暂停函数执行，返回任意表达式的值。这种特点使得 Generator 有多种应用场景。
+Generator 可以暫停函式執行，返回任意表達式的值。這種特點使得 Generator 有多種應用場景。
 
-### （1）异步操作的同步化表达
+### （1）非同步操作的同步化表達
 
-Generator 函数的暂停执行的效果，意味着可以把异步操作写在`yield`表达式里面，等到调用`next`方法时再往后执行。这实际上等同于不需要写回调函数了，因为异步操作的后续操作可以放在`yield`表达式下面，反正要等到调用`next`方法时再执行。所以，Generator 函数的一个重要实际意义就是用来处理异步操作，改写回调函数。
+Generator 函式的暫停執行的效果，意味著可以把非同步操作寫在`yield`表示式裡面，等到呼叫`next`方法時再往後執行。這實際上等同於不需要寫回調函數了，因為非同步操作的後續操作可以放在`yield`表示式下面，反正要等到呼叫`next`方法時再執行。所以，Generator 函式的一個重要實際意義就是用來處理非同步操作，改寫回調函式。
 
 ```javascript
 function* loadUI() {
@@ -1285,16 +1285,16 @@ function* loadUI() {
   hideLoadingScreen();
 }
 var loader = loadUI();
-// 加载UI
+// 載入UI
 loader.next()
 
-// 卸载UI
+// 解除安裝UI
 loader.next()
 ```
 
-上面代码中，第一次调用`loadUI`函数时，该函数不会执行，仅返回一个遍历器。下一次对该遍历器调用`next`方法，则会显示`Loading`界面（`showLoadingScreen`），并且异步加载数据（`loadUIDataAsynchronously`）。等到数据加载完成，再一次使用`next`方法，则会隐藏`Loading`界面。可以看到，这种写法的好处是所有`Loading`界面的逻辑，都被封装在一个函数，按部就班非常清晰。
+上面程式碼中，第一次呼叫`loadUI`函式時，該函式不會執行，僅返回一個遍歷器。下一次對該遍歷器呼叫`next`方法，則會顯示`Loading`介面（`showLoadingScreen`），並且非同步載入資料（`loadUIDataAsynchronously`）。等到資料載入完成，再一次使用`next`方法，則會隱藏`Loading`介面。可以看到，這種寫法的好處是所有`Loading`介面的邏輯，都被封裝在一個函式，按部就班非常清晰。
 
-Ajax 是典型的异步操作，通过 Generator 函数部署 Ajax 操作，可以用同步的方式表达。
+Ajax 是典型的非同步操作，透過 Generator 函式部署 Ajax 操作，可以用同步的方式表達。
 
 ```javascript
 function* main() {
@@ -1313,9 +1313,9 @@ var it = main();
 it.next();
 ```
 
-上面代码的`main`函数，就是通过 Ajax 操作获取数据。可以看到，除了多了一个`yield`，它几乎与同步操作的写法完全一样。注意，`makeAjaxCall`函数中的`next`方法，必须加上`response`参数，因为`yield`表达式，本身是没有值的，总是等于`undefined`。
+上面程式碼的`main`函式，就是透過 Ajax 操作獲取資料。可以看到，除了多了一個`yield`，它幾乎與同步操作的寫法完全一樣。注意，`makeAjaxCall`函式中的`next`方法，必須加上`response`引數，因為`yield`表示式，本身是沒有值的，總是等於`undefined`。
 
-下面是另一个例子，通过 Generator 函数逐行读取文本文件。
+下面是另一個例子，透過 Generator 函式逐行讀取文字檔案。
 
 ```javascript
 function* numbers() {
@@ -1330,11 +1330,11 @@ function* numbers() {
 }
 ```
 
-上面代码打开文本文件，使用`yield`表达式可以手动逐行读取文件。
+上面程式碼開啟文字檔案，使用`yield`表示式可以手動逐行讀取檔案。
 
 ### （2）控制流管理
 
-如果有一个多步操作非常耗时，采用回调函数，可能会写成下面这样。
+如果有一個多步操作非常耗時，採用回撥函式，可能會寫成下面這樣。
 
 ```javascript
 step1(function (value1) {
@@ -1348,7 +1348,7 @@ step1(function (value1) {
 });
 ```
 
-采用 Promise 改写上面的代码。
+採用 Promise 改寫上面的程式碼。
 
 ```javascript
 Promise.resolve(step1)
@@ -1363,7 +1363,7 @@ Promise.resolve(step1)
   .done();
 ```
 
-上面代码已经把回调函数，改成了直线执行的形式，但是加入了大量 Promise 的语法。Generator 函数可以进一步改善代码运行流程。
+上面程式碼已經把回撥函式，改成了直線執行的形式，但是加入了大量 Promise 的語法。Generator 函式可以進一步改善程式碼執行流程。
 
 ```javascript
 function* longRunningTask(value1) {
@@ -1379,14 +1379,14 @@ function* longRunningTask(value1) {
 }
 ```
 
-然后，使用一个函数，按次序自动执行所有步骤。
+然後，使用一個函式，按次序自動執行所有步驟。
 
 ```javascript
 scheduler(longRunningTask(initialValue));
 
 function scheduler(task) {
   var taskObj = task.next(task.value);
-  // 如果Generator函数未结束，就继续调用
+  // 如果Generator函式未結束，就繼續呼叫
   if (!taskObj.done) {
     task.value = taskObj.value
     scheduler(task);
@@ -1394,9 +1394,9 @@ function scheduler(task) {
 }
 ```
 
-注意，上面这种做法，只适合同步操作，即所有的`task`都必须是同步的，不能有异步操作。因为这里的代码一得到返回值，就继续往下执行，没有判断异步操作何时完成。如果要控制异步的操作流程，详见后面的《异步操作》一章。
+注意，上面這種做法，只適合同步操作，即所有的`task`都必須是同步的，不能有非同步操作。因為這裡的程式碼一得到返回值，就繼續往下執行，沒有判斷非同步操作何時完成。如果要控制非同步的操作流程，詳見後面的《非同步操作》一章。
 
-下面，利用`for...of`循环会自动依次执行`yield`命令的特性，提供一种更一般的控制流管理的方法。
+下面，利用`for...of`迴圈會自動依次執行`yield`命令的特性，提供一種更一般的控制流管理的方法。
 
 ```javascript
 let steps = [step1Func, step2Func, step3Func];
@@ -1409,9 +1409,9 @@ function* iterateSteps(steps){
 }
 ```
 
-上面代码中，数组`steps`封装了一个任务的多个步骤，Generator 函数`iterateSteps`则是依次为这些步骤加上`yield`命令。
+上面程式碼中，陣列`steps`封裝了一個任務的多個步驟，Generator 函式`iterateSteps`則是依次為這些步驟加上`yield`命令。
 
-将任务分解成步骤之后，还可以将项目分解成多个依次执行的任务。
+將任務分解成步驟之後，還可以將專案分解成多個依次執行的任務。
 
 ```javascript
 let jobs = [job1, job2, job3];
@@ -1424,9 +1424,9 @@ function* iterateJobs(jobs){
 }
 ```
 
-上面代码中，数组`jobs`封装了一个项目的多个任务，Generator 函数`iterateJobs`则是依次为这些任务加上`yield*`命令。
+上面程式碼中，陣列`jobs`封裝了一個專案的多個任務，Generator 函式`iterateJobs`則是依次為這些任務加上`yield*`命令。
 
-最后，就可以用`for...of`循环一次性依次执行所有任务的所有步骤。
+最後，就可以用`for...of`迴圈一次性依次執行所有任務的所有步驟。
 
 ```javascript
 for (var step of iterateJobs(jobs)){
@@ -1434,9 +1434,9 @@ for (var step of iterateJobs(jobs)){
 }
 ```
 
-再次提醒，上面的做法只能用于所有步骤都是同步操作的情况，不能有异步操作的步骤。如果想要依次执行异步的步骤，必须使用后面的《异步操作》一章介绍的方法。
+再次提醒，上面的做法只能用於所有步驟都是同步操作的情況，不能有非同步操作的步驟。如果想要依次執行非同步的步驟，必須使用後面的《非同步操作》一章介紹的方法。
 
-`for...of`的本质是一个`while`循环，所以上面的代码实质上执行的是下面的逻辑。
+`for...of`的本質是一個`while`迴圈，所以上面的程式碼實質上執行的是下面的邏輯。
 
 ```javascript
 var it = iterateJobs(jobs);
@@ -1449,9 +1449,9 @@ while (!res.done){
 }
 ```
 
-### （3）部署 Iterator 接口
+### （3）部署 Iterator 介面
 
-利用 Generator 函数，可以在任意对象上部署 Iterator 接口。
+利用 Generator 函式，可以在任意物件上部署 Iterator 介面。
 
 ```javascript
 function* iterEntries(obj) {
@@ -1472,9 +1472,9 @@ for (let [key, value] of iterEntries(myObj)) {
 // bar 7
 ```
 
-上述代码中，`myObj`是一个普通对象，通过`iterEntries`函数，就有了 Iterator 接口。也就是说，可以在任意对象上部署`next`方法。
+上述程式碼中，`myObj`是一個普通物件，透過`iterEntries`函式，就有了 Iterator 介面。也就是說，可以在任意物件上部署`next`方法。
 
-下面是一个对数组部署 Iterator 接口的例子，尽管数组原生具有这个接口。
+下面是一個對陣列部署 Iterator 介面的例子，儘管陣列原生具有這個介面。
 
 ```javascript
 function* makeSimpleGenerator(array){
@@ -1492,9 +1492,9 @@ gen.next().value // 'ya'
 gen.next().done  // true
 ```
 
-### （4）作为数据结构
+### （4）作為資料結構
 
-Generator 可以看作是数据结构，更确切地说，可以看作是一个数组结构，因为 Generator 函数可以返回一系列的值，这意味着它可以对任意表达式，提供类似数组的接口。
+Generator 可以看作是資料結構，更確切地說，可以看作是一個數組結構，因為 Generator 函式可以返回一系列的值，這意味著它可以對任意表達式，提供類似陣列的介面。
 
 ```javascript
 function* doStuff() {
@@ -1504,15 +1504,15 @@ function* doStuff() {
 }
 ```
 
-上面代码就是依次返回三个函数，但是由于使用了 Generator 函数，导致可以像处理数组那样，处理这三个返回的函数。
+上面程式碼就是依次返回三個函式，但是由於使用了 Generator 函式，導致可以像處理陣列那樣，處理這三個返回的函式。
 
 ```javascript
 for (task of doStuff()) {
-  // task是一个函数，可以像回调函数那样使用它
+  // task是一個函式，可以像回撥函式那樣使用它
 }
 ```
 
-实际上，如果用 ES5 表达，完全可以用数组模拟 Generator 的这种用法。
+實際上，如果用 ES5 表達，完全可以用陣列模擬 Generator 的這種用法。
 
 ```javascript
 function doStuff() {
@@ -1524,4 +1524,4 @@ function doStuff() {
 }
 ```
 
-上面的函数，可以用一模一样的`for...of`循环处理！两相一比较，就不难看出 Generator 使得数据或者操作，具备了类似数组的接口。
+上面的函式，可以用一模一樣的`for...of`迴圈處理！兩相一比較，就不難看出 Generator 使得資料或者操作，具備了類似陣列的介面。

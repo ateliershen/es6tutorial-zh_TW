@@ -1,14 +1,14 @@
-# 编程风格
+# 程式設計風格
 
-本章探讨如何将 ES6 的新语法，运用到编码实践之中，与传统的 JavaScript 语法结合在一起，写出合理的、易于阅读和维护的代码。
+本章探討如何將 ES6 的新語法，運用到編碼實踐之中，與傳統的 JavaScript 語法結合在一起，寫出合理的、易於閱讀和維護的程式碼。
 
-多家公司和组织已经公开了它们的风格规范，下面的内容主要参考了 [Airbnb](https://github.com/airbnb/javascript) 公司的 JavaScript 风格规范。
+多家公司和組織已經公開了它們的風格規範，下面的內容主要參考了 [Airbnb](https://github.com/airbnb/javascript) 公司的 JavaScript 風格規範。
 
-## 块级作用域
+## 塊級作用域
 
 **（1）let 取代 var**
 
-ES6 提出了两个新的声明变量的命令：`let`和`const`。其中，`let`完全可以取代`var`，因为两者语义相同，而且`let`没有副作用。
+ES6 提出了兩個新的宣告變數的命令：`let`和`const`。其中，`let`完全可以取代`var`，因為兩者語義相同，而且`let`沒有副作用。
 
 ```javascript
 'use strict';
@@ -22,9 +22,9 @@ for (let i = 0; i < 10; i++) {
 }
 ```
 
-上面代码如果用`var`替代`let`，实际上就声明了两个全局变量，这显然不是本意。变量应该只在其声明的代码块内有效，`var`命令做不到这一点。
+上面程式碼如果用`var`替代`let`，實際上就聲明瞭兩個全域性變數，這顯然不是本意。變數應該只在其宣告的程式碼塊內有效，`var`命令做不到這一點。
 
-`var`命令存在变量提升效用，`let`命令没有这个问题。
+`var`命令存在變數提升效用，`let`命令沒有這個問題。
 
 ```javascript
 'use strict';
@@ -35,15 +35,15 @@ if (true) {
 }
 ```
 
-上面代码如果使用`var`替代`let`，`console.log`那一行就不会报错，而是会输出`undefined`，因为变量声明提升到代码块的头部。这违反了变量先声明后使用的原则。
+上面程式碼如果使用`var`替代`let`，`console.log`那一行就不會報錯，而是會輸出`undefined`，因為變數宣告提升到程式碼塊的頭部。這違反了變數先聲明後使用的原則。
 
-所以，建议不再使用`var`命令，而是使用`let`命令取代。
+所以，建議不再使用`var`命令，而是使用`let`命令取代。
 
-**（2）全局常量和线程安全**
+**（2）全域性常量和執行緒安全**
 
-在`let`和`const`之间，建议优先使用`const`，尤其是在全局环境，不应该设置变量，只应设置常量。
+在`let`和`const`之間，建議優先使用`const`，尤其是在全域性環境，不應該設定變數，只應設定常量。
 
-`const`优于`let`有几个原因。一个是`const`可以提醒阅读程序的人，这个变量不应该改变；另一个是`const`比较符合函数式编程思想，运算不改变值，只是新建值，而且这样也有利于将来的分布式运算；最后一个原因是 JavaScript 编译器会对`const`进行优化，所以多使用`const`，有利于提高程序的运行效率，也就是说`let`和`const`的本质区别，其实是编译器内部的处理不同。
+`const`優於`let`有幾個原因。一個是`const`可以提醒閱讀程式的人，這個變數不應該改變；另一個是`const`比較符合函數語言程式設計思想，運算不改變值，只是新建值，而且這樣也有利於將來的分散式運算；最後一個原因是 JavaScript 編譯器會對`const`進行最佳化，所以多使用`const`，有利於提高程式的執行效率，也就是說`let`和`const`的本質區別，其實是編譯器內部的處理不同。
 
 ```javascript
 // bad
@@ -58,15 +58,15 @@ const c = 3;
 const [a, b, c] = [1, 2, 3];
 ```
 
-`const`声明常量还有两个好处，一是阅读代码的人立刻会意识到不应该修改这个值，二是防止了无意间修改变量值所导致的错误。
+`const`宣告常量還有兩個好處，一是閱讀程式碼的人立刻會意識到不應該修改這個值，二是防止了無意間修改變數值所導致的錯誤。
 
-所有的函数都应该设置为常量。
+所有的函式都應該設定為常量。
 
-长远来看，JavaScript 可能会有多线程的实现（比如 Intel 公司的 River Trail 那一类的项目），这时`let`表示的变量，只应出现在单线程运行的代码中，不能是多线程共享的，这样有利于保证线程安全。
+長遠來看，JavaScript 可能會有多執行緒的實現（比如 Intel 公司的 River Trail 那一類的專案），這時`let`表示的變數，只應出現在單執行緒執行的程式碼中，不能是多執行緒共享的，這樣有利於保證執行緒安全。
 
-## 字符串
+## 字串
 
-静态字符串一律使用单引号或反引号，不使用双引号。动态字符串使用反引号。
+靜態字串一律使用單引號或反引號，不使用雙引號。動態字串使用反引號。
 
 ```javascript
 // bad
@@ -81,9 +81,9 @@ const a = 'foobar';
 const b = `foo${a}bar`;
 ```
 
-## 解构赋值
+## 解構賦值
 
-使用数组成员对变量赋值时，优先使用解构赋值。
+使用陣列成員對變數賦值時，優先使用解構賦值。
 
 ```javascript
 const arr = [1, 2, 3, 4];
@@ -96,7 +96,7 @@ const second = arr[1];
 const [first, second] = arr;
 ```
 
-函数的参数如果是对象的成员，优先使用解构赋值。
+函式的引數如果是物件的成員，優先使用解構賦值。
 
 ```javascript
 // bad
@@ -115,7 +115,7 @@ function getFullName({ firstName, lastName }) {
 }
 ```
 
-如果函数返回多个值，优先使用对象的解构赋值，而不是数组的解构赋值。这样便于以后添加返回值，以及更改返回值的顺序。
+如果函式返回多個值，優先使用物件的解構賦值，而不是陣列的解構賦值。這樣便於以後新增返回值，以及更改返回值的順序。
 
 ```javascript
 // bad
@@ -131,9 +131,9 @@ function processInput(input) {
 const { left, right } = processInput(input);
 ```
 
-## 对象
+## 物件
 
-单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。
+單行定義的物件，最後一個成員不以逗號結尾。多行定義的物件，最後一個成員以逗號結尾。
 
 ```javascript
 // bad
@@ -151,7 +151,7 @@ const b = {
 };
 ```
 
-对象尽量静态化，一旦定义，就不得随意添加新的属性。如果添加属性不可避免，要使用`Object.assign`方法。
+物件儘量靜態化，一旦定義，就不得隨意新增新的屬性。如果新增屬性不可避免，要使用`Object.assign`方法。
 
 ```javascript
 // bad
@@ -167,7 +167,7 @@ const a = { x: null };
 a.x = 3;
 ```
 
-如果对象的属性名是动态的，可以在创造对象的时候，使用属性表达式定义。
+如果物件的屬性名是動態的，可以在創造物件的時候，使用屬性表示式定義。
 
 ```javascript
 // bad
@@ -185,9 +185,9 @@ const obj = {
 };
 ```
 
-上面代码中，对象`obj`的最后一个属性名，需要计算得到。这时最好采用属性表达式，在新建`obj`的时候，将该属性与其他属性定义在一起。这样一来，所有属性就在一个地方定义了。
+上面程式碼中，物件`obj`的最後一個屬性名，需要計算得到。這時最好採用屬性表示式，在新建`obj`的時候，將該屬性與其他屬性定義在一起。這樣一來，所有屬性就在一個地方定義了。
 
-另外，对象的属性和方法，尽量采用简洁表达法，这样易于描述和书写。
+另外，物件的屬性和方法，儘量採用簡潔表達法，這樣易於描述和書寫。
 
 ```javascript
 var ref = 'some value';
@@ -215,9 +215,9 @@ const atom = {
 };
 ```
 
-## 数组
+## 陣列
 
-使用扩展运算符（...）拷贝数组。
+使用擴充套件運算子（...）複製陣列。
 
 ```javascript
 // bad
@@ -233,16 +233,16 @@ for (i = 0; i < len; i++) {
 const itemsCopy = [...items];
 ```
 
-使用 Array.from 方法，将类似数组的对象转为数组。
+使用 Array.from 方法，將類似陣列的物件轉為陣列。
 
 ```javascript
 const foo = document.querySelectorAll('.foo');
 const nodes = Array.from(foo);
 ```
 
-## 函数
+## 函式
 
-立即执行函数可以写成箭头函数的形式。
+立即執行函式可以寫成箭頭函式的形式。
 
 ```javascript
 (() => {
@@ -250,7 +250,7 @@ const nodes = Array.from(foo);
 })();
 ```
 
-那些使用匿名函数当作参数的场合，尽量用箭头函数代替。因为这样更简洁，而且绑定了 this。
+那些使用匿名函式當作引數的場合，儘量用箭頭函式代替。因為這樣更簡潔，而且綁定了 this。
 
 ```javascript
 // bad
@@ -267,7 +267,7 @@ const nodes = Array.from(foo);
 [1, 2, 3].map(x => x * x);
 ```
 
-箭头函数取代`Function.prototype.bind`，不应再用 self/\_this/that 绑定 this。
+箭頭函式取代`Function.prototype.bind`，不應再用 self/\_this/that 繫結 this。
 
 ```javascript
 // bad
@@ -283,9 +283,9 @@ const boundMethod = method.bind(this);
 const boundMethod = (...params) => method.apply(this, params);
 ```
 
-简单的、单行的、不会复用的函数，建议采用箭头函数。如果函数体较为复杂，行数较多，还是应该采用传统的函数写法。
+簡單的、單行的、不會複用的函式，建議採用箭頭函式。如果函式體較為複雜，行數較多，還是應該採用傳統的函式寫法。
 
-所有配置项都应该集中在一个对象，放在最后一个参数，布尔值不可以直接作为参数。
+所有配置項都應該集中在一個物件，放在最後一個引數，布林值不可以直接作為引數。
 
 ```javascript
 // bad
@@ -297,7 +297,7 @@ function divide(a, b, { option = false } = {}) {
 }
 ```
 
-不要在函数体内使用 arguments 变量，使用 rest 运算符（...）代替。因为 rest 运算符显式表明你想要获取参数，而且 arguments 是一个类似数组的对象，而 rest 运算符可以提供一个真正的数组。
+不要在函式體內使用 arguments 變數，使用 rest 運算子（...）代替。因為 rest 運算子顯式表明你想要獲取引數，而且 arguments 是一個類似陣列的物件，而 rest 運算子可以提供一個真正的陣列。
 
 ```javascript
 // bad
@@ -312,7 +312,7 @@ function concatenateAll(...args) {
 }
 ```
 
-使用默认值语法设置函数参数的默认值。
+使用預設值語法設定函式引數的預設值。
 
 ```javascript
 // bad
@@ -326,9 +326,9 @@ function handleThings(opts = {}) {
 }
 ```
 
-## Map 结构
+## Map 結構
 
-注意区分 Object 和 Map，只有模拟现实世界的实体对象时，才使用 Object。如果只是需要`key: value`的数据结构，使用 Map 结构。因为 Map 有内建的遍历机制。
+注意區分 Object 和 Map，只有模擬現實世界的實體物件時，才使用 Object。如果只是需要`key: value`的資料結構，使用 Map 結構。因為 Map 有內建的遍歷機制。
 
 ```javascript
 let map = new Map(arr);
@@ -348,7 +348,7 @@ for (let item of map.entries()) {
 
 ## Class
 
-总是用 Class，取代需要 prototype 的操作。因为 Class 的写法更简洁，更易于理解。
+總是用 Class，取代需要 prototype 的操作。因為 Class 的寫法更簡潔，更易於理解。
 
 ```javascript
 // bad
@@ -374,7 +374,7 @@ class Queue {
 }
 ```
 
-使用`extends`实现继承，因为这样更简单，不会有破坏`instanceof`运算的危险。
+使用`extends`實現繼承，因為這樣更簡單，不會有破壞`instanceof`運算的危險。
 
 ```javascript
 // bad
@@ -395,9 +395,9 @@ class PeekableQueue extends Queue {
 }
 ```
 
-## 模块
+## 模組
 
-首先，Module 语法是 JavaScript 模块的标准写法，坚持使用这种写法。使用`import`取代`require`。
+首先，Module 語法是 JavaScript 模組的標準寫法，堅持使用這種寫法。使用`import`取代`require`。
 
 ```javascript
 // bad
@@ -412,7 +412,7 @@ import { func1, func2 } from 'moduleA';
 使用`export`取代`module.exports`。
 
 ```javascript
-// commonJS的写法
+// commonJS的寫法
 var React = require('react');
 
 var Breadcrumbs = React.createClass({
@@ -423,7 +423,7 @@ var Breadcrumbs = React.createClass({
 
 module.exports = Breadcrumbs;
 
-// ES6的写法
+// ES6的寫法
 import React from 'react';
 
 class Breadcrumbs extends React.Component {
@@ -435,9 +435,9 @@ class Breadcrumbs extends React.Component {
 export default Breadcrumbs;
 ```
 
-如果模块只有一个输出值，就使用`export default`，如果模块有多个输出值，就不使用`export default`，`export default`与普通的`export`不要同时使用。
+如果模組只有一個輸出值，就使用`export default`，如果模組有多個輸出值，就不使用`export default`，`export default`與普通的`export`不要同時使用。
 
-不要在模块输入中使用通配符。因为这样可以确保你的模块之中，有一个默认输出（export default）。
+不要在模組輸入中使用萬用字元。因為這樣可以確保你的模組之中，有一個預設輸出（export default）。
 
 ```javascript
 // bad
@@ -447,7 +447,7 @@ import * as myObject from './importModule';
 import myObject from './importModule';
 ```
 
-如果模块默认输出一个函数，函数名的首字母应该小写。
+如果模組預設輸出一個函式，函式名的首字母應該小寫。
 
 ```javascript
 function makeStyleGuide() {
@@ -456,7 +456,7 @@ function makeStyleGuide() {
 export default makeStyleGuide;
 ```
 
-如果模块默认输出一个对象，对象名的首字母应该大写。
+如果模組預設輸出一個物件，物件名的首字母應該大寫。
 
 ```javascript
 const StyleGuide = {
@@ -469,22 +469,22 @@ export default StyleGuide;
 
 ## ESLint 的使用
 
-ESLint 是一个语法规则和代码风格的检查工具，可以用来保证写出语法正确、风格统一的代码。
+ESLint 是一個語法規則和程式碼風格的檢查工具，可以用來保證寫出語法正確、風格統一的程式碼。
 
-首先，在项目的根目录安装 ESLint。
+首先，在專案的根目錄安裝 ESLint。
 
 ```bash
 $ npm install --save-dev eslint
 ```
 
-然后，安装 Airbnb 语法规则，以及 import、a11y、react 插件。
+然後，安裝 Airbnb 語法規則，以及 import、a11y、react 外掛。
 
 ```bash
 $ npm install --save-dev eslint-config-airbnb
 $ npm install --save-dev eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react
 ```
 
-最后，在项目的根目录下新建一个`.eslintrc`文件，配置 ESLint。
+最後，在專案的根目錄下新建一個`.eslintrc`檔案，配置 ESLint。
 
 ```javascript
 {
@@ -492,9 +492,9 @@ $ npm install --save-dev eslint-plugin-import eslint-plugin-jsx-a11y eslint-plug
 }
 ```
 
-现在就可以检查，当前项目的代码是否符合预设的规则。
+現在就可以檢查，當前專案的程式碼是否符合預設的規則。
 
-`index.js`文件的代码如下。
+`index.js`檔案的程式碼如下。
 
 ```javascript
 var unused = 'I have no purpose!';
@@ -507,7 +507,7 @@ function greet() {
 greet();
 ```
 
-使用 ESLint 检查这个文件，就会报出错误。
+使用 ESLint 檢查這個檔案，就會報出錯誤。
 
 ```bash
 $ npx eslint index.js
@@ -521,5 +521,5 @@ index.js
 ✖ 5 problems (5 errors, 0 warnings)
 ```
 
-上面代码说明，原文件有五个错误，其中两个是不应该使用`var`命令，而要使用`let`或`const`；一个是定义了变量，却没有使用；另外两个是行首缩进为 4 个空格，而不是规定的 2 个空格。
+上面程式碼說明，原檔案有五個錯誤，其中兩個是不應該使用`var`命令，而要使用`let`或`const`；一個是定義了變數，卻沒有使用；另外兩個是行首縮排為 4 個空格，而不是規定的 2 個空格。
 

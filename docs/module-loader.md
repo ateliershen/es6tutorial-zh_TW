@@ -1,68 +1,68 @@
-# Module 的加载实现
+# Module 的載入實現
 
-上一章介绍了模块的语法，本章介绍如何在浏览器和 Node.js 之中加载 ES6 模块，以及实际开发中经常遇到的一些问题（比如循环加载）。
+上一章介紹了模組的語法，本章介紹如何在瀏覽器和 Node.js 之中載入 ES6 模組，以及實際開發中經常遇到的一些問題（比如迴圈載入）。
 
-## 浏览器加载
+## 瀏覽器載入
 
-### 传统方法
+### 傳統方法
 
-HTML 网页中，浏览器通过`<script>`标签加载 JavaScript 脚本。
+HTML 網頁中，瀏覽器透過`<script>`標籤載入 JavaScript 指令碼。
 
 ```html
-<!-- 页面内嵌的脚本 -->
+<!-- 頁面內嵌的指令碼 -->
 <script type="application/javascript">
   // module code
 </script>
 
-<!-- 外部脚本 -->
+<!-- 外部指令碼 -->
 <script type="application/javascript" src="path/to/myModule.js">
 </script>
 ```
 
-上面代码中，由于浏览器脚本的默认语言是 JavaScript，因此`type="application/javascript"`可以省略。
+上面程式碼中，由於瀏覽器指令碼的預設語言是 JavaScript，因此`type="application/javascript"`可以省略。
 
-默认情况下，浏览器是同步加载 JavaScript 脚本，即渲染引擎遇到`<script>`标签就会停下来，等到执行完脚本，再继续向下渲染。如果是外部脚本，还必须加入脚本下载的时间。
+預設情況下，瀏覽器是同步載入 JavaScript 指令碼，即渲染引擎遇到`<script>`標籤就會停下來，等到執行完指令碼，再繼續向下渲染。如果是外部指令碼，還必須加入指令碼下載的時間。
 
-如果脚本体积很大，下载和执行的时间就会很长，因此造成浏览器堵塞，用户会感觉到浏览器“卡死”了，没有任何响应。这显然是很不好的体验，所以浏览器允许脚本异步加载，下面就是两种异步加载的语法。
+如果指令碼體積很大，下載和執行的時間就會很長，因此造成瀏覽器堵塞，使用者會感覺到瀏覽器“卡死”了，沒有任何響應。這顯然是很不好的體驗，所以瀏覽器允許指令碼非同步載入，下面就是兩種非同步載入的語法。
 
 ```html
 <script src="path/to/myModule.js" defer></script>
 <script src="path/to/myModule.js" async></script>
 ```
 
-上面代码中，`<script>`标签打开`defer`或`async`属性，脚本就会异步加载。渲染引擎遇到这一行命令，就会开始下载外部脚本，但不会等它下载和执行，而是直接执行后面的命令。
+上面程式碼中，`<script>`標籤開啟`defer`或`async`屬性，指令碼就會非同步載入。渲染引擎遇到這一行命令，就會開始下載外部指令碼，但不會等它下載和執行，而是直接執行後面的命令。
 
-`defer`与`async`的区别是：`defer`要等到整个页面在内存中正常渲染结束（DOM 结构完全生成，以及其他脚本执行完成），才会执行；`async`一旦下载完，渲染引擎就会中断渲染，执行这个脚本以后，再继续渲染。一句话，`defer`是“渲染完再执行”，`async`是“下载完就执行”。另外，如果有多个`defer`脚本，会按照它们在页面出现的顺序加载，而多个`async`脚本是不能保证加载顺序的。
+`defer`與`async`的區別是：`defer`要等到整個頁面在記憶體中正常渲染結束（DOM 結構完全生成，以及其他指令碼執行完成），才會執行；`async`一旦下載完，渲染引擎就會中斷渲染，執行這個指令碼以後，再繼續渲染。一句話，`defer`是“渲染完再執行”，`async`是“下載完就執行”。另外，如果有多個`defer`指令碼，會按照它們在頁面出現的順序載入，而多個`async`指令碼是不能保證載入順序的。
 
-### 加载规则
+### 載入規則
 
-浏览器加载 ES6 模块，也使用`<script>`标签，但是要加入`type="module"`属性。
+瀏覽器載入 ES6 模組，也使用`<script>`標籤，但是要加入`type="module"`屬性。
 
 ```html
 <script type="module" src="./foo.js"></script>
 ```
 
-上面代码在网页中插入一个模块`foo.js`，由于`type`属性设为`module`，所以浏览器知道这是一个 ES6 模块。
+上面程式碼在網頁中插入一個模組`foo.js`，由於`type`屬性設為`module`，所以瀏覽器知道這是一個 ES6 模組。
 
-浏览器对于带有`type="module"`的`<script>`，都是异步加载，不会造成堵塞浏览器，即等到整个页面渲染完，再执行模块脚本，等同于打开了`<script>`标签的`defer`属性。
+瀏覽器對於帶有`type="module"`的`<script>`，都是非同步載入，不會造成堵塞瀏覽器，即等到整個頁面渲染完，再執行模組指令碼，等同於打開了`<script>`標籤的`defer`屬性。
 
 ```html
 <script type="module" src="./foo.js"></script>
-<!-- 等同于 -->
+<!-- 等同於 -->
 <script type="module" src="./foo.js" defer></script>
 ```
 
-如果网页有多个`<script type="module">`，它们会按照在页面出现的顺序依次执行。
+如果網頁有多個`<script type="module">`，它們會按照在頁面出現的順序依次執行。
 
-`<script>`标签的`async`属性也可以打开，这时只要加载完成，渲染引擎就会中断渲染立即执行。执行完成后，再恢复渲染。
+`<script>`標籤的`async`屬性也可以開啟，這時只要載入完成，渲染引擎就會中斷渲染立即執行。執行完成後，再恢復渲染。
 
 ```html
 <script type="module" src="./foo.js" async></script>
 ```
 
-一旦使用了`async`属性，`<script type="module">`就不会按照在页面出现的顺序执行，而是只要该模块加载完成，就执行该模块。
+一旦使用了`async`屬性，`<script type="module">`就不會按照在頁面出現的順序執行，而是隻要該模組載入完成，就執行該模組。
 
-ES6 模块也允许内嵌在网页中，语法行为与加载外部脚本完全一致。
+ES6 模組也允許內嵌在網頁中，語法行為與載入外部指令碼完全一致。
 
 ```html
 <script type="module">
@@ -72,7 +72,7 @@ ES6 模块也允许内嵌在网页中，语法行为与加载外部脚本完全�
 </script>
 ```
 
-举例来说，jQuery 就支持模块加载。
+舉例來說，jQuery 就支援模組載入。
 
 ```html
 <script type="module">
@@ -81,15 +81,15 @@ ES6 模块也允许内嵌在网页中，语法行为与加载外部脚本完全�
 </script>
 ```
 
-对于外部的模块脚本（上例是`foo.js`），有几点需要注意。
+對於外部的模組指令碼（上例是`foo.js`），有幾點需要注意。
 
-- 代码是在模块作用域之中运行，而不是在全局作用域运行。模块内部的顶层变量，外部不可见。
-- 模块脚本自动采用严格模式，不管有没有声明`use strict`。
-- 模块之中，可以使用`import`命令加载其他模块（`.js`后缀不可省略，需要提供绝对 URL 或相对 URL），也可以使用`export`命令输出对外接口。
-- 模块之中，顶层的`this`关键字返回`undefined`，而不是指向`window`。也就是说，在模块顶层使用`this`关键字，是无意义的。
-- 同一个模块如果加载多次，将只执行一次。
+- 程式碼是在模組作用域之中執行，而不是在全域性作用域執行。模組內部的頂層變數，外部不可見。
+- 模組指令碼自動採用嚴格模式，不管有沒有宣告`use strict`。
+- 模組之中，可以使用`import`命令載入其他模組（`.js`字尾不可省略，需要提供絕對 URL 或相對 URL），也可以使用`export`命令輸出對外介面。
+- 模組之中，頂層的`this`關鍵字返回`undefined`，而不是指向`window`。也就是說，在模組頂層使用`this`關鍵字，是無意義的。
+- 同一個模組如果載入多次，將只執行一次。
 
-下面是一个示例模块。
+下面是一個示例模組。
 
 ```javascript
 import utils from 'https://example.com/js/utils.js';
@@ -100,27 +100,27 @@ console.log(x === window.x); //false
 console.log(this === undefined); // true
 ```
 
-利用顶层的`this`等于`undefined`这个语法点，可以侦测当前代码是否在 ES6 模块之中。
+利用頂層的`this`等於`undefined`這個語法點，可以偵測當前程式碼是否在 ES6 模組之中。
 
 ```javascript
 const isNotModuleScript = this !== undefined;
 ```
 
-## ES6 模块与 CommonJS 模块的差异
+## ES6 模組與 CommonJS 模組的差異
 
-讨论 Node.js 加载 ES6 模块之前，必须了解 ES6 模块与 CommonJS 模块完全不同。
+討論 Node.js 載入 ES6 模組之前，必須瞭解 ES6 模組與 CommonJS 模組完全不同。
 
-它们有三个重大差异。
+它們有三個重大差異。
 
-- CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。
-- CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。
-- CommonJS 模块的`require()`是同步加载模块，ES6 模块的`import`命令是异步加载，有一个独立的模块依赖的解析阶段。
+- CommonJS 模組輸出的是一個值的複製，ES6 模組輸出的是值的引用。
+- CommonJS 模組是執行時載入，ES6 模組是編譯時輸出介面。
+- CommonJS 模組的`require()`是同步載入模組，ES6 模組的`import`命令是非同步載入，有一個獨立的模組依賴的解析階段。
 
-第二个差异是因为 CommonJS 加载的是一个对象（即`module.exports`属性），该对象只有在脚本运行完才会生成。而 ES6 模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成。
+第二個差異是因為 CommonJS 載入的是一個物件（即`module.exports`屬性），該物件只有在指令碼執行完才會生成。而 ES6 模組不是物件，它的對外介面只是一種靜態定義，在程式碼靜態解析階段就會生成。
 
-下面重点解释第一个差异。
+下面重點解釋第一個差異。
 
-CommonJS 模块输出的是值的拷贝，也就是说，一旦输出一个值，模块内部的变化就影响不到这个值。请看下面这个模块文件`lib.js`的例子。
+CommonJS 模組輸出的是值的複製，也就是說，一旦輸出一個值，模組內部的變化就影響不到這個值。請看下面這個模組檔案`lib.js`的例子。
 
 ```javascript
 // lib.js
@@ -134,7 +134,7 @@ module.exports = {
 };
 ```
 
-上面代码输出内部变量`counter`和改写这个变量的内部方法`incCounter`。然后，在`main.js`里面加载这个模块。
+上面程式碼輸出內部變數`counter`和改寫這個變數的內部方法`incCounter`。然後，在`main.js`裡面載入這個模組。
 
 ```javascript
 // main.js
@@ -145,7 +145,7 @@ mod.incCounter();
 console.log(mod.counter); // 3
 ```
 
-上面代码说明，`lib.js`模块加载以后，它的内部变化就影响不到输出的`mod.counter`了。这是因为`mod.counter`是一个原始类型的值，会被缓存。除非写成一个函数，才能得到内部变动后的值。
+上面程式碼說明，`lib.js`模組載入以後，它的內部變化就影響不到輸出的`mod.counter`了。這是因為`mod.counter`是一個原始型別的值，會被快取。除非寫成一個函式，才能得到內部變動後的值。
 
 ```javascript
 // lib.js
@@ -161,7 +161,7 @@ module.exports = {
 };
 ```
 
-上面代码中，输出的`counter`属性实际上是一个取值器函数。现在再执行`main.js`，就可以正确读取内部变量`counter`的变动了。
+上面程式碼中，輸出的`counter`屬性實際上是一個取值器函式。現在再執行`main.js`，就可以正確讀取內部變數`counter`的變動了。
 
 ```bash
 $ node main.js
@@ -169,9 +169,9 @@ $ node main.js
 4
 ```
 
-ES6 模块的运行机制与 CommonJS 不一样。JS 引擎对脚本静态分析的时候，遇到模块加载命令`import`，就会生成一个只读引用。等到脚本真正执行时，再根据这个只读引用，到被加载的那个模块里面去取值。换句话说，ES6 的`import`有点像 Unix 系统的“符号连接”，原始值变了，`import`加载的值也会跟着变。因此，ES6 模块是动态引用，并且不会缓存值，模块里面的变量绑定其所在的模块。
+ES6 模組的執行機制與 CommonJS 不一樣。JS 引擎對指令碼靜態分析的時候，遇到模組載入命令`import`，就會生成一個只讀引用。等到指令碼真正執行時，再根據這個只讀引用，到被載入的那個模組裡面去取值。換句話說，ES6 的`import`有點像 Unix 系統的“符號連線”，原始值變了，`import`載入的值也會跟著變。因此，ES6 模組是動態引用，並且不會快取值，模組裡面的變數繫結其所在的模組。
 
-还是举上面的例子。
+還是舉上面的例子。
 
 ```javascript
 // lib.js
@@ -187,9 +187,9 @@ incCounter();
 console.log(counter); // 4
 ```
 
-上面代码说明，ES6 模块输入的变量`counter`是活的，完全反应其所在模块`lib.js`内部的变化。
+上面程式碼說明，ES6 模組輸入的變數`counter`是活的，完全反應其所在模組`lib.js`內部的變化。
 
-再举一个出现在`export`一节中的例子。
+再舉一個出現在`export`一節中的例子。
 
 ```javascript
 // m1.js
@@ -202,9 +202,9 @@ console.log(foo);
 setTimeout(() => console.log(foo), 500);
 ```
 
-上面代码中，`m1.js`的变量`foo`，在刚加载时等于`bar`，过了 500 毫秒，又变为等于`baz`。
+上面程式碼中，`m1.js`的變數`foo`，在剛載入時等於`bar`，過了 500 毫秒，又變為等於`baz`。
 
-让我们看看，`m2.js`能否正确读取这个变化。
+讓我們看看，`m2.js`能否正確讀取這個變化。
 
 ```bash
 $ babel-node m2.js
@@ -213,9 +213,9 @@ bar
 baz
 ```
 
-上面代码表明，ES6 模块不会缓存运行结果，而是动态地去被加载的模块取值，并且变量总是绑定其所在的模块。
+上面程式碼表明，ES6 模組不會快取執行結果，而是動態地去被載入的模組取值，並且變數總是繫結其所在的模組。
 
-由于 ES6 输入的模块变量，只是一个“符号连接”，所以这个变量是只读的，对它进行重新赋值会报错。
+由於 ES6 輸入的模組變數，只是一個“符號連線”，所以這個變數是隻讀的，對它進行重新賦值會報錯。
 
 ```javascript
 // lib.js
@@ -228,9 +228,9 @@ obj.prop = 123; // OK
 obj = {}; // TypeError
 ```
 
-上面代码中，`main.js`从`lib.js`输入变量`obj`，可以对`obj`添加属性，但是重新赋值就会报错。因为变量`obj`指向的地址是只读的，不能重新赋值，这就好比`main.js`创造了一个名为`obj`的`const`变量。
+上面程式碼中，`main.js`從`lib.js`輸入變數`obj`，可以對`obj`新增屬性，但是重新賦值就會報錯。因為變數`obj`指向的地址是隻讀的，不能重新賦值，這就好比`main.js`創造了一個名為`obj`的`const`變數。
 
-最后，`export`通过接口，输出的是同一个值。不同的脚本加载这个接口，得到的都是同样的实例。
+最後，`export`透過介面，輸出的是同一個值。不同的指令碼載入這個介面，得到的都是同樣的例項。
 
 ```javascript
 // mod.js
@@ -247,7 +247,7 @@ function C() {
 export let c = new C();
 ```
 
-上面的脚本`mod.js`，输出的是一个`C`的实例。不同的脚本加载这个模块，得到的都是同一个实例。
+上面的指令碼`mod.js`，輸出的是一個`C`的例項。不同的指令碼載入這個模組，得到的都是同一個例項。
 
 ```javascript
 // x.js
@@ -263,28 +263,28 @@ import './x';
 import './y';
 ```
 
-现在执行`main.js`，输出的是`1`。
+現在執行`main.js`，輸出的是`1`。
 
 ```bash
 $ babel-node main.js
 1
 ```
 
-这就证明了`x.js`和`y.js`加载的都是`C`的同一个实例。
+這就證明了`x.js`和`y.js`載入的都是`C`的同一個例項。
 
-## Node.js 的模块加载方法
+## Node.js 的模組載入方法
 
 ### 概述
 
-JavaScript 现在有两种模块。一种是 ES6 模块，简称 ESM；另一种是 CommonJS 模块，简称 CJS。
+JavaScript 現在有兩種模組。一種是 ES6 模組，簡稱 ESM；另一種是 CommonJS 模組，簡稱 CJS。
 
-CommonJS 模块是 Node.js 专用的，与 ES6 模块不兼容。语法上面，两者最明显的差异是，CommonJS 模块使用`require()`和`module.exports`，ES6 模块使用`import`和`export`。
+CommonJS 模組是 Node.js 專用的，與 ES6 模組不相容。語法上面，兩者最明顯的差異是，CommonJS 模組使用`require()`和`module.exports`，ES6 模組使用`import`和`export`。
 
-它们采用不同的加载方案。从 Node.js v13.2 版本开始，Node.js 已经默认打开了 ES6 模块支持。
+它們採用不同的載入方案。從 Node.js v13.2 版本開始，Node.js 已經預設打開了 ES6 模組支援。
 
-Node.js 要求 ES6 模块采用`.mjs`后缀文件名。也就是说，只要脚本文件里面使用`import`或者`export`命令，那么就必须采用`.mjs`后缀名。Node.js 遇到`.mjs`文件，就认为它是 ES6 模块，默认启用严格模式，不必在每个模块文件顶部指定`"use strict"`。
+Node.js 要求 ES6 模組採用`.mjs`字尾檔名。也就是說，只要指令碼檔案裡面使用`import`或者`export`命令，那麼就必須採用`.mjs`字尾名。Node.js 遇到`.mjs`檔案，就認為它是 ES6 模組，預設啟用嚴格模式，不必在每個模組檔案頂部指定`"use strict"`。
 
-如果不希望将后缀名改成`.mjs`，可以在项目的`package.json`文件中，指定`type`字段为`module`。
+如果不希望將字尾名改成`.mjs`，可以在專案的`package.json`檔案中，指定`type`欄位為`module`。
 
 ```javascript
 {
@@ -292,22 +292,22 @@ Node.js 要求 ES6 模块采用`.mjs`后缀文件名。也就是说，只要脚�
 }
 ```
 
-一旦设置了以后，该目录里面的 JS 脚本，就被解释用 ES6 模块。
+一旦設定了以後，該目錄裡面的 JS 指令碼，就被解釋用 ES6 模組。
 
 ```bash
-# 解释成 ES6 模块
+# 解釋成 ES6 模組
 $ node my-app.js
 ```
 
-如果这时还要使用 CommonJS 模块，那么需要将 CommonJS 脚本的后缀名都改成`.cjs`。如果没有`type`字段，或者`type`字段为`commonjs`，则`.js`脚本会被解释成 CommonJS 模块。
+如果這時還要使用 CommonJS 模組，那麼需要將 CommonJS 指令碼的字尾名都改成`.cjs`。如果沒有`type`欄位，或者`type`欄位為`commonjs`，則`.js`指令碼會被解釋成 CommonJS 模組。
 
-总结为一句话：`.mjs`文件总是以 ES6 模块加载，`.cjs`文件总是以 CommonJS 模块加载，`.js`文件的加载取决于`package.json`里面`type`字段的设置。
+總結為一句話：`.mjs`檔案總是以 ES6 模組載入，`.cjs`檔案總是以 CommonJS 模組載入，`.js`檔案的載入取決於`package.json`裡面`type`欄位的設定。
 
-注意，ES6 模块与 CommonJS 模块尽量不要混用。`require`命令不能加载`.mjs`文件，会报错，只有`import`命令才可以加载`.mjs`文件。反过来，`.mjs`文件里面也不能使用`require`命令，必须使用`import`。
+注意，ES6 模組與 CommonJS 模組儘量不要混用。`require`命令不能載入`.mjs`檔案，會報錯，只有`import`命令才可以載入`.mjs`檔案。反過來，`.mjs`檔案裡面也不能使用`require`命令，必須使用`import`。
 
-### package.json 的 main 字段
+### package.json 的 main 欄位
 
-`package.json`文件有两个字段可以指定模块的入口文件：`main`和`exports`。比较简单的模块，可以只使用`main`字段，指定模块加载的入口文件。
+`package.json`檔案有兩個欄位可以指定模組的入口檔案：`main`和`exports`。比較簡單的模組，可以只使用`main`欄位，指定模組載入的入口檔案。
 
 ```javascript
 // ./node_modules/es-module-package/package.json
@@ -317,28 +317,28 @@ $ node my-app.js
 }
 ```
 
-上面代码指定项目的入口脚本为`./src/index.js`，它的格式为 ES6 模块。如果没有`type`字段，`index.js`就会被解释为 CommonJS 模块。
+上面程式碼指定專案的入口指令碼為`./src/index.js`，它的格式為 ES6 模組。如果沒有`type`欄位，`index.js`就會被解釋為 CommonJS 模組。
 
-然后，`import`命令就可以加载这个模块。
+然後，`import`命令就可以載入這個模組。
 
 ```javascript
 // ./my-app.mjs
 
 import { something } from 'es-module-package';
-// 实际加载的是 ./node_modules/es-module-package/src/index.js
+// 實際載入的是 ./node_modules/es-module-package/src/index.js
 ```
 
-上面代码中，运行该脚本以后，Node.js 就会到`./node_modules`目录下面，寻找`es-module-package`模块，然后根据该模块`package.json`的`main`字段去执行入口文件。
+上面程式碼中，執行該指令碼以後，Node.js 就會到`./node_modules`目錄下面，尋找`es-module-package`模組，然後根據該模組`package.json`的`main`欄位去執行入口檔案。
 
-这时，如果用 CommonJS 模块的`require()`命令去加载`es-module-package`模块会报错，因为 CommonJS 模块不能处理`export`命令。
+這時，如果用 CommonJS 模組的`require()`命令去載入`es-module-package`模組會報錯，因為 CommonJS 模組不能處理`export`命令。
 
-### package.json 的 exports 字段
+### package.json 的 exports 欄位
 
-`exports`字段的优先级高于`main`字段。它有多种用法。
+`exports`欄位的優先順序高於`main`欄位。它有多種用法。
 
-（1）子目录别名
+（1）子目錄別名
 
-`package.json`文件的`exports`字段可以指定脚本或子目录的别名。
+`package.json`檔案的`exports`欄位可以指定指令碼或子目錄的別名。
 
 ```javascript
 // ./node_modules/es-module-package/package.json
@@ -349,14 +349,14 @@ import { something } from 'es-module-package';
 }
 ```
 
-上面的代码指定`src/submodule.js`别名为`submodule`，然后就可以从别名加载这个文件。
+上面的程式碼指定`src/submodule.js`別名為`submodule`，然後就可以從別名載入這個檔案。
 
 ```javascript
 import submodule from 'es-module-package/submodule';
-// 加载 ./node_modules/es-module-package/src/submodule.js
+// 載入 ./node_modules/es-module-package/src/submodule.js
 ```
 
-下面是子目录别名的例子。
+下面是子目錄別名的例子。
 
 ```javascript
 // ./node_modules/es-module-package/package.json
@@ -367,22 +367,22 @@ import submodule from 'es-module-package/submodule';
 }
 
 import feature from 'es-module-package/features/x.js';
-// 加载 ./node_modules/es-module-package/src/features/x.js
+// 載入 ./node_modules/es-module-package/src/features/x.js
 ```
 
-如果没有指定别名，就不能用“模块+脚本名”这种形式加载脚本。
+如果沒有指定別名，就不能用“模組+指令碼名”這種形式載入指令碼。
 
 ```javascript
-// 报错
+// 報錯
 import submodule from 'es-module-package/private-module.js';
 
-// 不报错
+// 不報錯
 import submodule from './node_modules/es-module-package/private-module.js';
 ```
 
-（2）main 的别名
+（2）main 的別名
 
-`exports`字段的别名如果是`.`，就代表模块的主入口，优先级高于`main`字段，并且可以直接简写成`exports`字段的值。
+`exports`欄位的別名如果是`.`，就代表模組的主入口，優先順序高於`main`欄位，並且可以直接簡寫成`exports`欄位的值。
 
 ```javascript
 {
@@ -391,13 +391,13 @@ import submodule from './node_modules/es-module-package/private-module.js';
   }
 }
 
-// 等同于
+// 等同於
 {
   "exports": "./main.js"
 }
 ```
 
-由于`exports`字段只有支持 ES6 的 Node.js 才认识，所以可以用来兼容旧版本的 Node.js。
+由於`exports`欄位只有支援 ES6 的 Node.js 才認識，所以可以用來相容舊版本的 Node.js。
 
 ```javascript
 {
@@ -408,11 +408,11 @@ import submodule from './node_modules/es-module-package/private-module.js';
 }
 ```
 
-上面代码中，老版本的 Node.js （不支持 ES6 模块）的入口文件是`main-legacy.cjs`，新版本的 Node.js 的入口文件是`main-modern.cjs`。
+上面程式碼中，老版本的 Node.js （不支援 ES6 模組）的入口檔案是`main-legacy.cjs`，新版本的 Node.js 的入口檔案是`main-modern.cjs`。
 
-**（3）条件加载**
+**（3）條件載入**
 
-利用`.`这个别名，可以为 ES6 模块和 CommonJS 指定不同的入口。目前，这个功能需要在 Node.js 运行的时候，打开`--experimental-conditional-exports`标志。
+利用`.`這個別名，可以為 ES6 模組和 CommonJS 指定不同的入口。目前，這個功能需要在 Node.js 執行的時候，開啟`--experimental-conditional-exports`標誌。
 
 ```javascript
 {
@@ -426,9 +426,9 @@ import submodule from './node_modules/es-module-package/private-module.js';
 }
 ```
 
-上面代码中，别名`.`的`require`条件指定`require()`命令的入口文件（即 CommonJS 的入口），`default`条件指定其他情况的入口（即 ES6 的入口）。
+上面程式碼中，別名`.`的`require`條件指定`require()`命令的入口檔案（即 CommonJS 的入口），`default`條件指定其他情況的入口（即 ES6 的入口）。
 
-上面的写法可以简写如下。
+上面的寫法可以簡寫如下。
 
 ```javascript
 {
@@ -439,11 +439,11 @@ import submodule from './node_modules/es-module-package/private-module.js';
 }
 ```
 
-注意，如果同时还有其他别名，就不能采用简写，否则或报错。
+注意，如果同時還有其他別名，就不能採用簡寫，否則或報錯。
 
 ```javascript
 {
-  // 报错
+  // 報錯
   "exports": {
     "./feature": "./lib/feature.js",
     "require": "./main.cjs",
@@ -452,9 +452,9 @@ import submodule from './node_modules/es-module-package/private-module.js';
 }
 ```
 
-### CommonJS 模块加载 ES6 模块
+### CommonJS 模組載入 ES6 模組
 
-CommonJS 的`require()`命令不能加载 ES6 模块，会报错，只能使用`import()`这个方法加载。
+CommonJS 的`require()`命令不能載入 ES6 模組，會報錯，只能使用`import()`這個方法載入。
 
 ```javascript
 (async () => {
@@ -462,32 +462,32 @@ CommonJS 的`require()`命令不能加载 ES6 模块，会报错，只能使用`
 })();
 ```
 
-上面代码可以在 CommonJS 模块中运行。
+上面程式碼可以在 CommonJS 模組中執行。
 
-`require()`不支持 ES6 模块的一个原因是，它是同步加载，而 ES6 模块内部可以使用顶层`await`命令，导致无法被同步加载。
+`require()`不支援 ES6 模組的一個原因是，它是同步載入，而 ES6 模組內部可以使用頂層`await`命令，導致無法被同步載入。
 
-### ES6 模块加载 CommonJS 模块
+### ES6 模組載入 CommonJS 模組
 
-ES6 模块的`import`命令可以加载 CommonJS 模块，但是只能整体加载，不能只加载单一的输出项。
+ES6 模組的`import`命令可以載入 CommonJS 模組，但是隻能整體載入，不能只加載單一的輸出項。
 
 ```javascript
-// 正确
+// 正確
 import packageMain from 'commonjs-package';
 
-// 报错
+// 報錯
 import { method } from 'commonjs-package';
 ```
 
-这是因为 ES6 模块需要支持静态代码分析，而 CommonJS 模块的输出接口是`module.exports`，是一个对象，无法被静态分析，所以只能整体加载。
+這是因為 ES6 模組需要支援靜態程式碼分析，而 CommonJS 模組的輸出介面是`module.exports`，是一個物件，無法被靜態分析，所以只能整體載入。
 
-加载单一的输出项，可以写成下面这样。
+載入單一的輸出項，可以寫成下面這樣。
 
 ```javascript
 import packageMain from 'commonjs-package';
 const { method } = packageMain;
 ```
 
-还有一种变通的加载方法，就是使用 Node.js 内置的`module.createRequire()`方法。
+還有一種變通的載入方法，就是使用 Node.js 內建的`module.createRequire()`方法。
 
 ```javascript
 // cjs.cjs
@@ -502,26 +502,26 @@ const cjs = require('./cjs.cjs');
 cjs === 'cjs'; // true
 ```
 
-上面代码中，ES6 模块通过`module.createRequire()`方法可以加载 CommonJS 模块。但是，这种写法等于将 ES6 和 CommonJS 混在一起了，所以不建议使用。
+上面程式碼中，ES6 模組透過`module.createRequire()`方法可以載入 CommonJS 模組。但是，這種寫法等於將 ES6 和 CommonJS 混在一起了，所以不建議使用。
 
-### 同时支持两种格式的模块
+### 同時支援兩種格式的模組
 
-一个模块同时要支持 CommonJS 和 ES6 两种格式，也很容易。
+一個模組同時要支援 CommonJS 和 ES6 兩種格式，也很容易。
 
-如果原始模块是 ES6 格式，那么需要给出一个整体输出接口，比如`export default obj`，使得 CommonJS 可以用`import()`进行加载。
+如果原始模組是 ES6 格式，那麼需要給出一個整體輸出介面，比如`export default obj`，使得 CommonJS 可以用`import()`進行載入。
 
-如果原始模块是 CommonJS 格式，那么可以加一个包装层。
+如果原始模組是 CommonJS 格式，那麼可以加一個包裝層。
 
 ```javascript
 import cjsModule from '../index.js';
 export const foo = cjsModule.foo;
 ```
 
-上面代码先整体输入 CommonJS 模块，然后再根据需要输出具名接口。
+上面程式碼先整體輸入 CommonJS 模組，然後再根據需要輸出具名介面。
 
-你可以把这个文件的后缀名改为`.mjs`，或者将它放在一个子目录，再在这个子目录里面放一个单独的`package.json`文件，指明`{ type: "module" }`。
+你可以把這個檔案的字尾名改為`.mjs`，或者將它放在一個子目錄，再在這個子目錄裡面放一個單獨的`package.json`檔案，指明`{ type: "module" }`。
 
-另一种做法是在`package.json`文件的`exports`字段，指明两种格式模块各自的加载入口。
+另一種做法是在`package.json`檔案的`exports`欄位，指明兩種格式模組各自的載入入口。
 
 ```javascript
 "exports"：{
@@ -530,18 +530,18 @@ export const foo = cjsModule.foo;
 }
 ```
 
-上面代码指定`require()`和`import`，加载该模块会自动切换到不一样的入口文件。
+上面程式碼指定`require()`和`import`，載入該模組會自動切換到不一樣的入口檔案。
 
-### Node.js 的内置模块
+### Node.js 的內建模組
 
-Node.js 的内置模块可以整体加载，也可以加载指定的输出项。
+Node.js 的內建模組可以整體載入，也可以載入指定的輸出項。
 
 ```javascript
-// 整体加载
+// 整體載入
 import EventEmitter from 'events';
 const e = new EventEmitter();
 
-// 加载指定的输出项
+// 載入指定的輸出項
 import { readFile } from 'fs';
 readFile('./foo.txt', (err, source) => {
   if (err) {
@@ -552,32 +552,32 @@ readFile('./foo.txt', (err, source) => {
 });
 ```
 
-### 加载路径
+### 載入路徑
 
-ES6 模块的加载路径必须给出脚本的完整路径，不能省略脚本的后缀名。`import`命令和`package.json`文件的`main`字段如果省略脚本的后缀名，会报错。
+ES6 模組的載入路徑必須給出指令碼的完整路徑，不能省略指令碼的字尾名。`import`命令和`package.json`檔案的`main`欄位如果省略指令碼的字尾名，會報錯。
 
 ```javascript
-// ES6 模块中将报错
+// ES6 模組中將報錯
 import { something } from './index';
 ```
 
-为了与浏览器的`import`加载规则相同，Node.js 的`.mjs`文件支持 URL 路径。
+為了與瀏覽器的`import`載入規則相同，Node.js 的`.mjs`檔案支援 URL 路徑。
 
 ```javascript
-import './foo.mjs?query=1'; // 加载 ./foo 传入参数 ?query=1
+import './foo.mjs?query=1'; // 載入 ./foo 傳入引數 ?query=1
 ```
 
-上面代码中，脚本路径带有参数`?query=1`，Node 会按 URL 规则解读。同一个脚本只要参数不同，就会被加载多次，并且保存成不同的缓存。由于这个原因，只要文件名中含有`:`、`%`、`#`、`?`等特殊字符，最好对这些字符进行转义。
+上面程式碼中，指令碼路徑帶有引數`?query=1`，Node 會按 URL 規則解讀。同一個指令碼只要引數不同，就會被載入多次，並且儲存成不同的快取。由於這個原因，只要檔名中含有`:`、`%`、`#`、`?`等特殊字元，最好對這些字元進行轉義。
 
-目前，Node.js 的`import`命令只支持加载本地模块（`file:`协议）和`data:`协议，不支持加载远程模块。另外，脚本路径只支持相对路径，不支持绝对路径（即以`/`或`//`开头的路径）。
+目前，Node.js 的`import`命令只支援載入本地模組（`file:`協議）和`data:`協議，不支援載入遠端模組。另外，指令碼路徑只支援相對路徑，不支援絕對路徑（即以`/`或`//`開頭的路徑）。
 
-### 内部变量
+### 內部變數
 
-ES6 模块应该是通用的，同一个模块不用修改，就可以用在浏览器环境和服务器环境。为了达到这个目标，Node.js 规定 ES6 模块之中不能使用 CommonJS 模块的特有的一些内部变量。
+ES6 模組應該是通用的，同一個模組不用修改，就可以用在瀏覽器環境和伺服器環境。為了達到這個目標，Node.js 規定 ES6 模組之中不能使用 CommonJS 模組的特有的一些內部變數。
 
-首先，就是`this`关键字。ES6 模块之中，顶层的`this`指向`undefined`；CommonJS 模块的顶层`this`指向当前模块，这是两者的一个重大差异。
+首先，就是`this`關鍵字。ES6 模組之中，頂層的`this`指向`undefined`；CommonJS 模組的頂層`this`指向當前模組，這是兩者的一個重大差異。
 
-其次，以下这些顶层变量在 ES6 模块之中都是不存在的。
+其次，以下這些頂層變數在 ES6 模組之中都是不存在的。
 
 - `arguments`
 - `require`
@@ -586,9 +586,9 @@ ES6 模块应该是通用的，同一个模块不用修改，就可以用在浏�
 - `__filename`
 - `__dirname`
 
-## 循环加载
+## 迴圈載入
 
-“循环加载”（circular dependency）指的是，`a`脚本的执行依赖`b`脚本，而`b`脚本的执行又依赖`a`脚本。
+“迴圈載入”（circular dependency）指的是，`a`指令碼的執行依賴`b`指令碼，而`b`指令碼的執行又依賴`a`指令碼。
 
 ```javascript
 // a.js
@@ -598,17 +598,17 @@ var b = require('b');
 var a = require('a');
 ```
 
-通常，“循环加载”表示存在强耦合，如果处理不好，还可能导致递归加载，使得程序无法执行，因此应该避免出现。
+通常，“迴圈載入”表示存在強耦合，如果處理不好，還可能導致遞迴載入，使得程式無法執行，因此應該避免出現。
 
-但是实际上，这是很难避免的，尤其是依赖关系复杂的大项目，很容易出现`a`依赖`b`，`b`依赖`c`，`c`又依赖`a`这样的情况。这意味着，模块加载机制必须考虑“循环加载”的情况。
+但是實際上，這是很難避免的，尤其是依賴關係複雜的大專案，很容易出現`a`依賴`b`，`b`依賴`c`，`c`又依賴`a`這樣的情況。這意味著，模組載入機制必須考慮“迴圈載入”的情況。
 
-对于 JavaScript 语言来说，目前最常见的两种模块格式 CommonJS 和 ES6，处理“循环加载”的方法是不一样的，返回的结果也不一样。
+對於 JavaScript 語言來說，目前最常見的兩種模組格式 CommonJS 和 ES6，處理“迴圈載入”的方法是不一樣的，返回的結果也不一樣。
 
-### CommonJS 模块的加载原理
+### CommonJS 模組的載入原理
 
-介绍 ES6 如何处理“循环加载”之前，先介绍目前最流行的 CommonJS 模块格式的加载原理。
+介紹 ES6 如何處理“迴圈載入”之前，先介紹目前最流行的 CommonJS 模組格式的載入原理。
 
-CommonJS 的一个模块，就是一个脚本文件。`require`命令第一次加载该脚本，就会执行整个脚本，然后在内存生成一个对象。
+CommonJS 的一個模組，就是一個指令碼檔案。`require`命令第一次載入該指令碼，就會執行整個指令碼，然後在記憶體生成一個物件。
 
 ```javascript
 {
@@ -619,47 +619,47 @@ CommonJS 的一个模块，就是一个脚本文件。`require`命令第一次�
 }
 ```
 
-上面代码就是 Node 内部加载模块后生成的一个对象。该对象的`id`属性是模块名，`exports`属性是模块输出的各个接口，`loaded`属性是一个布尔值，表示该模块的脚本是否执行完毕。其他还有很多属性，这里都省略了。
+上面程式碼就是 Node 內部載入模組後生成的一個物件。該物件的`id`屬性是模組名，`exports`屬性是模組輸出的各個介面，`loaded`屬性是一個布林值，表示該模組的指令碼是否執行完畢。其他還有很多屬性，這裡都省略了。
 
-以后需要用到这个模块的时候，就会到`exports`属性上面取值。即使再次执行`require`命令，也不会再次执行该模块，而是到缓存之中取值。也就是说，CommonJS 模块无论加载多少次，都只会在第一次加载时运行一次，以后再加载，就返回第一次运行的结果，除非手动清除系统缓存。
+以後需要用到這個模組的時候，就會到`exports`屬性上面取值。即使再次執行`require`命令，也不會再次執行該模組，而是到快取之中取值。也就是說，CommonJS 模組無論載入多少次，都只會在第一次載入時執行一次，以後再載入，就返回第一次執行的結果，除非手動清除系統快取。
 
-### CommonJS 模块的循环加载
+### CommonJS 模組的迴圈載入
 
-CommonJS 模块的重要特性是加载时执行，即脚本代码在`require`的时候，就会全部执行。一旦出现某个模块被"循环加载"，就只输出已经执行的部分，还未执行的部分不会输出。
+CommonJS 模組的重要特性是載入時執行，即指令碼程式碼在`require`的時候，就會全部執行。一旦出現某個模組被"迴圈載入"，就只輸出已經執行的部分，還未執行的部分不會輸出。
 
-让我们来看，Node [官方文档](https://nodejs.org/api/modules.html#modules_cycles)里面的例子。脚本文件`a.js`代码如下。
+讓我們來看，Node [官方文件](https://nodejs.org/api/modules.html#modules_cycles)裡面的例子。指令碼檔案`a.js`程式碼如下。
 
 ```javascript
 exports.done = false;
 var b = require('./b.js');
 console.log('在 a.js 之中，b.done = %j', b.done);
 exports.done = true;
-console.log('a.js 执行完毕');
+console.log('a.js 執行完畢');
 ```
 
-上面代码之中，`a.js`脚本先输出一个`done`变量，然后加载另一个脚本文件`b.js`。注意，此时`a.js`代码就停在这里，等待`b.js`执行完毕，再往下执行。
+上面程式碼之中，`a.js`指令碼先輸出一個`done`變數，然後載入另一個指令碼檔案`b.js`。注意，此時`a.js`程式碼就停在這裡，等待`b.js`執行完畢，再往下執行。
 
-再看`b.js`的代码。
+再看`b.js`的程式碼。
 
 ```javascript
 exports.done = false;
 var a = require('./a.js');
 console.log('在 b.js 之中，a.done = %j', a.done);
 exports.done = true;
-console.log('b.js 执行完毕');
+console.log('b.js 執行完畢');
 ```
 
-上面代码之中，`b.js`执行到第二行，就会去加载`a.js`，这时，就发生了“循环加载”。系统会去`a.js`模块对应对象的`exports`属性取值，可是因为`a.js`还没有执行完，从`exports`属性只能取回已经执行的部分，而不是最后的值。
+上面程式碼之中，`b.js`執行到第二行，就會去載入`a.js`，這時，就發生了“迴圈載入”。系統會去`a.js`模組對應物件的`exports`屬性取值，可是因為`a.js`還沒有執行完，從`exports`屬性只能取回已經執行的部分，而不是最後的值。
 
-`a.js`已经执行的部分，只有一行。
+`a.js`已經執行的部分，只有一行。
 
 ```javascript
 exports.done = false;
 ```
 
-因此，对于`b.js`来说，它从`a.js`只输入一个变量`done`，值为`false`。
+因此，對於`b.js`來說，它從`a.js`只輸入一個變數`done`，值為`false`。
 
-然后，`b.js`接着往下执行，等到全部执行完毕，再把执行权交还给`a.js`。于是，`a.js`接着往下执行，直到执行完毕。我们写一个脚本`main.js`，验证这个过程。
+然後，`b.js`接著往下執行，等到全部執行完畢，再把執行權交還給`a.js`。於是，`a.js`接著往下執行，直到執行完畢。我們寫一個指令碼`main.js`，驗證這個過程。
 
 ```javascript
 var a = require('./a.js');
@@ -667,48 +667,48 @@ var b = require('./b.js');
 console.log('在 main.js 之中, a.done=%j, b.done=%j', a.done, b.done);
 ```
 
-执行`main.js`，运行结果如下。
+執行`main.js`，執行結果如下。
 
 ```bash
 $ node main.js
 
 在 b.js 之中，a.done = false
-b.js 执行完毕
+b.js 執行完畢
 在 a.js 之中，b.done = true
-a.js 执行完毕
+a.js 執行完畢
 在 main.js 之中, a.done=true, b.done=true
 ```
 
-上面的代码证明了两件事。一是，在`b.js`之中，`a.js`没有执行完毕，只执行了第一行。二是，`main.js`执行到第二行时，不会再次执行`b.js`，而是输出缓存的`b.js`的执行结果，即它的第四行。
+上面的程式碼證明了兩件事。一是，在`b.js`之中，`a.js`沒有執行完畢，只執行了第一行。二是，`main.js`執行到第二行時，不會再次執行`b.js`，而是輸出快取的`b.js`的執行結果，即它的第四行。
 
 ```javascript
 exports.done = true;
 ```
 
-总之，CommonJS 输入的是被输出值的拷贝，不是引用。
+總之，CommonJS 輸入的是被輸出值的複製，不是引用。
 
-另外，由于 CommonJS 模块遇到循环加载时，返回的是当前已经执行的部分的值，而不是代码全部执行后的值，两者可能会有差异。所以，输入变量的时候，必须非常小心。
+另外，由於 CommonJS 模組遇到迴圈載入時，返回的是當前已經執行的部分的值，而不是程式碼全部執行後的值，兩者可能會有差異。所以，輸入變數的時候，必須非常小心。
 
 ```javascript
-var a = require('a'); // 安全的写法
-var foo = require('a').foo; // 危险的写法
+var a = require('a'); // 安全的寫法
+var foo = require('a').foo; // 危險的寫法
 
 exports.good = function (arg) {
   return a.foo('good', arg); // 使用的是 a.foo 的最新值
 };
 
 exports.bad = function (arg) {
-  return foo('bad', arg); // 使用的是一个部分加载时的值
+  return foo('bad', arg); // 使用的是一個部分載入時的值
 };
 ```
 
-上面代码中，如果发生循环加载，`require('a').foo`的值很可能后面会被改写，改用`require('a')`会更保险一点。
+上面程式碼中，如果發生迴圈載入，`require('a').foo`的值很可能後面會被改寫，改用`require('a')`會更保險一點。
 
-### ES6 模块的循环加载
+### ES6 模組的迴圈載入
 
-ES6 处理“循环加载”与 CommonJS 有本质的不同。ES6 模块是动态引用，如果使用`import`从一个模块加载变量（即`import foo from 'foo'`），那些变量不会被缓存，而是成为一个指向被加载模块的引用，需要开发者自己保证，真正取值的时候能够取到值。
+ES6 處理“迴圈載入”與 CommonJS 有本質的不同。ES6 模組是動態引用，如果使用`import`從一個模組載入變數（即`import foo from 'foo'`），那些變數不會被快取，而是成為一個指向被載入模組的引用，需要開發者自己保證，真正取值的時候能夠取到值。
 
-请看下面这个例子。
+請看下面這個例子。
 
 ```javascript
 // a.mjs
@@ -724,7 +724,7 @@ console.log(foo);
 export let bar = 'bar';
 ```
 
-上面代码中，`a.mjs`加载`b.mjs`，`b.mjs`又加载`a.mjs`，构成循环加载。执行`a.mjs`，结果如下。
+上面程式碼中，`a.mjs`載入`b.mjs`，`b.mjs`又載入`a.mjs`，構成迴圈載入。執行`a.mjs`，結果如下。
 
 ```bash
 $ node --experimental-modules a.mjs
@@ -732,11 +732,11 @@ b.mjs
 ReferenceError: foo is not defined
 ```
 
-上面代码中，执行`a.mjs`以后会报错，`foo`变量未定义，这是为什么？
+上面程式碼中，執行`a.mjs`以後會報錯，`foo`變數未定義，這是為什麼？
 
-让我们一行行来看，ES6 循环加载是怎么处理的。首先，执行`a.mjs`以后，引擎发现它加载了`b.mjs`，因此会优先执行`b.mjs`，然后再执行`a.mjs`。接着，执行`b.mjs`的时候，已知它从`a.mjs`输入了`foo`接口，这时不会去执行`a.mjs`，而是认为这个接口已经存在了，继续往下执行。执行到第三行`console.log(foo)`的时候，才发现这个接口根本没定义，因此报错。
+讓我們一行行來看，ES6 迴圈載入是怎麼處理的。首先，執行`a.mjs`以後，引擎發現它載入了`b.mjs`，因此會優先執行`b.mjs`，然後再執行`a.mjs`。接著，執行`b.mjs`的時候，已知它從`a.mjs`輸入了`foo`介面，這時不會去執行`a.mjs`，而是認為這個介面已經存在了，繼續往下執行。執行到第三行`console.log(foo)`的時候，才發現這個介面根本沒定義，因此報錯。
 
-解决这个问题的方法，就是让`b.mjs`运行的时候，`foo`已经有定义了。这可以通过将`foo`写成函数来解决。
+解決這個問題的方法，就是讓`b.mjs`執行的時候，`foo`已經有定義了。這可以透過將`foo`寫成函式來解決。
 
 ```javascript
 // a.mjs
@@ -754,7 +754,7 @@ function bar() { return 'bar' }
 export {bar};
 ```
 
-这时再执行`a.mjs`就可以得到预期结果。
+這時再執行`a.mjs`就可以得到預期結果。
 
 ```bash
 $ node --experimental-modules a.mjs
@@ -764,7 +764,7 @@ a.mjs
 bar
 ```
 
-这是因为函数具有提升作用，在执行`import {bar} from './b'`时，函数`foo`就已经有定义了，所以`b.mjs`加载的时候不会报错。这也意味着，如果把函数`foo`改写成函数表达式，也会报错。
+這是因為函式具有提升作用，在執行`import {bar} from './b'`時，函式`foo`就已經有定義了，所以`b.mjs`載入的時候不會報錯。這也意味著，如果把函式`foo`改寫成函式表示式，也會報錯。
 
 ```javascript
 // a.mjs
@@ -775,9 +775,9 @@ const foo = () => 'foo';
 export {foo};
 ```
 
-上面代码的第四行，改成了函数表达式，就不具有提升作用，执行就会报错。
+上面程式碼的第四行，改成了函式表示式，就不具有提升作用，執行就會報錯。
 
-我们再来看 ES6 模块加载器[SystemJS](https://github.com/ModuleLoader/es6-module-loader/blob/master/docs/circular-references-bindings.md)给出的一个例子。
+我們再來看 ES6 模組載入器[SystemJS](https://github.com/ModuleLoader/es6-module-loader/blob/master/docs/circular-references-bindings.md)給出的一個例子。
 
 ```javascript
 // even.js
@@ -795,9 +795,9 @@ export function odd(n) {
 }
 ```
 
-上面代码中，`even.js`里面的函数`even`有一个参数`n`，只要不等于 0，就会减去 1，传入加载的`odd()`。`odd.js`也会做类似操作。
+上面程式碼中，`even.js`裡面的函式`even`有一個引數`n`，只要不等於 0，就會減去 1，傳入載入的`odd()`。`odd.js`也會做類似操作。
 
-运行上面这段代码，结果如下。
+執行上面這段程式碼，結果如下。
 
 ```javascript
 $ babel-node
@@ -812,9 +812,9 @@ true
 17
 ```
 
-上面代码中，参数`n`从 10 变为 0 的过程中，`even()`一共会执行 6 次，所以变量`counter`等于 6。第二次调用`even()`时，参数`n`从 20 变为 0，`even()`一共会执行 11 次，加上前面的 6 次，所以变量`counter`等于 17。
+上面程式碼中，引數`n`從 10 變為 0 的過程中，`even()`一共會執行 6 次，所以變數`counter`等於 6。第二次呼叫`even()`時，引數`n`從 20 變為 0，`even()`一共會執行 11 次，加上前面的 6 次，所以變數`counter`等於 17。
 
-这个例子要是改写成 CommonJS，就根本无法执行，会报错。
+這個例子要是改寫成 CommonJS，就根本無法執行，會報錯。
 
 ```javascript
 // even.js
@@ -833,7 +833,7 @@ module.exports = function (n) {
 }
 ```
 
-上面代码中，`even.js`加载`odd.js`，而`odd.js`又去加载`even.js`，形成“循环加载”。这时，执行引擎就会输出`even.js`已经执行的部分（不存在任何结果），所以在`odd.js`之中，变量`even`等于`undefined`，等到后面调用`even(n - 1)`就会报错。
+上面程式碼中，`even.js`載入`odd.js`，而`odd.js`又去載入`even.js`，形成“迴圈載入”。這時，執行引擎就會輸出`even.js`已經執行的部分（不存在任何結果），所以在`odd.js`之中，變數`even`等於`undefined`，等到後面呼叫`even(n - 1)`就會報錯。
 
 ```bash
 $ node

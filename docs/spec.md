@@ -1,62 +1,62 @@
-# 读懂 ECMAScript 规格
+# 讀懂 ECMAScript 規格
 
 ## 概述
 
-规格文件是计算机语言的官方标准，详细描述语法规则和实现方法。
+規格檔案是計算機語言的官方標準，詳細描述語法規則和實現方法。
 
-一般来说，没有必要阅读规格，除非你要写编译器。因为规格写得非常抽象和精炼，又缺乏实例，不容易理解，而且对于解决实际的应用问题，帮助不大。但是，如果你遇到疑难的语法问题，实在找不到答案，这时可以去查看规格文件，了解语言标准是怎么说的。规格是解决问题的“最后一招”。
+一般來說，沒有必要閱讀規格，除非你要寫編譯器。因為規格寫得非常抽象和精煉，又缺乏例項，不容易理解，而且對於解決實際的應用問題，幫助不大。但是，如果你遇到疑難的語法問題，實在找不到答案，這時可以去檢視規格檔案，瞭解語言標準是怎麼說的。規格是解決問題的“最後一招”。
 
-这对 JavaScript 语言很有必要。因为它的使用场景复杂，语法规则不统一，例外很多，各种运行环境的行为不一致，导致奇怪的语法问题层出不穷，任何语法书都不可能囊括所有情况。查看规格，不失为一种解决语法问题的最可靠、最权威的终极方法。
+這對 JavaScript 語言很有必要。因為它的使用場景複雜，語法規則不統一，例外很多，各種執行環境的行為不一致，導致奇怪的語法問題層出不窮，任何語法書都不可能囊括所有情況。檢視規格，不失為一種解決語法問題的最可靠、最權威的終極方法。
 
-本章介绍如何读懂 ECMAScript 6 的规格文件。
+本章介紹如何讀懂 ECMAScript 6 的規格檔案。
 
-ECMAScript 6 的规格，可以在 ECMA 国际标准组织的官方网站（[www.ecma-international.org/ecma-262/6.0/](http://www.ecma-international.org/ecma-262/6.0/)）免费下载和在线阅读。
+ECMAScript 6 的規格，可以在 ECMA 國際標準組織的官方網站（[www.ecma-international.org/ecma-262/6.0/](http://www.ecma-international.org/ecma-262/6.0/)）免費下載和線上閱讀。
 
-这个规格文件相当庞大，一共有 26 章，A4 打印的话，足足有 545 页。它的特点就是规定得非常细致，每一个语法行为、每一个函数的实现都做了详尽的清晰的描述。基本上，编译器作者只要把每一步翻译成代码就可以了。这很大程度上，保证了所有 ES6 实现都有一致的行为。
+這個規格檔案相當龐大，一共有 26 章，A4 列印的話，足足有 545 頁。它的特點就是規定得非常細緻，每一個語法行為、每一個函式的實現都做了詳盡的清晰的描述。基本上，編譯器作者只要把每一步翻譯成程式碼就可以了。這很大程度上，保證了所有 ES6 實現都有一致的行為。
 
-ECMAScript 6 规格的 26 章之中，第 1 章到第 3 章是对文件本身的介绍，与语言关系不大。第 4 章是对这门语言总体设计的描述，有兴趣的读者可以读一下。第 5 章到第 8 章是语言宏观层面的描述。第 5 章是规格的名词解释和写法的介绍，第 6 章介绍数据类型，第 7 章介绍语言内部用到的抽象操作，第 8 章介绍代码如何运行。第 9 章到第 26 章介绍具体的语法。
+ECMAScript 6 規格的 26 章之中，第 1 章到第 3 章是對檔案本身的介紹，與語言關係不大。第 4 章是對這門語言總體設計的描述，有興趣的讀者可以讀一下。第 5 章到第 8 章是語言巨集觀層面的描述。第 5 章是規格的名詞解釋和寫法的介紹，第 6 章介紹資料型別，第 7 章介紹語言內部用到的抽象操作，第 8 章介紹程式碼如何執行。第 9 章到第 26 章介紹具體的語法。
 
-对于一般用户来说，除了第 4 章，其他章节都涉及某一方面的细节，不用通读，只要在用到的时候，查阅相关章节即可。
+對於一般使用者來說，除了第 4 章，其他章節都涉及某一方面的細節，不用通讀，只要在用到的時候，查閱相關章節即可。
 
-## 术语
+## 術語
 
-ES6 规格使用了一些专门的术语，了解这些术语，可以帮助你读懂规格。本节介绍其中的几个。
+ES6 規格使用了一些專門的術語，瞭解這些術語，可以幫助你讀懂規格。本節介紹其中的幾個。
 
 ### 抽象操作
 
-所谓“抽象操作”（abstract operations）就是引擎的一些内部方法，外部不能调用。规格定义了一系列的抽象操作，规定了它们的行为，留给各种引擎自己去实现。
+所謂“抽象操作”（abstract operations）就是引擎的一些內部方法，外部不能呼叫。規格定義了一系列的抽象操作，規定了它們的行為，留給各種引擎自己去實現。
 
-举例来说，`Boolean(value)`的算法，第一步是这样的。
+舉例來說，`Boolean(value)`的演算法，第一步是這樣的。
 
 > 1. Let `b` be `ToBoolean(value)`.
 
-这里的`ToBoolean`就是一个抽象操作，是引擎内部求出布尔值的算法。
+這裡的`ToBoolean`就是一個抽象操作，是引擎內部求出布林值的演算法。
 
-许多函数的算法都会多次用到同样的步骤，所以 ES6 规格将它们抽出来，定义成“抽象操作”，方便描述。
+許多函式的演算法都會多次用到同樣的步驟，所以 ES6 規格將它們抽出來，定義成“抽象操作”，方便描述。
 
 ### Record 和 field
 
-ES6 规格将键值对（key-value map）的数据结构称为 Record，其中的每一组键值对称为 field。这就是说，一个 Record 由多个 field 组成，而每个 field 都包含一个键名（key）和一个键值（value）。
+ES6 規格將鍵值對（key-value map）的資料結構稱為 Record，其中的每一組鍵值對稱為 field。這就是說，一個 Record 由多個 field 組成，而每個 field 都包含一個鍵名（key）和一個鍵值（value）。
 
 ### [[Notation]]
 
-ES6 规格大量使用`[[Notation]]`这种书写法，比如`[[Value]]`、`[[Writable]]`、`[[Get]]`、`[[Set]]`等等。它用来指代 field 的键名。
+ES6 規格大量使用`[[Notation]]`這種書寫法，比如`[[Value]]`、`[[Writable]]`、`[[Get]]`、`[[Set]]`等等。它用來指代 field 的鍵名。
 
-举例来说，`obj`是一个 Record，它有一个`Prototype`属性。ES6 规格不会写`obj.Prototype`，而是写`obj.[[Prototype]]`。一般来说，使用`[[Notation]]`这种书写法的属性，都是对象的内部属性。
+舉例來說，`obj`是一個 Record，它有一個`Prototype`屬性。ES6 規格不會寫`obj.Prototype`，而是寫`obj.[[Prototype]]`。一般來說，使用`[[Notation]]`這種書寫法的屬性，都是物件的內部屬性。
 
-所有的 JavaScript 函数都有一个内部属性`[[Call]]`，用来运行该函数。
+所有的 JavaScript 函式都有一個內部屬性`[[Call]]`，用來執行該函式。
 
 ```javascript
 F.[[Call]](V, argumentsList)
 ```
 
-上面代码中，`F`是一个函数对象，`[[Call]]`是它的内部方法，`F.[[call]]()`表示运行该函数，`V`表示`[[Call]]`运行时`this`的值，`argumentsList`则是调用时传入函数的参数。
+上面程式碼中，`F`是一個函式物件，`[[Call]]`是它的內部方法，`F.[[call]]()`表示執行該函式，`V`表示`[[Call]]`執行時`this`的值，`argumentsList`則是呼叫時傳入函式的引數。
 
 ### Completion Record
 
-每一个语句都会返回一个 Completion Record，表示运行结果。每个 Completion Record 有一个`[[Type]]`属性，表示运行结果的类型。
+每一個語句都會返回一個 Completion Record，表示執行結果。每個 Completion Record 有一個`[[Type]]`屬性，表示執行結果的型別。
 
-`[[Type]]`属性有五种可能的值。
+`[[Type]]`屬性有五種可能的值。
 
 - normal
 - return
@@ -64,62 +64,62 @@ F.[[Call]](V, argumentsList)
 - break
 - continue
 
-如果`[[Type]]`的值是`normal`，就称为 normal completion，表示运行正常。其他的值，都称为 abrupt completion。其中，开发者只需要关注`[[Type]]`为`throw`的情况，即运行出错；`break`、`continue`、`return`这三个值都只出现在特定场景，可以不用考虑。
+如果`[[Type]]`的值是`normal`，就稱為 normal completion，表示執行正常。其他的值，都稱為 abrupt completion。其中，開發者只需要關注`[[Type]]`為`throw`的情況，即執行出錯；`break`、`continue`、`return`這三個值都只出現在特定場景，可以不用考慮。
 
-## 抽象操作的标准流程
+## 抽象操作的標準流程
 
-抽象操作的运行流程，一般是下面这样。
+抽象操作的執行流程，一般是下面這樣。
 
 > 1. Let `result` be `AbstractOp()`.
 > 1. If `result` is an abrupt completion, return `result`.
 > 1. Set `result` to `result.[[Value]]`.
 > 1. return `result`.
 
-上面的第一步调用了抽象操作`AbstractOp()`，得到`result`，这是一个 Completion Record。第二步，如果`result`属于 abrupt completion，就直接返回。如果此处没有返回，表示`result`属于 normal completion。第三步，将`result`的值设置为`resultCompletionRecord.[[Value]]`。第四步，返回`result`。
+上面的第一步呼叫了抽象操作`AbstractOp()`，得到`result`，這是一個 Completion Record。第二步，如果`result`屬於 abrupt completion，就直接返回。如果此處沒有返回，表示`result`屬於 normal completion。第三步，將`result`的值設定為`resultCompletionRecord.[[Value]]`。第四步，返回`result`。
 
-ES6 规格将这个标准流程，使用简写的方式表达。
+ES6 規格將這個標準流程，使用簡寫的方式表達。
 
 > 1. Let `result` be `AbstractOp()`.
 > 1. `ReturnIfAbrupt(result)`.
 > 1. return `result`.
 
-这个简写方式里面的`ReturnIfAbrupt(result)`，就代表了上面的第二步和第三步，即如果有报错，就返回错误，否则取出值。
+這個簡寫方式裡面的`ReturnIfAbrupt(result)`，就代表了上面的第二步和第三步，即如果有報錯，就返回錯誤，否則取出值。
 
-甚至还有进一步的简写格式。
+甚至還有進一步的簡寫格式。
 
 > 1. Let `result` be `? AbstractOp()`.
 > 1. return `result`.
 
-上面流程的`?`，就代表`AbstractOp()`可能会报错。一旦报错，就返回错误，否则取出值。
+上面流程的`?`，就代表`AbstractOp()`可能會報錯。一旦報錯，就返回錯誤，否則取出值。
 
-除了`?`，ES 6 规格还使用另一个简写符号`!`。
+除了`?`，ES 6 規格還使用另一個簡寫符號`!`。
 
 > 1. Let `result` be `! AbstractOp()`.
 > 1. return `result`.
 
-上面流程的`!`，代表`AbstractOp()`不会报错，返回的一定是 normal completion，总是可以取出值。
+上面流程的`!`，代表`AbstractOp()`不會報錯，返回的一定是 normal completion，總是可以取出值。
 
-## 相等运算符
+## 相等運算子
 
-下面通过一些例子，介绍如何使用这份规格。
+下面透過一些例子，介紹如何使用這份規格。
 
-相等运算符（`==`）是一个很让人头痛的运算符，它的语法行为多变，不符合直觉。这个小节就看看规格怎么规定它的行为。
+相等運算子（`==`）是一個很讓人頭痛的運算子，它的語法行為多變，不符合直覺。這個小節就看看規格怎麼規定它的行為。
 
-请看下面这个表达式，请问它的值是多少。
+請看下面這個表示式，請問它的值是多少。
 
 ```javascript
 0 == null
 ```
 
-如果你不确定答案，或者想知道语言内部怎么处理，就可以去查看规格，[7.2.12 小节](http://www.ecma-international.org/ecma-262/6.0/#sec-abstract-equality-comparison)是对相等运算符（`==`）的描述。
+如果你不確定答案，或者想知道語言內部怎麼處理，就可以去檢視規格，[7.2.12 小節](http://www.ecma-international.org/ecma-262/6.0/#sec-abstract-equality-comparison)是對相等運算子（`==`）的描述。
 
-规格对每一种语法行为的描述，都分成两部分：先是总体的行为描述，然后是实现的算法细节。相等运算符的总体描述，只有一句话。
+規格對每一種語法行為的描述，都分成兩部分：先是總體的行為描述，然後是實現的演算法細節。相等運算子的總體描述，只有一句話。
 
 > “The comparison `x == y`, where `x` and `y` are values, produces `true` or `false`.”
 
-上面这句话的意思是，相等运算符用于比较两个值，返回`true`或`false`。
+上面這句話的意思是，相等運算子用於比較兩個值，返回`true`或`false`。
 
-下面是算法细节。
+下面是演算法細節。
 
 > 1. ReturnIfAbrupt(x).
 > 1. ReturnIfAbrupt(y).
@@ -139,30 +139,30 @@ ES6 规格将这个标准流程，使用简写的方式表达。
 >    return the result of the comparison `ToPrimitive(x) == y`.
 > 1. Return `false`.
 
-上面这段算法，一共有 12 步，翻译如下。
+上面這段演算法，一共有 12 步，翻譯如下。
 
-> 1. 如果`x`不是正常值（比如抛出一个错误），中断执行。
-> 1. 如果`y`不是正常值，中断执行。
-> 1. 如果`Type(x)`与`Type(y)`相同，执行严格相等运算`x === y`。
+> 1. 如果`x`不是正常值（比如丟擲一個錯誤），中斷執行。
+> 1. 如果`y`不是正常值，中斷執行。
+> 1. 如果`Type(x)`與`Type(y)`相同，執行嚴格相等運算`x === y`。
 > 1. 如果`x`是`null`，`y`是`undefined`，返回`true`。
 > 1. 如果`x`是`undefined`，`y`是`null`，返回`true`。
-> 1. 如果`Type(x)`是数值，`Type(y)`是字符串，返回`x == ToNumber(y)`的结果。
-> 1. 如果`Type(x)`是字符串，`Type(y)`是数值，返回`ToNumber(x) == y`的结果。
-> 1. 如果`Type(x)`是布尔值，返回`ToNumber(x) == y`的结果。
-> 1. 如果`Type(y)`是布尔值，返回`x == ToNumber(y)`的结果。
-> 1. 如果`Type(x)`是字符串或数值或`Symbol`值，`Type(y)`是对象，返回`x == ToPrimitive(y)`的结果。
-> 1. 如果`Type(x)`是对象，`Type(y)`是字符串或数值或`Symbol`值，返回`ToPrimitive(x) == y`的结果。
+> 1. 如果`Type(x)`是數值，`Type(y)`是字串，返回`x == ToNumber(y)`的結果。
+> 1. 如果`Type(x)`是字串，`Type(y)`是數值，返回`ToNumber(x) == y`的結果。
+> 1. 如果`Type(x)`是布林值，返回`ToNumber(x) == y`的結果。
+> 1. 如果`Type(y)`是布林值，返回`x == ToNumber(y)`的結果。
+> 1. 如果`Type(x)`是字串或數值或`Symbol`值，`Type(y)`是物件，返回`x == ToPrimitive(y)`的結果。
+> 1. 如果`Type(x)`是物件，`Type(y)`是字串或數值或`Symbol`值，返回`ToPrimitive(x) == y`的結果。
 > 1. 返回`false`。
 
-由于`0`的类型是数值，`null`的类型是 Null（这是规格[4.3.13 小节](http://www.ecma-international.org/ecma-262/6.0/#sec-terms-and-definitions-null-type)的规定，是内部 Type 运算的结果，跟`typeof`运算符无关）。因此上面的前 11 步都得不到结果，要到第 12 步才能得到`false`。
+由於`0`的型別是數值，`null`的型別是 Null（這是規格[4.3.13 小節](http://www.ecma-international.org/ecma-262/6.0/#sec-terms-and-definitions-null-type)的規定，是內部 Type 運算的結果，跟`typeof`運算子無關）。因此上面的前 11 步都得不到結果，要到第 12 步才能得到`false`。
 
 ```javascript
 0 == null // false
 ```
 
-## 数组的空位
+## 陣列的空位
 
-下面再看另一个例子。
+下面再看另一個例子。
 
 ```javascript
 const a1 = [undefined, undefined, undefined];
@@ -177,9 +177,9 @@ a2[0] // undefined
 a1[0] === a2[0] // true
 ```
 
-上面代码中，数组`a1`的成员是三个`undefined`，数组`a2`的成员是三个空位。这两个数组很相似，长度都是 3，每个位置的成员读取出来都是`undefined`。
+上面程式碼中，陣列`a1`的成員是三個`undefined`，陣列`a2`的成員是三個空位。這兩個陣列很相似，長度都是 3，每個位置的成員讀取出來都是`undefined`。
 
-但是，它们实际上存在重大差异。
+但是，它們實際上存在重大差異。
 
 ```javascript
 0 in a1 // true
@@ -195,29 +195,29 @@ a1.map(n => 1) // [1, 1, 1]
 a2.map(n => 1) // [, , ,]
 ```
 
-上面代码一共列出了四种运算，数组`a1`和`a2`的结果都不一样。前三种运算（`in`运算符、数组的`hasOwnProperty`方法、`Object.keys`方法）都说明，数组`a2`取不到属性名。最后一种运算（数组的`map`方法）说明，数组`a2`没有发生遍历。
+上面程式碼一共列出了四種運算，陣列`a1`和`a2`的結果都不一樣。前三種運算（`in`運算子、陣列的`hasOwnProperty`方法、`Object.keys`方法）都說明，陣列`a2`取不到屬性名。最後一種運算（陣列的`map`方法）說明，陣列`a2`沒有發生遍歷。
 
-为什么`a1`与`a2`成员的行为不一致？数组的成员是`undefined`或空位，到底有什么不同？
+為什麼`a1`與`a2`成員的行為不一致？陣列的成員是`undefined`或空位，到底有什麼不同？
 
-规格的[12.2.5 小节《数组的初始化》](http://www.ecma-international.org/ecma-262/6.0/#sec-array-initializer)给出了答案。
+規格的[12.2.5 小節《陣列的初始化》](http://www.ecma-international.org/ecma-262/6.0/#sec-array-initializer)給出了答案。
 
 > “Array elements may be elided at the beginning, middle or end of the element list. Whenever a comma in the element list is not preceded by an AssignmentExpression (i.e., a comma at the beginning or after another comma), the missing array element contributes to the length of the Array and increases the index of subsequent elements. Elided array elements are not defined. If an element is elided at the end of an array, that element does not contribute to the length of the Array.”
 
-翻译如下。
+翻譯如下。
 
-> "数组成员可以省略。只要逗号前面没有任何表达式，数组的`length`属性就会加 1，并且相应增加其后成员的位置索引。被省略的成员不会被定义。如果被省略的成员是数组最后一个成员，则不会导致数组`length`属性增加。”
+> "陣列成員可以省略。只要逗號前面沒有任何表示式，陣列的`length`屬性就會加 1，並且相應增加其後成員的位置索引。被省略的成員不會被定義。如果被省略的成員是陣列最後一個成員，則不會導致陣列`length`屬性增加。”
 
-上面的规格说得很清楚，数组的空位会反映在`length`属性，也就是说空位有自己的位置，但是这个位置的值是未定义，即这个值是不存在的。如果一定要读取，结果就是`undefined`（因为`undefined`在 JavaScript 语言中表示不存在）。
+上面的規格說得很清楚，陣列的空位會反映在`length`屬性，也就是說空位有自己的位置，但是這個位置的值是未定義，即這個值是不存在的。如果一定要讀取，結果就是`undefined`（因為`undefined`在 JavaScript 語言中表示不存在）。
 
-这就解释了为什么`in`运算符、数组的`hasOwnProperty`方法、`Object.keys`方法，都取不到空位的属性名。因为这个属性名根本就不存在，规格里面没说要为空位分配属性名(位置索引），只说要为下一个元素的位置索引加 1。
+這就解釋了為什麼`in`運算子、陣列的`hasOwnProperty`方法、`Object.keys`方法，都取不到空位的屬性名。因為這個屬性名根本就不存在，規格里面沒說要為空位分配屬性名(位置索引），只說要為下一個元素的位置索引加 1。
 
-至于为什么数组的`map`方法会跳过空位，请看下一节。
+至於為什麼陣列的`map`方法會跳過空位，請看下一節。
 
-## 数组的 map 方法
+## 陣列的 map 方法
 
-规格的[22.1.3.15 小节](http://www.ecma-international.org/ecma-262/6.0/#sec-array.prototype.map)定义了数组的`map`方法。该小节先是总体描述`map`方法的行为，里面没有提到数组空位。
+規格的[22.1.3.15 小節](http://www.ecma-international.org/ecma-262/6.0/#sec-array.prototype.map)定義了陣列的`map`方法。該小節先是總體描述`map`方法的行為，裡面沒有提到陣列空位。
 
-后面的算法描述是这样的。
+後面的演算法描述是這樣的。
 
 > 1. Let `O` be `ToObject(this value)`.
 > 1. `ReturnIfAbrupt(O)`.
@@ -242,32 +242,32 @@ a2.map(n => 1) // [, , ,]
 >    1. Increase `k` by 1.
 > 1. Return `A`.
 
-翻译如下。
+翻譯如下。
 
-> 1. 得到当前数组的`this`对象
-> 1. 如果报错就返回
-> 1. 求出当前数组的`length`属性
-> 1. 如果报错就返回
-> 1. 如果 map 方法的参数`callbackfn`不可执行，就报错
-> 1. 如果 map 方法的参数之中，指定了`this`，就让`T`等于该参数，否则`T`为`undefined`
-> 1. 生成一个新的数组`A`，跟当前数组的`length`属性保持一致
-> 1. 如果报错就返回
-> 1. 设定`k`等于 0
-> 1. 只要`k`小于当前数组的`length`属性，就重复下面步骤
->    1. 设定`Pk`等于`ToString(k)`，即将`K`转为字符串
->    1. 设定`kPresent`等于`HasProperty(O, Pk)`，即求当前数组有没有指定属性
->    1. 如果报错就返回
->    1. 如果`kPresent`等于`true`，则进行下面步骤
->       1. 设定`kValue`等于`Get(O, Pk)`，取出当前数组的指定属性
->       1. 如果报错就返回
->       1. 设定`mappedValue`等于`Call(callbackfn, T, «kValue, k, O»)`，即执行回调函数
->       1. 如果报错就返回
->       1. 设定`status`等于`CreateDataPropertyOrThrow (A, Pk, mappedValue)`，即将回调函数的值放入`A`数组的指定位置
->       1. 如果报错就返回
+> 1. 得到當前陣列的`this`物件
+> 1. 如果報錯就返回
+> 1. 求出當前陣列的`length`屬性
+> 1. 如果報錯就返回
+> 1. 如果 map 方法的引數`callbackfn`不可執行，就報錯
+> 1. 如果 map 方法的引數之中，指定了`this`，就讓`T`等於該引數，否則`T`為`undefined`
+> 1. 生成一個新的陣列`A`，跟當前陣列的`length`屬性保持一致
+> 1. 如果報錯就返回
+> 1. 設定`k`等於 0
+> 1. 只要`k`小於當前陣列的`length`屬性，就重複下面步驟
+>    1. 設定`Pk`等於`ToString(k)`，即將`K`轉為字串
+>    1. 設定`kPresent`等於`HasProperty(O, Pk)`，即求當前陣列有沒有指定屬性
+>    1. 如果報錯就返回
+>    1. 如果`kPresent`等於`true`，則進行下面步驟
+>       1. 設定`kValue`等於`Get(O, Pk)`，取出當前陣列的指定屬性
+>       1. 如果報錯就返回
+>       1. 設定`mappedValue`等於`Call(callbackfn, T, «kValue, k, O»)`，即執行回撥函式
+>       1. 如果報錯就返回
+>       1. 設定`status`等於`CreateDataPropertyOrThrow (A, Pk, mappedValue)`，即將回調函式的值放入`A`陣列的指定位置
+>       1. 如果報錯就返回
 >    1. `k`增加 1
 > 1. 返回`A`
 
-仔细查看上面的算法，可以发现，当处理一个全是空位的数组时，前面步骤都没有问题。进入第 10 步中第 2 步时，`kPresent`会报错，因为空位对应的属性名，对于数组来说是不存在的，因此就会返回，不会进行后面的步骤。
+仔細檢視上面的演算法，可以發現，當處理一個全是空位的陣列時，前面步驟都沒有問題。進入第 10 步中第 2 步時，`kPresent`會報錯，因為空位對應的屬性名，對於陣列來說是不存在的，因此就會返回，不會進行後面的步驟。
 
 ```javascript
 const arr = [, , ,];
@@ -277,9 +277,9 @@ arr.map(n => {
 }) // [, , ,]
 ```
 
-上面代码中，`arr`是一个全是空位的数组，`map`方法遍历成员时，发现是空位，就直接跳过，不会进入回调函数。因此，回调函数里面的`console.log`语句根本不会执行，整个`map`方法返回一个全是空位的新数组。
+上面程式碼中，`arr`是一個全是空位的陣列，`map`方法遍歷成員時，發現是空位，就直接跳過，不會進入回撥函式。因此，回撥函式裡面的`console.log`語句根本不會執行，整個`map`方法返回一個全是空位的新陣列。
 
-V8 引擎对`map`方法的[实现](https://github.com/v8/v8/blob/44c44521ae11859478b42004f57ea93df52526ee/src/js/array.js#L1347)如下，可以看到跟规格的算法描述完全一致。
+V8 引擎對`map`方法的[實現](https://github.com/v8/v8/blob/44c44521ae11859478b42004f57ea93df52526ee/src/js/array.js#L1347)如下，可以看到跟規格的演算法描述完全一致。
 
 ```javascript
 function ArrayMap(f, receiver) {

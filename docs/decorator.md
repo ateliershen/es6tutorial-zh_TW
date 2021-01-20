@@ -1,10 +1,10 @@
-# 装饰器
+# 裝飾器
 
-[说明] Decorator 提案经过了大幅修改，目前还没有定案，不知道语法会不会再变。下面的内容完全依据以前的提案，已经有点过时了。等待定案以后，需要完全重写。
+[說明] Decorator 提案經過了大幅修改，目前還沒有定案，不知道語法會不會再變。下面的內容完全依據以前的提案，已經有點過時了。等待定案以後，需要完全重寫。
 
-装饰器（Decorator）是一种与类（class）相关的语法，用来注释或修改类和类方法。许多面向对象的语言都有这项功能，目前有一个[提案](https://github.com/tc39/proposal-decorators)将其引入了 ECMAScript。
+裝飾器（Decorator）是一種與類（class）相關的語法，用來註釋或修改類和類方法。許多面向物件的語言都有這項功能，目前有一個[提案](https://github.com/tc39/proposal-decorators)將其引入了 ECMAScript。
 
-装饰器是一种函数，写成`@ + 函数名`。它可以放在类和类方法的定义前面。
+裝飾器是一種函式，寫成`@ + 函式名`。它可以放在類和類方法的定義前面。
 
 ```javascript
 @frozen class Foo {
@@ -17,11 +17,11 @@
 }
 ```
 
-上面代码一共使用了四个装饰器，一个用在类本身，另外三个用在类方法。它们不仅增加了代码的可读性，清晰地表达了意图，而且提供一种方便的手段，增加或修改类的功能。
+上面程式碼一共使用了四個裝飾器，一個用在類本身，另外三個用在類方法。它們不僅增加了程式碼的可讀性，清晰地表達了意圖，而且提供一種方便的手段，增加或修改類的功能。
 
-## 类的装饰
+## 類的裝飾
 
-装饰器可以用来装饰整个类。
+裝飾器可以用來裝飾整個類。
 
 ```javascript
 @testable
@@ -36,21 +36,21 @@ function testable(target) {
 MyTestableClass.isTestable // true
 ```
 
-上面代码中，`@testable`就是一个装饰器。它修改了`MyTestableClass`这个类的行为，为它加上了静态属性`isTestable`。`testable`函数的参数`target`是`MyTestableClass`类本身。
+上面程式碼中，`@testable`就是一個裝飾器。它修改了`MyTestableClass`這個類的行為，為它加上了靜態屬性`isTestable`。`testable`函式的引數`target`是`MyTestableClass`類本身。
 
-基本上，装饰器的行为就是下面这样。
+基本上，裝飾器的行為就是下面這樣。
 
 ```javascript
 @decorator
 class A {}
 
-// 等同于
+// 等同於
 
 class A {}
 A = decorator(A) || A;
 ```
 
-也就是说，装饰器是一个对类进行处理的函数。装饰器函数的第一个参数，就是所要装饰的目标类。
+也就是說，裝飾器是一個對類進行處理的函式。裝飾器函式的第一個引數，就是所要裝飾的目標類。
 
 ```javascript
 function testable(target) {
@@ -58,9 +58,9 @@ function testable(target) {
 }
 ```
 
-上面代码中，`testable`函数的参数`target`，就是会被装饰的类。
+上面程式碼中，`testable`函式的引數`target`，就是會被裝飾的類。
 
-如果觉得一个参数不够用，可以在装饰器外面再封装一层函数。
+如果覺得一個引數不夠用，可以在裝飾器外面再封裝一層函式。
 
 ```javascript
 function testable(isTestable) {
@@ -78,11 +78,11 @@ class MyClass {}
 MyClass.isTestable // false
 ```
 
-上面代码中，装饰器`testable`可以接受参数，这就等于可以修改装饰器的行为。
+上面程式碼中，裝飾器`testable`可以接受引數，這就等於可以修改裝飾器的行為。
 
-注意，装饰器对类的行为的改变，是代码编译时发生的，而不是在运行时。这意味着，装饰器能在编译阶段运行代码。也就是说，装饰器本质就是编译时执行的函数。
+注意，裝飾器對類的行為的改變，是程式碼編譯時發生的，而不是在執行時。這意味著，裝飾器能在編譯階段執行程式碼。也就是說，裝飾器本質就是編譯時執行的函式。
 
-前面的例子是为类添加一个静态属性，如果想添加实例属性，可以通过目标类的`prototype`对象操作。
+前面的例子是為類新增一個靜態屬性，如果想新增例項屬性，可以透過目標類的`prototype`物件操作。
 
 ```javascript
 function testable(target) {
@@ -96,9 +96,9 @@ let obj = new MyTestableClass();
 obj.isTestable // true
 ```
 
-上面代码中，装饰器函数`testable`是在目标类的`prototype`对象上添加属性，因此就可以在实例上调用。
+上面程式碼中，裝飾器函式`testable`是在目標類的`prototype`物件上新增屬性，因此就可以在例項上呼叫。
 
-下面是另外一个例子。
+下面是另外一個例子。
 
 ```javascript
 // mixins.js
@@ -122,7 +122,7 @@ let obj = new MyClass();
 obj.foo() // 'foo'
 ```
 
-上面代码通过装饰器`mixins`，把`Foo`对象的方法添加到了`MyClass`的实例上面。可以用`Object.assign()`模拟这个功能。
+上面程式碼透過裝飾器`mixins`，把`Foo`物件的方法新增到了`MyClass`的例項上面。可以用`Object.assign()`模擬這個功能。
 
 ```javascript
 const Foo = {
@@ -137,7 +137,7 @@ let obj = new MyClass();
 obj.foo() // 'foo'
 ```
 
-实际开发中，React 与 Redux 库结合使用时，常常需要写成下面这样。
+實際開發中，React 與 Redux 庫結合使用時，常常需要寫成下面這樣。
 
 ```javascript
 class MyReactComponent extends React.Component {}
@@ -145,18 +145,18 @@ class MyReactComponent extends React.Component {}
 export default connect(mapStateToProps, mapDispatchToProps)(MyReactComponent);
 ```
 
-有了装饰器，就可以改写上面的代码。
+有了裝飾器，就可以改寫上面的程式碼。
 
 ```javascript
 @connect(mapStateToProps, mapDispatchToProps)
 export default class MyReactComponent extends React.Component {}
 ```
 
-相对来说，后一种写法看上去更容易理解。
+相對來說，後一種寫法看上去更容易理解。
 
-## 方法的装饰
+## 方法的裝飾
 
-装饰器不仅可以装饰类，还可以装饰类的属性。
+裝飾器不僅可以裝飾類，還可以裝飾類的屬性。
 
 ```javascript
 class Person {
@@ -165,13 +165,13 @@ class Person {
 }
 ```
 
-上面代码中，装饰器`readonly`用来装饰“类”的`name`方法。
+上面程式碼中，裝飾器`readonly`用來裝飾“類”的`name`方法。
 
-装饰器函数`readonly`一共可以接受三个参数。
+裝飾器函式`readonly`一共可以接受三個引數。
 
 ```javascript
 function readonly(target, name, descriptor){
-  // descriptor对象原来的值如下
+  // descriptor物件原來的值如下
   // {
   //   value: specifiedFunction,
   //   enumerable: false,
@@ -183,15 +183,15 @@ function readonly(target, name, descriptor){
 }
 
 readonly(Person.prototype, 'name', descriptor);
-// 类似于
+// 類似於
 Object.defineProperty(Person.prototype, 'name', descriptor);
 ```
 
-装饰器第一个参数是类的原型对象，上例是`Person.prototype`，装饰器的本意是要“装饰”类的实例，但是这个时候实例还没生成，所以只能去装饰原型（这不同于类的装饰，那种情况时`target`参数指的是类本身）；第二个参数是所要装饰的属性名，第三个参数是该属性的描述对象。
+裝飾器第一個引數是類的原型物件，上例是`Person.prototype`，裝飾器的本意是要“裝飾”類的例項，但是這個時候例項還沒生成，所以只能去裝飾原型（這不同於類的裝飾，那種情況時`target`引數指的是類本身）；第二個引數是所要裝飾的屬性名，第三個引數是該屬性的描述物件。
 
-另外，上面代码说明，装饰器（readonly）会修改属性的描述对象（descriptor），然后被修改的描述对象再用来定义属性。
+另外，上面程式碼說明，裝飾器（readonly）會修改屬性的描述物件（descriptor），然後被修改的描述物件再用來定義屬性。
 
-下面是另一个例子，修改属性描述对象的`enumerable`属性，使得该属性不可遍历。
+下面是另一個例子，修改屬性描述物件的`enumerable`屬性，使得該屬性不可遍歷。
 
 ```javascript
 class Person {
@@ -205,7 +205,7 @@ function nonenumerable(target, name, descriptor) {
 }
 ```
 
-下面的`@log`装饰器，可以起到输出日志的作用。
+下面的`@log`裝飾器，可以起到輸出日誌的作用。
 
 ```javascript
 class Math {
@@ -232,9 +232,9 @@ const math = new Math();
 math.add(2, 4);
 ```
 
-上面代码中，`@log`装饰器的作用就是在执行原始的操作之前，执行一次`console.log`，从而达到输出日志的目的。
+上面程式碼中，`@log`裝飾器的作用就是在執行原始的操作之前，執行一次`console.log`，從而達到輸出日誌的目的。
 
-装饰器有注释的作用。
+裝飾器有註釋的作用。
 
 ```javascript
 @testable
@@ -245,9 +245,9 @@ class Person {
 }
 ```
 
-从上面代码中，我们一眼就能看出，`Person`类是可测试的，而`name`方法是只读和不可枚举的。
+從上面程式碼中，我們一眼就能看出，`Person`類是可測試的，而`name`方法是隻讀和不可列舉的。
 
-下面是使用 Decorator 写法的[组件](https://github.com/ionic-team/stencil)，看上去一目了然。
+下面是使用 Decorator 寫法的[元件](https://github.com/ionic-team/stencil)，看上去一目瞭然。
 
 ```javascript
 @Component({
@@ -267,7 +267,7 @@ export class MyComponent {
 }
 ```
 
-如果同一个方法有多个装饰器，会像剥洋葱一样，先从外到内进入，然后由内向外执行。
+如果同一個方法有多個裝飾器，會像剝洋蔥一樣，先從外到內進入，然後由內向外執行。
 
 ```javascript
 function dec(id){
@@ -286,13 +286,13 @@ class Example {
 // executed 1
 ```
 
-上面代码中，外层装饰器`@dec(1)`先进入，但是内层装饰器`@dec(2)`先执行。
+上面程式碼中，外層裝飾器`@dec(1)`先進入，但是內層裝飾器`@dec(2)`先執行。
 
-除了注释，装饰器还能用来类型检查。所以，对于类来说，这项功能相当有用。从长期来看，它将是 JavaScript 代码静态分析的重要工具。
+除了註釋，裝飾器還能用來型別檢查。所以，對於類來說，這項功能相當有用。從長期來看，它將是 JavaScript 程式碼靜態分析的重要工具。
 
-## 为什么装饰器不能用于函数？
+## 為什麼裝飾器不能用於函式？
 
-装饰器只能用于类和类的方法，不能用于函数，因为存在函数提升。
+裝飾器只能用於類和類的方法，不能用於函式，因為存在函式提升。
 
 ```javascript
 var counter = 0;
@@ -306,7 +306,7 @@ function foo() {
 }
 ```
 
-上面的代码，意图是执行后`counter`等于 1，但是实际上结果是`counter`等于 0。因为函数提升，使得实际执行的代码是下面这样。
+上面的程式碼，意圖是執行後`counter`等於 1，但是實際上結果是`counter`等於 0。因為函式提升，使得實際執行的程式碼是下面這樣。
 
 ```javascript
 var counter;
@@ -323,7 +323,7 @@ add = function () {
 };
 ```
 
-下面是另一个例子。
+下面是另一個例子。
 
 ```javascript
 var readOnly = require("some-decorator");
@@ -333,7 +333,7 @@ function foo() {
 }
 ```
 
-上面代码也有问题，因为实际执行是下面这样。
+上面程式碼也有問題，因為實際執行是下面這樣。
 
 ```javascript
 var readOnly;
@@ -345,9 +345,9 @@ function foo() {
 readOnly = require("some-decorator");
 ```
 
-总之，由于存在函数提升，使得装饰器不能用于函数。类是不会提升的，所以就没有这方面的问题。
+總之，由於存在函式提升，使得裝飾器不能用於函式。類是不會提升的，所以就沒有這方面的問題。
 
-另一方面，如果一定要装饰函数，可以采用高阶函数的形式直接执行。
+另一方面，如果一定要裝飾函式，可以採用高階函式的形式直接執行。
 
 ```javascript
 function doSomething(name) {
@@ -368,11 +368,11 @@ const wrapped = loggingDecorator(doSomething);
 
 ## core-decorators.js
 
-[core-decorators.js](https://github.com/jayphelps/core-decorators.js)是一个第三方模块，提供了几个常见的装饰器，通过它可以更好地理解装饰器。
+[core-decorators.js](https://github.com/jayphelps/core-decorators.js)是一個第三方模組，提供了幾個常見的裝飾器，透過它可以更好地理解裝飾器。
 
 **（1）@autobind**
 
-`autobind`装饰器使得方法中的`this`对象，绑定原始对象。
+`autobind`裝飾器使得方法中的`this`物件，繫結原始物件。
 
 ```javascript
 import { autobind } from 'core-decorators';
@@ -393,7 +393,7 @@ getPerson() === person;
 
 **（2）@readonly**
 
-`readonly`装饰器使得属性或方法不可写。
+`readonly`裝飾器使得屬性或方法不可寫。
 
 ```javascript
 import { readonly } from 'core-decorators';
@@ -410,7 +410,7 @@ dinner.entree = 'salmon';
 
 **（3）@override**
 
-`override`装饰器检查子类的方法，是否正确覆盖了父类的同名方法，如果不正确会报错。
+`override`裝飾器檢查子類的方法，是否正確覆蓋了父類的同名方法，如果不正確會報錯。
 
 ```javascript
 import { override } from 'core-decorators';
@@ -436,9 +436,9 @@ class Child extends Parent {
 }
 ```
 
-**（4）@deprecate (别名@deprecated)**
+**（4）@deprecate (別名@deprecated)**
 
-`deprecate`或`deprecated`装饰器在控制台显示一条警告，表示该方法将废除。
+`deprecate`或`deprecated`裝飾器在控制檯顯示一條警告，表示該方法將廢除。
 
 ```javascript
 import { deprecate } from 'core-decorators';
@@ -471,7 +471,7 @@ person.facepalmHarder();
 
 **（5）@suppressWarnings**
 
-`suppressWarnings`装饰器抑制`deprecated`装饰器导致的`console.warn()`调用。但是，异步代码发出的调用除外。
+`suppressWarnings`裝飾器抑制`deprecated`裝飾器導致的`console.warn()`呼叫。但是，非同步程式碼發出的呼叫除外。
 
 ```javascript
 import { suppressWarnings } from 'core-decorators';
@@ -492,9 +492,9 @@ person.facepalmWithoutWarning();
 // no warning is logged
 ```
 
-## 使用装饰器实现自动发布事件
+## 使用裝飾器實現自動釋出事件
 
-我们可以使用装饰器，使得对象的方法被调用时，自动发出一个事件。
+我們可以使用裝飾器，使得物件的方法被呼叫時，自動發出一個事件。
 
 ```javascript
 const postal = require("postal/lib/postal.lodash");
@@ -503,9 +503,9 @@ export default function publish(topic, channel) {
   const channelName = channel || '/';
   const msgChannel = postal.channel(channelName);
   msgChannel.subscribe(topic, v => {
-    console.log('频道: ', channelName);
+    console.log('頻道: ', channelName);
     console.log('事件: ', topic);
-    console.log('数据: ', v);
+    console.log('資料: ', v);
   });
 
   return function(target, name, descriptor) {
@@ -519,7 +519,7 @@ export default function publish(topic, channel) {
 }
 ```
 
-上面代码定义了一个名为`publish`的装饰器，它通过改写`descriptor.value`，使得原方法被调用时，会自动发出一个事件。它使用的事件“发布/订阅”库是[Postal.js](https://github.com/postaljs/postal.js)。
+上面程式碼定義了一個名為`publish`的裝飾器，它透過改寫`descriptor.value`，使得原方法被呼叫時，會自動發出一個事件。它使用的事件“釋出/訂閱”庫是[Postal.js](https://github.com/postaljs/postal.js)。
 
 它的用法如下。
 
@@ -544,24 +544,24 @@ foo.someMethod();
 foo.anotherMethod();
 ```
 
-以后，只要调用`someMethod`或者`anotherMethod`，就会自动发出一个事件。
+以後，只要呼叫`someMethod`或者`anotherMethod`，就會自動發出一個事件。
 
 ```bash
 $ bash-node index.js
-频道:  component
+頻道:  component
 事件:  foo.some.message
-数据:  { my: 'data' }
+資料:  { my: 'data' }
 
-频道:  /
+頻道:  /
 事件:  foo.some.other
-数据:  undefined
+資料:  undefined
 ```
 
 ## Mixin
 
-在装饰器的基础上，可以实现`Mixin`模式。所谓`Mixin`模式，就是对象继承的一种替代方案，中文译为“混入”（mix in），意为在一个对象之中混入另外一个对象的方法。
+在裝飾器的基礎上，可以實現`Mixin`模式。所謂`Mixin`模式，就是物件繼承的一種替代方案，中文譯為“混入”（mix in），意為在一個物件之中混入另外一個物件的方法。
 
-请看下面的例子。
+請看下面的例子。
 
 ```javascript
 const Foo = {
@@ -576,9 +576,9 @@ let obj = new MyClass();
 obj.foo() // 'foo'
 ```
 
-上面代码之中，对象`Foo`有一个`foo`方法，通过`Object.assign`方法，可以将`foo`方法“混入”`MyClass`类，导致`MyClass`的实例`obj`对象都具有`foo`方法。这就是“混入”模式的一个简单实现。
+上面程式碼之中，物件`Foo`有一個`foo`方法，透過`Object.assign`方法，可以將`foo`方法“混入”`MyClass`類，導致`MyClass`的例項`obj`物件都具有`foo`方法。這就是“混入”模式的一個簡單實現。
 
-下面，我们部署一个通用脚本`mixins.js`，将 Mixin 写成一个装饰器。
+下面，我們部署一個通用指令碼`mixins.js`，將 Mixin 寫成一個裝飾器。
 
 ```javascript
 export function mixins(...list) {
@@ -588,7 +588,7 @@ export function mixins(...list) {
 }
 ```
 
-然后，就可以使用上面这个装饰器，为类“混入”各种方法。
+然後，就可以使用上面這個裝飾器，為類“混入”各種方法。
 
 ```javascript
 import { mixins } from './mixins';
@@ -604,9 +604,9 @@ let obj = new MyClass();
 obj.foo() // "foo"
 ```
 
-通过`mixins`这个装饰器，实现了在`MyClass`类上面“混入”`Foo`对象的`foo`方法。
+透過`mixins`這個裝飾器，實現了在`MyClass`類上面“混入”`Foo`物件的`foo`方法。
 
-不过，上面的方法会改写`MyClass`类的`prototype`对象，如果不喜欢这一点，也可以通过类的继承实现 Mixin。
+不過，上面的方法會改寫`MyClass`類的`prototype`物件，如果不喜歡這一點，也可以透過類的繼承實現 Mixin。
 
 ```javascript
 class MyClass extends MyBaseClass {
@@ -614,7 +614,7 @@ class MyClass extends MyBaseClass {
 }
 ```
 
-上面代码中，`MyClass`继承了`MyBaseClass`。如果我们想在`MyClass`里面“混入”一个`foo`方法，一个办法是在`MyClass`和`MyBaseClass`之间插入一个混入类，这个类具有`foo`方法，并且继承了`MyBaseClass`的所有方法，然后`MyClass`再继承这个类。
+上面程式碼中，`MyClass`繼承了`MyBaseClass`。如果我們想在`MyClass`裡面“混入”一個`foo`方法，一個辦法是在`MyClass`和`MyBaseClass`之間插入一個混入類，這個類具有`foo`方法，並且繼承了`MyBaseClass`的所有方法，然後`MyClass`再繼承這個類。
 
 ```javascript
 let MyMixin = (superclass) => class extends superclass {
@@ -624,9 +624,9 @@ let MyMixin = (superclass) => class extends superclass {
 };
 ```
 
-上面代码中，`MyMixin`是一个混入类生成器，接受`superclass`作为参数，然后返回一个继承`superclass`的子类，该子类包含一个`foo`方法。
+上面程式碼中，`MyMixin`是一個混入類生成器，接受`superclass`作為引數，然後返回一個繼承`superclass`的子類，該子類包含一個`foo`方法。
 
-接着，目标类再去继承这个混入类，就达到了“混入”`foo`方法的目的。
+接著，目標類再去繼承這個混入類，就達到了“混入”`foo`方法的目的。
 
 ```javascript
 class MyClass extends MyMixin(MyBaseClass) {
@@ -637,7 +637,7 @@ let c = new MyClass();
 c.foo(); // "foo from MyMixin"
 ```
 
-如果需要“混入”多个方法，就生成多个混入类。
+如果需要“混入”多個方法，就生成多個混入類。
 
 ```javascript
 class MyClass extends Mixin1(Mixin2(MyBaseClass)) {
@@ -645,7 +645,7 @@ class MyClass extends Mixin1(Mixin2(MyBaseClass)) {
 }
 ```
 
-这种写法的一个好处，是可以调用`super`，因此可以避免在“混入”过程中覆盖父类的同名方法。
+這種寫法的一個好處，是可以呼叫`super`，因此可以避免在“混入”過程中覆蓋父類的同名方法。
 
 ```javascript
 let Mixin1 = (superclass) => class extends superclass {
@@ -676,7 +676,7 @@ class C extends Mixin1(Mixin2(S)) {
 }
 ```
 
-上面代码中，每一次`混入`发生时，都调用了父类的`super.foo`方法，导致父类的同名方法没有被覆盖，行为被保留了下来。
+上面程式碼中，每一次`混入`發生時，都呼叫了父類的`super.foo`方法，導致父類的同名方法沒有被覆蓋，行為被保留了下來。
 
 ```javascript
 new C().foo()
@@ -688,9 +688,9 @@ new C().foo()
 
 ## Trait
 
-Trait 也是一种装饰器，效果与 Mixin 类似，但是提供更多功能，比如防止同名方法的冲突、排除混入某些方法、为混入的方法起别名等等。
+Trait 也是一種裝飾器，效果與 Mixin 類似，但是提供更多功能，比如防止同名方法的衝突、排除混入某些方法、為混入的方法起別名等等。
 
-下面采用[traits-decorator](https://github.com/CocktailJS/traits-decorator)这个第三方模块作为例子。这个模块提供的`traits`装饰器，不仅可以接受对象，还可以接受 ES6 类作为参数。
+下面採用[traits-decorator](https://github.com/CocktailJS/traits-decorator)這個第三方模組作為例子。這個模組提供的`traits`裝飾器，不僅可以接受物件，還可以接受 ES6 類作為引數。
 
 ```javascript
 import { traits } from 'traits-decorator';
@@ -711,9 +711,9 @@ obj.foo() // foo
 obj.bar() // bar
 ```
 
-上面代码中，通过`traits`装饰器，在`MyClass`类上面“混入”了`TFoo`类的`foo`方法和`TBar`对象的`bar`方法。
+上面程式碼中，透過`traits`裝飾器，在`MyClass`類上面“混入”了`TFoo`類的`foo`方法和`TBar`物件的`bar`方法。
 
-Trait 不允许“混入”同名方法。
+Trait 不允許“混入”同名方法。
 
 ```javascript
 import { traits } from 'traits-decorator';
@@ -729,15 +729,15 @@ const TBar = {
 
 @traits(TFoo, TBar)
 class MyClass { }
-// 报错
+// 報錯
 // throw new Error('Method named: ' + methodName + ' is defined twice.');
 //        ^
 // Error: Method named: foo is defined twice.
 ```
 
-上面代码中，`TFoo`和`TBar`都有`foo`方法，结果`traits`装饰器报错。
+上面程式碼中，`TFoo`和`TBar`都有`foo`方法，結果`traits`裝飾器報錯。
 
-一种解决方法是排除`TBar`的`foo`方法。
+一種解決方法是排除`TBar`的`foo`方法。
 
 ```javascript
 import { traits, excludes } from 'traits-decorator';
@@ -759,9 +759,9 @@ obj.foo() // foo
 obj.bar() // bar
 ```
 
-上面代码使用绑定运算符（::）在`TBar`上排除`foo`方法，混入时就不会报错了。
+上面程式碼使用繫結運算子（::）在`TBar`上排除`foo`方法，混入時就不會報錯了。
 
-另一种方法是为`TBar`的`foo`方法起一个别名。
+另一種方法是為`TBar`的`foo`方法起一個別名。
 
 ```javascript
 import { traits, alias } from 'traits-decorator';
@@ -784,18 +784,18 @@ obj.aliasFoo() // foo
 obj.bar() // bar
 ```
 
-上面代码为`TBar`的`foo`方法起了别名`aliasFoo`，于是`MyClass`也可以混入`TBar`的`foo`方法了。
+上面程式碼為`TBar`的`foo`方法起了別名`aliasFoo`，於是`MyClass`也可以混入`TBar`的`foo`方法了。
 
-`alias`和`excludes`方法，可以结合起来使用。
+`alias`和`excludes`方法，可以結合起來使用。
 
 ```javascript
 @traits(TExample::excludes('foo','bar')::alias({baz:'exampleBaz'}))
 class MyClass {}
 ```
 
-上面代码排除了`TExample`的`foo`方法和`bar`方法，为`baz`方法起了别名`exampleBaz`。
+上面程式碼排除了`TExample`的`foo`方法和`bar`方法，為`baz`方法起了別名`exampleBaz`。
 
-`as`方法则为上面的代码提供了另一种写法。
+`as`方法則為上面的程式碼提供了另一種寫法。
 
 ```javascript
 @traits(TExample::as({excludes:['foo', 'bar'], alias: {baz: 'exampleBaz'}}))

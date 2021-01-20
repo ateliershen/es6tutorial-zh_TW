@@ -1,10 +1,10 @@
-# Class 的基本语法
+# Class 的基本語法
 
-## 简介
+## 簡介
 
-### 类的由来
+### 類的由來
 
-JavaScript 语言中，生成实例对象的传统方法是通过构造函数。下面是一个例子。
+JavaScript 語言中，生成例項物件的傳統方法是透過建構函式。下面是一個例子。
 
 ```javascript
 function Point(x, y) {
@@ -19,11 +19,11 @@ Point.prototype.toString = function () {
 var p = new Point(1, 2);
 ```
 
-上面这种写法跟传统的面向对象语言（比如 C++ 和 Java）差异很大，很容易让新学习这门语言的程序员感到困惑。
+上面這種寫法跟傳統的面嚮物件語言（比如 C++ 和 Java）差異很大，很容易讓新學習這門語言的程式設計師感到困惑。
 
-ES6 提供了更接近传统语言的写法，引入了 Class（类）这个概念，作为对象的模板。通过`class`关键字，可以定义类。
+ES6 提供了更接近傳統語言的寫法，引入了 Class（類）這個概念，作為物件的模板。透過`class`關鍵字，可以定義類。
 
-基本上，ES6 的`class`可以看作只是一个语法糖，它的绝大部分功能，ES5 都可以做到，新的`class`写法只是让对象原型的写法更加清晰、更像面向对象编程的语法而已。上面的代码用 ES6 的`class`改写，就是下面这样。
+基本上，ES6 的`class`可以看作只是一個語法糖，它的絕大部分功能，ES5 都可以做到，新的`class`寫法只是讓物件原型的寫法更加清晰、更像面向物件程式設計的語法而已。上面的程式碼用 ES6 的`class`改寫，就是下面這樣。
 
 ```javascript
 class Point {
@@ -38,11 +38,11 @@ class Point {
 }
 ```
 
-上面代码定义了一个“类”，可以看到里面有一个`constructor()`方法，这就是构造方法，而`this`关键字则代表实例对象。这种新的 Class 写法，本质上与本章开头的 ES5 的构造函数`Point`是一致的。
+上面程式碼定義了一個“類”，可以看到裡面有一個`constructor()`方法，這就是構造方法，而`this`關鍵字則代表例項物件。這種新的 Class 寫法，本質上與本章開頭的 ES5 的建構函式`Point`是一致的。
 
-`Point`类除了构造方法，还定义了一个`toString()`方法。注意，定义`toString()`方法的时候，前面不需要加上`function`这个关键字，直接把函数定义放进去了就可以了。另外，方法与方法之间不需要逗号分隔，加了会报错。
+`Point`類除了構造方法，還定義了一個`toString()`方法。注意，定義`toString()`方法的時候，前面不需要加上`function`這個關鍵字，直接把函式定義放進去了就可以了。另外，方法與方法之間不需要逗號分隔，加了會報錯。
 
-ES6 的类，完全可以看作构造函数的另一种写法。
+ES6 的類，完全可以看作建構函式的另一種寫法。
 
 ```javascript
 class Point {
@@ -53,9 +53,9 @@ typeof Point // "function"
 Point === Point.prototype.constructor // true
 ```
 
-上面代码表明，类的数据类型就是函数，类本身就指向构造函数。
+上面程式碼表明，類的資料型別就是函式，類本身就指向建構函式。
 
-使用的时候，也是直接对类使用`new`命令，跟构造函数的用法完全一致。
+使用的時候，也是直接對類使用`new`命令，跟建構函式的用法完全一致。
 
 ```javascript
 class Bar {
@@ -68,7 +68,7 @@ const b = new Bar();
 b.doStuff() // "stuff"
 ```
 
-构造函数的`prototype`属性，在 ES6 的“类”上面继续存在。事实上，类的所有方法都定义在类的`prototype`属性上面。
+建構函式的`prototype`屬性，在 ES6 的“類”上面繼續存在。事實上，類的所有方法都定義在類的`prototype`屬性上面。
 
 ```javascript
 class Point {
@@ -85,7 +85,7 @@ class Point {
   }
 }
 
-// 等同于
+// 等同於
 
 Point.prototype = {
   constructor() {},
@@ -94,9 +94,9 @@ Point.prototype = {
 };
 ```
 
-上面代码中，`constructor()`、`toString()`、`toValue()`这三个方法，其实都是定义在`Point.prototype`上面。
+上面程式碼中，`constructor()`、`toString()`、`toValue()`這三個方法，其實都是定義在`Point.prototype`上面。
 
-因此，在类的实例上面调用方法，其实就是调用原型上的方法。
+因此，在類的例項上面呼叫方法，其實就是呼叫原型上的方法。
 
 ```javascript
 class B {}
@@ -105,9 +105,9 @@ const b = new B();
 b.constructor === B.prototype.constructor // true
 ```
 
-上面代码中，`b`是`B`类的实例，它的`constructor()`方法就是`B`类原型的`constructor()`方法。
+上面程式碼中，`b`是`B`類的例項，它的`constructor()`方法就是`B`類原型的`constructor()`方法。
 
-由于类的方法都定义在`prototype`对象上面，所以类的新方法可以添加在`prototype`对象上面。`Object.assign()`方法可以很方便地一次向类添加多个方法。
+由於類的方法都定義在`prototype`物件上面，所以類的新方法可以新增在`prototype`物件上面。`Object.assign()`方法可以很方便地一次向類新增多個方法。
 
 ```javascript
 class Point {
@@ -122,13 +122,13 @@ Object.assign(Point.prototype, {
 });
 ```
 
-`prototype`对象的`constructor()`属性，直接指向“类”的本身，这与 ES5 的行为是一致的。
+`prototype`物件的`constructor()`屬性，直接指向“類”的本身，這與 ES5 的行為是一致的。
 
 ```javascript
 Point.prototype.constructor === Point // true
 ```
 
-另外，类的内部所有定义的方法，都是不可枚举的（non-enumerable）。
+另外，類的內部所有定義的方法，都是不可列舉的（non-enumerable）。
 
 ```javascript
 class Point {
@@ -147,7 +147,7 @@ Object.getOwnPropertyNames(Point.prototype)
 // ["constructor","toString"]
 ```
 
-上面代码中，`toString()`方法是`Point`类内部定义的方法，它是不可枚举的。这一点与 ES5 的行为不一致。
+上面程式碼中，`toString()`方法是`Point`類內部定義的方法，它是不可列舉的。這一點與 ES5 的行為不一致。
 
 ```javascript
 var Point = function (x, y) {
@@ -164,25 +164,25 @@ Object.getOwnPropertyNames(Point.prototype)
 // ["constructor","toString"]
 ```
 
-上面代码采用 ES5 的写法，`toString()`方法就是可枚举的。
+上面程式碼採用 ES5 的寫法，`toString()`方法就是可列舉的。
 
 ### constructor 方法
 
-`constructor()`方法是类的默认方法，通过`new`命令生成对象实例时，自动调用该方法。一个类必须有`constructor()`方法，如果没有显式定义，一个空的`constructor()`方法会被默认添加。
+`constructor()`方法是類的預設方法，透過`new`命令生成物件例項時，自動呼叫該方法。一個類必須有`constructor()`方法，如果沒有顯式定義，一個空的`constructor()`方法會被預設新增。
 
 ```javascript
 class Point {
 }
 
-// 等同于
+// 等同於
 class Point {
   constructor() {}
 }
 ```
 
-上面代码中，定义了一个空的类`Point`，JavaScript 引擎会自动为它添加一个空的`constructor()`方法。
+上面程式碼中，定義了一個空的類`Point`，JavaScript 引擎會自動為它新增一個空的`constructor()`方法。
 
-`constructor()`方法默认返回实例对象（即`this`），完全可以指定返回另外一个对象。
+`constructor()`方法預設返回例項物件（即`this`），完全可以指定返回另外一個物件。
 
 ```javascript
 class Foo {
@@ -195,9 +195,9 @@ new Foo() instanceof Foo
 // false
 ```
 
-上面代码中，`constructor()`函数返回一个全新的对象，结果导致实例对象不是`Foo`类的实例。
+上面程式碼中，`constructor()`函式返回一個全新的物件，結果導致例項物件不是`Foo`類的例項。
 
-类必须使用`new`调用，否则会报错。这是它跟普通构造函数的一个主要区别，后者不用`new`也可以执行。
+類必須使用`new`呼叫，否則會報錯。這是它跟普通建構函式的一個主要區別，後者不用`new`也可以執行。
 
 ```javascript
 class Foo {
@@ -210,26 +210,26 @@ Foo()
 // TypeError: Class constructor Foo cannot be invoked without 'new'
 ```
 
-### 类的实例
+### 類的例項
 
-生成类的实例的写法，与 ES5 完全一样，也是使用`new`命令。前面说过，如果忘记加上`new`，像函数那样调用`Class`，将会报错。
+生成類的例項的寫法，與 ES5 完全一樣，也是使用`new`命令。前面說過，如果忘記加上`new`，像函式那樣呼叫`Class`，將會報錯。
 
 ```javascript
 class Point {
   // ...
 }
 
-// 报错
+// 報錯
 var point = Point(2, 3);
 
-// 正确
+// 正確
 var point = new Point(2, 3);
 ```
 
-与 ES5 一样，实例的属性除非显式定义在其本身（即定义在`this`对象上），否则都是定义在原型上（即定义在`class`上）。
+與 ES5 一樣，例項的屬性除非顯式定義在其本身（即定義在`this`物件上），否則都是定義在原型上（即定義在`class`上）。
 
 ```javascript
-//定义类
+//定義類
 class Point {
 
   constructor(x, y) {
@@ -253,9 +253,9 @@ point.hasOwnProperty('toString') // false
 point.__proto__.hasOwnProperty('toString') // true
 ```
 
-上面代码中，`x`和`y`都是实例对象`point`自身的属性（因为定义在`this`变量上），所以`hasOwnProperty()`方法返回`true`，而`toString()`是原型对象的属性（因为定义在`Point`类上），所以`hasOwnProperty()`方法返回`false`。这些都与 ES5 的行为保持一致。
+上面程式碼中，`x`和`y`都是例項物件`point`自身的屬性（因為定義在`this`變數上），所以`hasOwnProperty()`方法返回`true`，而`toString()`是原型物件的屬性（因為定義在`Point`類上），所以`hasOwnProperty()`方法返回`false`。這些都與 ES5 的行為保持一致。
 
-与 ES5 一样，类的所有实例共享一个原型对象。
+與 ES5 一樣，類的所有例項共享一個原型物件。
 
 ```javascript
 var p1 = new Point(2,3);
@@ -265,11 +265,11 @@ p1.__proto__ === p2.__proto__
 //true
 ```
 
-上面代码中，`p1`和`p2`都是`Point`的实例，它们的原型都是`Point.prototype`，所以`__proto__`属性是相等的。
+上面程式碼中，`p1`和`p2`都是`Point`的例項，它們的原型都是`Point.prototype`，所以`__proto__`屬性是相等的。
 
-这也意味着，可以通过实例的`__proto__`属性为“类”添加方法。
+這也意味著，可以透過例項的`__proto__`屬性為“類”新增方法。
 
-> `__proto__` 并不是语言本身的特性，这是各大厂商具体实现时添加的私有属性，虽然目前很多现代浏览器的 JS 引擎中都提供了这个私有属性，但依旧不建议在生产中使用该属性，避免对环境产生依赖。生产环境中，我们可以使用 `Object.getPrototypeOf` 方法来获取实例对象的原型，然后再来为原型添加方法/属性。
+> `__proto__` 並不是語言本身的特性，這是各大廠商具體實現時新增的私有屬性，雖然目前很多現代瀏覽器的 JS 引擎中都提供了這個私有屬性，但依舊不建議在生產中使用該屬性，避免對環境產生依賴。生產環境中，我們可以使用 `Object.getPrototypeOf` 方法來獲取例項物件的原型，然後再來為原型新增方法/屬性。
 
 ```javascript
 var p1 = new Point(2,3);
@@ -284,11 +284,11 @@ var p3 = new Point(4,2);
 p3.printName() // "Oops"
 ```
 
-上面代码在`p1`的原型上添加了一个`printName()`方法，由于`p1`的原型就是`p2`的原型，因此`p2`也可以调用这个方法。而且，此后新建的实例`p3`也可以调用这个方法。这意味着，使用实例的`__proto__`属性改写原型，必须相当谨慎，不推荐使用，因为这会改变“类”的原始定义，影响到所有实例。
+上面程式碼在`p1`的原型上添加了一個`printName()`方法，由於`p1`的原型就是`p2`的原型，因此`p2`也可以呼叫這個方法。而且，此後新建的例項`p3`也可以呼叫這個方法。這意味著，使用例項的`__proto__`屬性改寫原型，必須相當謹慎，不推薦使用，因為這會改變“類”的原始定義，影響到所有例項。
 
-### 取值函数（getter）和存值函数（setter）
+### 取值函式（getter）和存值函式（setter）
 
-与 ES5 一样，在“类”的内部可以使用`get`和`set`关键字，对某个属性设置存值函数和取值函数，拦截该属性的存取行为。
+與 ES5 一樣，在“類”的內部可以使用`get`和`set`關鍵字，對某個屬性設定存值函式和取值函式，攔截該屬性的存取行為。
 
 ```javascript
 class MyClass {
@@ -312,9 +312,9 @@ inst.prop
 // 'getter'
 ```
 
-上面代码中，`prop`属性有对应的存值函数和取值函数，因此赋值和读取行为都被自定义了。
+上面程式碼中，`prop`屬性有對應的存值函式和取值函式，因此賦值和讀取行為都被自定義了。
 
-存值函数和取值函数是设置在属性的 Descriptor 对象上的。
+存值函式和取值函式是設定在屬性的 Descriptor 物件上的。
 
 ```javascript
 class CustomHTMLElement {
@@ -339,11 +339,11 @@ var descriptor = Object.getOwnPropertyDescriptor(
 "set" in descriptor  // true
 ```
 
-上面代码中，存值函数和取值函数是定义在`html`属性的描述对象上面，这与 ES5 完全一致。
+上面程式碼中，存值函式和取值函式是定義在`html`屬性的描述物件上面，這與 ES5 完全一致。
 
-### 属性表达式
+### 屬性表示式
 
-类的属性名，可以采用表达式。
+類的屬性名，可以採用表示式。
 
 ```javascript
 let methodName = 'getArea';
@@ -359,11 +359,11 @@ class Square {
 }
 ```
 
-上面代码中，`Square`类的方法名`getArea`，是从表达式得到的。
+上面程式碼中，`Square`類的方法名`getArea`，是從表示式得到的。
 
-### Class 表达式
+### Class 表示式
 
-与函数一样，类也可以使用表达式的形式定义。
+與函式一樣，類也可以使用表示式的形式定義。
 
 ```javascript
 const MyClass = class Me {
@@ -373,7 +373,7 @@ const MyClass = class Me {
 };
 ```
 
-上面代码使用表达式定义了一个类。需要注意的是，这个类的名字是`Me`，但是`Me`只在 Class 的内部可用，指代当前类。在 Class 外部，这个类只能用`MyClass`引用。
+上面程式碼使用表示式定義了一個類。需要注意的是，這個類的名字是`Me`，但是`Me`只在 Class 的內部可用，指代當前類。在 Class 外部，這個類只能用`MyClass`引用。
 
 ```javascript
 let inst = new MyClass();
@@ -381,15 +381,15 @@ inst.getClassName() // Me
 Me.name // ReferenceError: Me is not defined
 ```
 
-上面代码表示，`Me`只在 Class 内部有定义。
+上面程式碼表示，`Me`只在 Class 內部有定義。
 
-如果类的内部没用到的话，可以省略`Me`，也就是可以写成下面的形式。
+如果類的內部沒用到的話，可以省略`Me`，也就是可以寫成下面的形式。
 
 ```javascript
 const MyClass = class { /* ... */ };
 ```
 
-采用 Class 表达式，可以写出立即执行的 Class。
+採用 Class 表示式，可以寫出立即執行的 Class。
 
 ```javascript
 let person = new class {
@@ -400,29 +400,29 @@ let person = new class {
   sayName() {
     console.log(this.name);
   }
-}('张三');
+}('張三');
 
-person.sayName(); // "张三"
+person.sayName(); // "張三"
 ```
 
-上面代码中，`person`是一个立即执行的类的实例。
+上面程式碼中，`person`是一個立即執行的類的例項。
 
-### 注意点
+### 注意點
 
-**（1）严格模式**
+**（1）嚴格模式**
 
-类和模块的内部，默认就是严格模式，所以不需要使用`use strict`指定运行模式。只要你的代码写在类或模块之中，就只有严格模式可用。考虑到未来所有的代码，其实都是运行在模块之中，所以 ES6 实际上把整个语言升级到了严格模式。
+類和模組的內部，預設就是嚴格模式，所以不需要使用`use strict`指定執行模式。只要你的程式碼寫在類或模組之中，就只有嚴格模式可用。考慮到未來所有的程式碼，其實都是執行在模組之中，所以 ES6 實際上把整個語言升級到了嚴格模式。
 
 **（2）不存在提升**
 
-类不存在变量提升（hoist），这一点与 ES5 完全不同。
+類不存在變數提升（hoist），這一點與 ES5 完全不同。
 
 ```javascript
 new Foo(); // ReferenceError
 class Foo {}
 ```
 
-上面代码中，`Foo`类使用在前，定义在后，这样会报错，因为 ES6 不会把类的声明提升到代码头部。这种规定的原因与下文要提到的继承有关，必须保证子类在父类之后定义。
+上面程式碼中，`Foo`類使用在前，定義在後，這樣會報錯，因為 ES6 不會把類的宣告提升到程式碼頭部。這種規定的原因與下文要提到的繼承有關，必須保證子類在父類之後定義。
 
 ```javascript
 {
@@ -432,22 +432,22 @@ class Foo {}
 }
 ```
 
-上面的代码不会报错，因为`Bar`继承`Foo`的时候，`Foo`已经有定义了。但是，如果存在`class`的提升，上面代码就会报错，因为`class`会被提升到代码头部，而`let`命令是不提升的，所以导致`Bar`继承`Foo`的时候，`Foo`还没有定义。
+上面的程式碼不會報錯，因為`Bar`繼承`Foo`的時候，`Foo`已經有定義了。但是，如果存在`class`的提升，上面程式碼就會報錯，因為`class`會被提升到程式碼頭部，而`let`命令是不提升的，所以導致`Bar`繼承`Foo`的時候，`Foo`還沒有定義。
 
-**（3）name 属性**
+**（3）name 屬性**
 
-由于本质上，ES6 的类只是 ES5 的构造函数的一层包装，所以函数的许多特性都被`Class`继承，包括`name`属性。
+由於本質上，ES6 的類只是 ES5 的建構函式的一層包裝，所以函式的許多特性都被`Class`繼承，包括`name`屬性。
 
 ```javascript
 class Point {}
 Point.name // "Point"
 ```
 
-`name`属性总是返回紧跟在`class`关键字后面的类名。
+`name`屬性總是返回緊跟在`class`關鍵字後面的類名。
 
 **（4）Generator 方法**
 
-如果某个方法之前加上星号（`*`），就表示该方法是一个 Generator 函数。
+如果某個方法之前加上星號（`*`），就表示該方法是一個 Generator 函式。
 
 ```javascript
 class Foo {
@@ -468,11 +468,11 @@ for (let x of new Foo('hello', 'world')) {
 // world
 ```
 
-上面代码中，`Foo`类的`Symbol.iterator`方法前有一个星号，表示该方法是一个 Generator 函数。`Symbol.iterator`方法返回一个`Foo`类的默认遍历器，`for...of`循环会自动调用这个遍历器。
+上面程式碼中，`Foo`類的`Symbol.iterator`方法前有一個星號，表示該方法是一個 Generator 函式。`Symbol.iterator`方法返回一個`Foo`類的預設遍歷器，`for...of`迴圈會自動呼叫這個遍歷器。
 
 **（5）this 的指向**
 
-类的方法内部如果含有`this`，它默认指向类的实例。但是，必须非常小心，一旦单独使用该方法，很可能报错。
+類的方法內部如果含有`this`，它預設指向類的例項。但是，必須非常小心，一旦單獨使用該方法，很可能報錯。
 
 ```javascript
 class Logger {
@@ -490,9 +490,9 @@ const { printName } = logger;
 printName(); // TypeError: Cannot read property 'print' of undefined
 ```
 
-上面代码中，`printName`方法中的`this`，默认指向`Logger`类的实例。但是，如果将这个方法提取出来单独使用，`this`会指向该方法运行时所在的环境（由于 class 内部是严格模式，所以 this 实际指向的是`undefined`），从而导致找不到`print`方法而报错。
+上面程式碼中，`printName`方法中的`this`，預設指向`Logger`類的例項。但是，如果將這個方法提取出來單獨使用，`this`會指向該方法執行時所在的環境（由於 class 內部是嚴格模式，所以 this 實際指向的是`undefined`），從而導致找不到`print`方法而報錯。
 
-一个比较简单的解决方法是，在构造方法中绑定`this`，这样就不会找不到`print`方法了。
+一個比較簡單的解決方法是，在構造方法中繫結`this`，這樣就不會找不到`print`方法了。
 
 ```javascript
 class Logger {
@@ -504,7 +504,7 @@ class Logger {
 }
 ```
 
-另一种解决方法是使用箭头函数。
+另一種解決方法是使用箭頭函式。
 
 ```javascript
 class Obj {
@@ -517,9 +517,9 @@ const myObj = new Obj();
 myObj.getThis() === myObj // true
 ```
 
-箭头函数内部的`this`总是指向定义时所在的对象。上面代码中，箭头函数位于构造函数内部，它的定义生效的时候，是在构造函数执行的时候。这时，箭头函数所在的运行环境，肯定是实例对象，所以`this`会总是指向实例对象。
+箭頭函式內部的`this`總是指向定義時所在的物件。上面程式碼中，箭頭函式位於建構函式內部，它的定義生效的時候，是在建構函式執行的時候。這時，箭頭函式所在的執行環境，肯定是例項物件，所以`this`會總是指向例項物件。
 
-还有一种解决方法是使用`Proxy`，获取方法的时候，自动绑定`this`。
+還有一種解決方法是使用`Proxy`，獲取方法的時候，自動繫結`this`。
 
 ```javascript
 function selfish (target) {
@@ -543,9 +543,9 @@ function selfish (target) {
 const logger = selfish(new Logger());
 ```
 
-## 静态方法
+## 靜態方法
 
-类相当于实例的原型，所有在类中定义的方法，都会被实例继承。如果在一个方法前，加上`static`关键字，就表示该方法不会被实例继承，而是直接通过类来调用，这就称为“静态方法”。
+類相當於例項的原型，所有在類中定義的方法，都會被例項繼承。如果在一個方法前，加上`static`關鍵字，就表示該方法不會被例項繼承，而是直接透過類來呼叫，這就稱為“靜態方法”。
 
 ```javascript
 class Foo {
@@ -561,9 +561,9 @@ foo.classMethod()
 // TypeError: foo.classMethod is not a function
 ```
 
-上面代码中，`Foo`类的`classMethod`方法前有`static`关键字，表明该方法是一个静态方法，可以直接在`Foo`类上调用（`Foo.classMethod()`），而不是在`Foo`类的实例上调用。如果在实例上调用静态方法，会抛出一个错误，表示不存在该方法。
+上面程式碼中，`Foo`類的`classMethod`方法前有`static`關鍵字，表明該方法是一個靜態方法，可以直接在`Foo`類上呼叫（`Foo.classMethod()`），而不是在`Foo`類的例項上呼叫。如果在例項上呼叫靜態方法，會丟擲一個錯誤，表示不存在該方法。
 
-注意，如果静态方法包含`this`关键字，这个`this`指的是类，而不是实例。
+注意，如果靜態方法包含`this`關鍵字，這個`this`指的是類，而不是例項。
 
 ```javascript
 class Foo {
@@ -581,9 +581,9 @@ class Foo {
 Foo.bar() // hello
 ```
 
-上面代码中，静态方法`bar`调用了`this.baz`，这里的`this`指的是`Foo`类，而不是`Foo`的实例，等同于调用`Foo.baz`。另外，从这个例子还可以看出，静态方法可以与非静态方法重名。
+上面程式碼中，靜態方法`bar`呼叫了`this.baz`，這裡的`this`指的是`Foo`類，而不是`Foo`的例項，等同於呼叫`Foo.baz`。另外，從這個例子還可以看出，靜態方法可以與非靜態方法重名。
 
-父类的静态方法，可以被子类继承。
+父類的靜態方法，可以被子類繼承。
 
 ```javascript
 class Foo {
@@ -598,9 +598,9 @@ class Bar extends Foo {
 Bar.classMethod() // 'hello'
 ```
 
-上面代码中，父类`Foo`有一个静态方法，子类`Bar`可以调用这个方法。
+上面程式碼中，父類`Foo`有一個靜態方法，子類`Bar`可以呼叫這個方法。
 
-静态方法也是可以从`super`对象上调用的。
+靜態方法也是可以從`super`物件上呼叫的。
 
 ```javascript
 class Foo {
@@ -618,9 +618,9 @@ class Bar extends Foo {
 Bar.classMethod() // "hello, too"
 ```
 
-## 实例属性的新写法
+## 例項屬性的新寫法
 
-实例属性除了定义在`constructor()`方法里面的`this`上面，也可以定义在类的最顶层。
+例項屬性除了定義在`constructor()`方法裡面的`this`上面，也可以定義在類的最頂層。
 
 ```javascript
 class IncreasingCounter {
@@ -637,7 +637,7 @@ class IncreasingCounter {
 }
 ```
 
-上面代码中，实例属性`this._count`定义在`constructor()`方法里面。另一种写法是，这个属性也可以定义在类的最顶层，其他都不变。
+上面程式碼中，例項屬性`this._count`定義在`constructor()`方法裡面。另一種寫法是，這個屬性也可以定義在類的最頂層，其他都不變。
 
 ```javascript
 class IncreasingCounter {
@@ -652,9 +652,9 @@ class IncreasingCounter {
 }
 ```
 
-上面代码中，实例属性`_count`与取值函数`value()`和`increment()`方法，处于同一个层级。这时，不需要在实例属性前面加上`this`。
+上面程式碼中，例項屬性`_count`與取值函式`value()`和`increment()`方法，處於同一個層級。這時，不需要在例項屬性前面加上`this`。
 
-这种新写法的好处是，所有实例对象自身的属性都定义在类的头部，看上去比较整齐，一眼就能看出这个类有哪些实例属性。
+這種新寫法的好處是，所有例項物件自身的屬性都定義在類的頭部，看上去比較整齊，一眼就能看出這個類有哪些例項屬性。
 
 ```javascript
 class foo {
@@ -667,11 +667,11 @@ class foo {
 }
 ```
 
-上面的代码，一眼就能看出，`foo`类有两个实例属性，一目了然。另外，写起来也比较简洁。
+上面的程式碼，一眼就能看出，`foo`類有兩個例項屬性，一目瞭然。另外，寫起來也比較簡潔。
 
-## 静态属性
+## 靜態屬性
 
-静态属性指的是 Class 本身的属性，即`Class.propName`，而不是定义在实例对象（`this`）上的属性。
+靜態屬性指的是 Class 本身的屬性，即`Class.propName`，而不是定義在例項物件（`this`）上的屬性。
 
 ```javascript
 class Foo {
@@ -681,9 +681,9 @@ Foo.prop = 1;
 Foo.prop // 1
 ```
 
-上面的写法为`Foo`类定义了一个静态属性`prop`。
+上面的寫法為`Foo`類定義了一個靜態屬性`prop`。
 
-目前，只有这种写法可行，因为 ES6 明确规定，Class 内部只有静态方法，没有静态属性。现在有一个[提案](https://github.com/tc39/proposal-class-fields)提供了类的静态属性，写法是在实例属性的前面，加上`static`关键字。
+目前，只有這種寫法可行，因為 ES6 明確規定，Class 內部只有靜態方法，沒有靜態屬性。現在有一個[提案](https://github.com/tc39/proposal-class-fields)提供了類的靜態屬性，寫法是在例項屬性的前面，加上`static`關鍵字。
 
 ```javascript
 class MyClass {
@@ -695,30 +695,30 @@ class MyClass {
 }
 ```
 
-这个新写法大大方便了静态属性的表达。
+這個新寫法大大方便了靜態屬性的表達。
 
 ```javascript
-// 老写法
+// 老寫法
 class Foo {
   // ...
 }
 Foo.prop = 1;
 
-// 新写法
+// 新寫法
 class Foo {
   static prop = 1;
 }
 ```
 
-上面代码中，老写法的静态属性定义在类的外部。整个类生成以后，再生成静态属性。这样让人很容易忽略这个静态属性，也不符合相关代码应该放在一起的代码组织原则。另外，新写法是显式声明（declarative），而不是赋值处理，语义更好。
+上面程式碼中，老寫法的靜態屬性定義在類的外部。整個類生成以後，再生成靜態屬性。這樣讓人很容易忽略這個靜態屬性，也不符合相關程式碼應該放在一起的程式碼組織原則。另外，新寫法是顯式宣告（declarative），而不是賦值處理，語義更好。
 
-## 私有方法和私有属性
+## 私有方法和私有屬性
 
-### 现有的解决方案
+### 現有的解決方案
 
-私有方法和私有属性，是只能在类的内部访问的方法和属性，外部不能访问。这是常见需求，有利于代码的封装，但 ES6 不提供，只能通过变通方法模拟实现。
+私有方法和私有屬性，是隻能在類的內部訪問的方法和屬性，外部不能訪問。這是常見需求，有利於程式碼的封裝，但 ES6 不提供，只能透過變通方法模擬實現。
 
-一种做法是在命名上加以区别。
+一種做法是在命名上加以區別。
 
 ```javascript
 class Widget {
@@ -737,9 +737,9 @@ class Widget {
 }
 ```
 
-上面代码中，`_bar()`方法前面的下划线，表示这是一个只限于内部使用的私有方法。但是，这种命名是不保险的，在类的外部，还是可以调用到这个方法。
+上面程式碼中，`_bar()`方法前面的下劃線，表示這是一個只限於內部使用的私有方法。但是，這種命名是不保險的，在類的外部，還是可以呼叫到這個方法。
 
-另一种方法就是索性将私有方法移出类，因为类内部的所有方法都是对外可见的。
+另一種方法就是索性將私有方法移出類，因為類內部的所有方法都是對外可見的。
 
 ```javascript
 class Widget {
@@ -755,9 +755,9 @@ function bar(baz) {
 }
 ```
 
-上面代码中，`foo`是公开方法，内部调用了`bar.call(this, baz)`。这使得`bar()`实际上成为了当前类的私有方法。
+上面程式碼中，`foo`是公開方法，內部呼叫了`bar.call(this, baz)`。這使得`bar()`實際上成為了當前類的私有方法。
 
-还有一种方法是利用`Symbol`值的唯一性，将私有方法的名字命名为一个`Symbol`值。
+還有一種方法是利用`Symbol`值的唯一性，將私有方法的名字命名為一個`Symbol`值。
 
 ```javascript
 const bar = Symbol('bar');
@@ -779,7 +779,7 @@ export default class myClass{
 };
 ```
 
-上面代码中，`bar`和`snaf`都是`Symbol`值，一般情况下无法获取到它们，因此达到了私有方法和私有属性的效果。但是也不是绝对不行，`Reflect.ownKeys()`依然可以拿到它们。
+上面程式碼中，`bar`和`snaf`都是`Symbol`值，一般情況下無法獲取到它們，因此達到了私有方法和私有屬性的效果。但是也不是絕對不行，`Reflect.ownKeys()`依然可以拿到它們。
 
 ```javascript
 const inst = new myClass();
@@ -788,11 +788,11 @@ Reflect.ownKeys(myClass.prototype)
 // [ 'constructor', 'foo', Symbol(bar) ]
 ```
 
-上面代码中，Symbol 值的属性名依然可以从类的外部拿到。
+上面程式碼中，Symbol 值的屬性名依然可以從類的外部拿到。
 
-### 私有属性的提案
+### 私有屬性的提案
 
-目前，有一个[提案](https://github.com/tc39/proposal-private-methods)，为`class`加了私有属性。方法是在属性名之前，使用`#`表示。
+目前，有一個[提案](https://github.com/tc39/proposal-private-methods)，為`class`加了私有屬性。方法是在屬性名之前，使用`#`表示。
 
 ```javascript
 class IncreasingCounter {
@@ -807,17 +807,17 @@ class IncreasingCounter {
 }
 ```
 
-上面代码中，`#count`就是私有属性，只能在类的内部使用（`this.#count`）。如果在类的外部使用，就会报错。
+上面程式碼中，`#count`就是私有屬性，只能在類的內部使用（`this.#count`）。如果在類的外部使用，就會報錯。
 
 ```javascript
 const counter = new IncreasingCounter();
-counter.#count // 报错
-counter.#count = 42 // 报错
+counter.#count // 報錯
+counter.#count = 42 // 報錯
 ```
 
-上面代码在类的外部，读取私有属性，就会报错。
+上面程式碼在類的外部，讀取私有屬性，就會報錯。
 
-下面是另一个例子。
+下面是另一個例子。
 
 ```javascript
 class Point {
@@ -837,11 +837,11 @@ class Point {
 }
 ```
 
-上面代码中，`#x`就是私有属性，在`Point`类之外是读取不到这个属性的。由于井号`#`是属性名的一部分，使用时必须带有`#`一起使用，所以`#x`和`x`是两个不同的属性。
+上面程式碼中，`#x`就是私有屬性，在`Point`類之外是讀取不到這個屬性的。由於井號`#`是屬性名的一部分，使用時必須帶有`#`一起使用，所以`#x`和`x`是兩個不同的屬性。
 
-之所以要引入一个新的前缀`#`表示私有属性，而没有采用`private`关键字，是因为 JavaScript 是一门动态语言，没有类型声明，使用独立的符号似乎是唯一的比较方便可靠的方法，能够准确地区分一种属性是否为私有属性。另外，Ruby 语言使用`@`表示私有属性，ES6 没有用这个符号而使用`#`，是因为`@`已经被留给了 Decorator。
+之所以要引入一個新的字首`#`表示私有屬性，而沒有采用`private`關鍵字，是因為 JavaScript 是一門動態語言，沒有型別宣告，使用獨立的符號似乎是唯一的比較方便可靠的方法，能夠準確地區分一種屬性是否為私有屬性。另外，Ruby 語言使用`@`表示私有屬性，ES6 沒有用這個符號而使用`#`，是因為`@`已經被留給了 Decorator。
 
-这种写法不仅可以写私有属性，还可以用来写私有方法。
+這種寫法不僅可以寫私有屬性，還可以用來寫私有方法。
 
 ```javascript
 class Foo {
@@ -860,9 +860,9 @@ class Foo {
 }
 ```
 
-上面代码中，`#sum()`就是一个私有方法。
+上面程式碼中，`#sum()`就是一個私有方法。
 
-另外，私有属性也可以设置 getter 和 setter 方法。
+另外，私有屬性也可以設定 getter 和 setter 方法。
 
 ```javascript
 class Counter {
@@ -880,9 +880,9 @@ class Counter {
 }
 ```
 
-上面代码中，`#x`是一个私有属性，它的读写都通过`get #x()`和`set #x()`来完成。
+上面程式碼中，`#x`是一個私有屬性，它的讀寫都透過`get #x()`和`set #x()`來完成。
 
-私有属性不限于从`this`引用，只要是在类的内部，实例也可以引用私有属性。
+私有屬性不限於從`this`引用，只要是在類的內部，例項也可以引用私有屬性。
 
 ```javascript
 class Foo {
@@ -895,9 +895,9 @@ class Foo {
 Foo.getPrivateValue(new Foo()); // 42
 ```
 
-上面代码允许从实例`foo`上面引用私有属性。
+上面程式碼允許從例項`foo`上面引用私有屬性。
 
-私有属性和私有方法前面，也可以加上`static`关键字，表示这是一个静态的私有属性或私有方法。
+私有屬性和私有方法前面，也可以加上`static`關鍵字，表示這是一個靜態的私有屬性或私有方法。
 
 ```javascript
 class FakeMath {
@@ -918,41 +918,41 @@ FakeMath.PI // 3.142857142857143
 FakeMath.random()
 // I heard you like random numbers…
 // 4
-FakeMath.#totallyRandomNumber // 报错
-FakeMath.#computeRandomNumber() // 报错
+FakeMath.#totallyRandomNumber // 報錯
+FakeMath.#computeRandomNumber() // 報錯
 ```
 
-上面代码中，`#totallyRandomNumber`是私有属性，`#computeRandomNumber()`是私有方法，只能在`FakeMath`这个类的内部调用，外部调用就会报错。
+上面程式碼中，`#totallyRandomNumber`是私有屬性，`#computeRandomNumber()`是私有方法，只能在`FakeMath`這個類的內部呼叫，外部呼叫就會報錯。
 
-## new.target 属性
+## new.target 屬性
 
-`new`是从构造函数生成实例对象的命令。ES6 为`new`命令引入了一个`new.target`属性，该属性一般用在构造函数之中，返回`new`命令作用于的那个构造函数。如果构造函数不是通过`new`命令或`Reflect.construct()`调用的，`new.target`会返回`undefined`，因此这个属性可以用来确定构造函数是怎么调用的。
+`new`是從建構函式生成例項物件的命令。ES6 為`new`命令引入了一個`new.target`屬性，該屬性一般用在建構函式之中，返回`new`命令作用於的那個建構函式。如果建構函式不是透過`new`命令或`Reflect.construct()`呼叫的，`new.target`會返回`undefined`，因此這個屬性可以用來確定建構函式是怎麼呼叫的。
 
 ```javascript
 function Person(name) {
   if (new.target !== undefined) {
     this.name = name;
   } else {
-    throw new Error('必须使用 new 命令生成实例');
+    throw new Error('必須使用 new 命令生成例項');
   }
 }
 
-// 另一种写法
+// 另一種寫法
 function Person(name) {
   if (new.target === Person) {
     this.name = name;
   } else {
-    throw new Error('必须使用 new 命令生成实例');
+    throw new Error('必須使用 new 命令生成例項');
   }
 }
 
-var person = new Person('张三'); // 正确
-var notAPerson = Person.call(person, '张三');  // 报错
+var person = new Person('張三'); // 正確
+var notAPerson = Person.call(person, '張三');  // 報錯
 ```
 
-上面代码确保构造函数只能通过`new`命令调用。
+上面程式碼確保建構函式只能透過`new`命令呼叫。
 
-Class 内部调用`new.target`，返回当前 Class。
+Class 內部呼叫`new.target`，返回當前 Class。
 
 ```javascript
 class Rectangle {
@@ -963,10 +963,10 @@ class Rectangle {
   }
 }
 
-var obj = new Rectangle(3, 4); // 输出 true
+var obj = new Rectangle(3, 4); // 輸出 true
 ```
 
-需要注意的是，子类继承父类时，`new.target`会返回子类。
+需要注意的是，子類繼承父類時，`new.target`會返回子類。
 
 ```javascript
 class Rectangle {
@@ -982,18 +982,18 @@ class Square extends Rectangle {
   }
 }
 
-var obj = new Square(3); // 输出 false
+var obj = new Square(3); // 輸出 false
 ```
 
-上面代码中，`new.target`会返回子类。
+上面程式碼中，`new.target`會返回子類。
 
-利用这个特点，可以写出不能独立使用、必须继承后才能使用的类。
+利用這個特點，可以寫出不能獨立使用、必須繼承後才能使用的類。
 
 ```javascript
 class Shape {
   constructor() {
     if (new.target === Shape) {
-      throw new Error('本类不能实例化');
+      throw new Error('本類不能例項化');
     }
   }
 }
@@ -1005,10 +1005,10 @@ class Rectangle extends Shape {
   }
 }
 
-var x = new Shape();  // 报错
-var y = new Rectangle(3, 4);  // 正确
+var x = new Shape();  // 報錯
+var y = new Rectangle(3, 4);  // 正確
 ```
 
-上面代码中，`Shape`类不能被实例化，只能用于继承。
+上面程式碼中，`Shape`類不能被例項化，只能用於繼承。
 
-注意，在函数外部，使用`new.target`会报错。
+注意，在函式外部，使用`new.target`會報錯。

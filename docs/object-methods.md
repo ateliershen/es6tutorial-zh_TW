@@ -1,12 +1,12 @@
-# 对象的新增方法
+# 物件的新增方法
 
-本章介绍 Object 对象的新增方法。
+本章介紹 Object 物件的新增方法。
 
 ## Object.is()
 
-ES5 比较两个值是否相等，只有两个运算符：相等运算符（`==`）和严格相等运算符（`===`）。它们都有缺点，前者会自动转换数据类型，后者的`NaN`不等于自身，以及`+0`等于`-0`。JavaScript 缺乏一种运算，在所有环境中，只要两个值是一样的，它们就应该相等。
+ES5 比較兩個值是否相等，只有兩個運算子：相等運算子（`==`）和嚴格相等運算子（`===`）。它們都有缺點，前者會自動轉換資料型別，後者的`NaN`不等於自身，以及`+0`等於`-0`。JavaScript 缺乏一種運算，在所有環境中，只要兩個值是一樣的，它們就應該相等。
 
-ES6 提出“Same-value equality”（同值相等）算法，用来解决这个问题。`Object.is`就是部署这个算法的新方法。它用来比较两个值是否严格相等，与严格比较运算符（===）的行为基本一致。
+ES6 提出“Same-value equality”（同值相等）演算法，用來解決這個問題。`Object.is`就是部署這個演算法的新方法。它用來比較兩個值是否嚴格相等，與嚴格比較運算子（===）的行為基本一致。
 
 ```javascript
 Object.is('foo', 'foo')
@@ -15,7 +15,7 @@ Object.is({}, {})
 // false
 ```
 
-不同之处只有两个：一是`+0`不等于`-0`，二是`NaN`等于自身。
+不同之處只有兩個：一是`+0`不等於`-0`，二是`NaN`等於自身。
 
 ```javascript
 +0 === -0 //true
@@ -25,16 +25,16 @@ Object.is(+0, -0) // false
 Object.is(NaN, NaN) // true
 ```
 
-ES5 可以通过下面的代码，部署`Object.is`。
+ES5 可以透過下面的程式碼，部署`Object.is`。
 
 ```javascript
 Object.defineProperty(Object, 'is', {
   value: function(x, y) {
     if (x === y) {
-      // 针对+0 不等于 -0的情况
+      // 針對+0 不等於 -0的情況
       return x !== 0 || 1 / x === 1 / y;
     }
-    // 针对NaN的情况
+    // 針對NaN的情況
     return x !== x && y !== y;
   },
   configurable: true,
@@ -47,7 +47,7 @@ Object.defineProperty(Object, 'is', {
 
 ### 基本用法
 
-`Object.assign()`方法用于对象的合并，将源对象（source）的所有可枚举属性，复制到目标对象（target）。
+`Object.assign()`方法用於物件的合併，將源物件（source）的所有可列舉屬性，複製到目標物件（target）。
 
 ```javascript
 const target = { a: 1 };
@@ -59,9 +59,9 @@ Object.assign(target, source1, source2);
 target // {a:1, b:2, c:3}
 ```
 
-`Object.assign()`方法的第一个参数是目标对象，后面的参数都是源对象。
+`Object.assign()`方法的第一個引數是目標物件，後面的引數都是源物件。
 
-注意，如果目标对象与源对象有同名属性，或多个源对象有同名属性，则后面的属性会覆盖前面的属性。
+注意，如果目標物件與源物件有同名屬性，或多個源物件有同名屬性，則後面的屬性會覆蓋前面的屬性。
 
 ```javascript
 const target = { a: 1, b: 1 };
@@ -73,27 +73,27 @@ Object.assign(target, source1, source2);
 target // {a:1, b:2, c:3}
 ```
 
-如果只有一个参数，`Object.assign()`会直接返回该参数。
+如果只有一個引數，`Object.assign()`會直接返回該引數。
 
 ```javascript
 const obj = {a: 1};
 Object.assign(obj) === obj // true
 ```
 
-如果该参数不是对象，则会先转成对象，然后返回。
+如果該引數不是物件，則會先轉成物件，然後返回。
 
 ```javascript
 typeof Object.assign(2) // "object"
 ```
 
-由于`undefined`和`null`无法转成对象，所以如果它们作为参数，就会报错。
+由於`undefined`和`null`無法轉成物件，所以如果它們作為引數，就會報錯。
 
 ```javascript
-Object.assign(undefined) // 报错
-Object.assign(null) // 报错
+Object.assign(undefined) // 報錯
+Object.assign(null) // 報錯
 ```
 
-如果非对象参数出现在源对象的位置（即非首参数），那么处理规则有所不同。首先，这些参数都会转成对象，如果无法转成对象，就会跳过。这意味着，如果`undefined`和`null`不在首参数，就不会报错。
+如果非物件引數出現在源物件的位置（即非首引數），那麼處理規則有所不同。首先，這些引數都會轉成物件，如果無法轉成物件，就會跳過。這意味著，如果`undefined`和`null`不在首引數，就不會報錯。
 
 ```javascript
 let obj = {a: 1};
@@ -101,7 +101,7 @@ Object.assign(obj, undefined) === obj // true
 Object.assign(obj, null) === obj // true
 ```
 
-其他类型的值（即数值、字符串和布尔值）不在首参数，也不会报错。但是，除了字符串会以数组形式，拷贝入目标对象，其他值都不会产生效果。
+其他型別的值（即數值、字串和布林值）不在首引數，也不會報錯。但是，除了字串會以陣列形式，複製入目標物件，其他值都不會產生效果。
 
 ```javascript
 const v1 = 'abc';
@@ -112,7 +112,7 @@ const obj = Object.assign({}, v1, v2, v3);
 console.log(obj); // { "0": "a", "1": "b", "2": "c" }
 ```
 
-上面代码中，`v1`、`v2`、`v3`分别是字符串、布尔值和数值，结果只有字符串合入目标对象（以字符数组的形式），数值和布尔值都会被忽略。这是因为只有字符串的包装对象，会产生可枚举属性。
+上面程式碼中，`v1`、`v2`、`v3`分別是字串、布林值和數值，結果只有字串合入目標物件（以字元陣列的形式），數值和布林值都會被忽略。這是因為只有字串的包裝物件，會產生可列舉屬性。
 
 ```javascript
 Object(true) // {[[PrimitiveValue]]: true}
@@ -120,9 +120,9 @@ Object(10)  //  {[[PrimitiveValue]]: 10}
 Object('abc') // {0: "a", 1: "b", 2: "c", length: 3, [[PrimitiveValue]]: "abc"}
 ```
 
-上面代码中，布尔值、数值、字符串分别转成对应的包装对象，可以看到它们的原始值都在包装对象的内部属性`[[PrimitiveValue]]`上面，这个属性是不会被`Object.assign()`拷贝的。只有字符串的包装对象，会产生可枚举的实义属性，那些属性则会被拷贝。
+上面程式碼中，布林值、數值、字串分別轉成對應的包裝物件，可以看到它們的原始值都在包裝物件的內部屬性`[[PrimitiveValue]]`上面，這個屬性是不會被`Object.assign()`複製的。只有字串的包裝物件，會產生可列舉的實義屬性，那些屬性則會被複製。
 
-`Object.assign()`拷贝的属性是有限制的，只拷贝源对象的自身属性（不拷贝继承属性），也不拷贝不可枚举的属性（`enumerable: false`）。
+`Object.assign()`複製的屬性是有限制的，只複製源物件的自身屬性（不複製繼承屬性），也不複製不可列舉的屬性（`enumerable: false`）。
 
 ```javascript
 Object.assign({b: 'c'},
@@ -134,20 +134,20 @@ Object.assign({b: 'c'},
 // { b: 'c' }
 ```
 
-上面代码中，`Object.assign()`要拷贝的对象只有一个不可枚举属性`invisible`，这个属性并没有被拷贝进去。
+上面程式碼中，`Object.assign()`要複製的物件只有一個不可列舉屬性`invisible`，這個屬性並沒有被複製進去。
 
-属性名为 Symbol 值的属性，也会被`Object.assign()`拷贝。
+屬性名為 Symbol 值的屬性，也會被`Object.assign()`複製。
 
 ```javascript
 Object.assign({ a: 'b' }, { [Symbol('c')]: 'd' })
 // { a: 'b', Symbol(c): 'd' }
 ```
 
-### 注意点
+### 注意點
 
-**（1）浅拷贝**
+**（1）淺複製**
 
-`Object.assign()`方法实行的是浅拷贝，而不是深拷贝。也就是说，如果源对象某个属性的值是对象，那么目标对象拷贝得到的是这个对象的引用。
+`Object.assign()`方法實行的是淺複製，而不是深複製。也就是說，如果源物件某個屬性的值是物件，那麼目標物件複製得到的是這個物件的引用。
 
 ```javascript
 const obj1 = {a: {b: 1}};
@@ -157,11 +157,11 @@ obj1.a.b = 2;
 obj2.a.b // 2
 ```
 
-上面代码中，源对象`obj1`的`a`属性的值是一个对象，`Object.assign()`拷贝得到的是这个对象的引用。这个对象的任何变化，都会反映到目标对象上面。
+上面程式碼中，源物件`obj1`的`a`屬性的值是一個物件，`Object.assign()`複製得到的是這個物件的引用。這個物件的任何變化，都會反映到目標物件上面。
 
-**（2）同名属性的替换**
+**（2）同名屬性的替換**
 
-对于这种嵌套的对象，一旦遇到同名属性，`Object.assign()`的处理方法是替换，而不是添加。
+對於這種巢狀的物件，一旦遇到同名屬性，`Object.assign()`的處理方法是替換，而不是新增。
 
 ```javascript
 const target = { a: { b: 'c', d: 'e' } }
@@ -170,24 +170,24 @@ Object.assign(target, source)
 // { a: { b: 'hello' } }
 ```
 
-上面代码中，`target`对象的`a`属性被`source`对象的`a`属性整个替换掉了，而不会得到`{ a: { b: 'hello', d: 'e' } }`的结果。这通常不是开发者想要的，需要特别小心。
+上面程式碼中，`target`物件的`a`屬性被`source`物件的`a`屬性整個替換掉了，而不會得到`{ a: { b: 'hello', d: 'e' } }`的結果。這通常不是開發者想要的，需要特別小心。
 
-一些函数库提供`Object.assign()`的定制版本（比如 Lodash 的`_.defaultsDeep()`方法），可以得到深拷贝的合并。
+一些函式庫提供`Object.assign()`的定製版本（比如 Lodash 的`_.defaultsDeep()`方法），可以得到深複製的合併。
 
-**（3）数组的处理**
+**（3）陣列的處理**
 
-`Object.assign()`可以用来处理数组，但是会把数组视为对象。
+`Object.assign()`可以用來處理陣列，但是會把陣列視為物件。
 
 ```javascript
 Object.assign([1, 2, 3], [4, 5])
 // [4, 5, 3]
 ```
 
-上面代码中，`Object.assign()`把数组视为属性名为 0、1、2 的对象，因此源数组的 0 号属性`4`覆盖了目标数组的 0 号属性`1`。
+上面程式碼中，`Object.assign()`把陣列視為屬性名為 0、1、2 的物件，因此源陣列的 0 號屬性`4`覆蓋了目標陣列的 0 號屬性`1`。
 
-**（4）取值函数的处理**
+**（4）取值函式的處理**
 
-`Object.assign()`只能进行值的复制，如果要复制的值是一个取值函数，那么将求值后再复制。
+`Object.assign()`只能進行值的複製，如果要複製的值是一個取值函式，那麼將求值後再複製。
 
 ```javascript
 const source = {
@@ -199,13 +199,13 @@ Object.assign(target, source)
 // { foo: 1 }
 ```
 
-上面代码中，`source`对象的`foo`属性是一个取值函数，`Object.assign()`不会复制这个取值函数，只会拿到值以后，将这个值复制过去。
+上面程式碼中，`source`物件的`foo`屬性是一個取值函式，`Object.assign()`不會複製這個取值函式，只會拿到值以後，將這個值複製過去。
 
-### 常见用途
+### 常見用途
 
-`Object.assign()`方法有很多用处。
+`Object.assign()`方法有很多用處。
 
-**（1）为对象添加属性**
+**（1）為物件新增屬性**
 
 ```javascript
 class Point {
@@ -215,9 +215,9 @@ class Point {
 }
 ```
 
-上面方法通过`Object.assign()`方法，将`x`属性和`y`属性添加到`Point`类的对象实例。
+上面方法透過`Object.assign()`方法，將`x`屬性和`y`屬性新增到`Point`類的物件例項。
 
-**（2）为对象添加方法**
+**（2）為物件新增方法**
 
 ```javascript
 Object.assign(SomeClass.prototype, {
@@ -229,7 +229,7 @@ Object.assign(SomeClass.prototype, {
   }
 });
 
-// 等同于下面的写法
+// 等同於下面的寫法
 SomeClass.prototype.someMethod = function (arg1, arg2) {
   ···
 };
@@ -238,9 +238,9 @@ SomeClass.prototype.anotherMethod = function () {
 };
 ```
 
-上面代码使用了对象属性的简洁表示法，直接将两个函数放在大括号中，再使用`assign()`方法添加到`SomeClass.prototype`之中。
+上面程式碼使用了物件屬性的簡潔表示法，直接將兩個函式放在大括號中，再使用`assign()`方法新增到`SomeClass.prototype`之中。
 
-**（3）克隆对象**
+**（3）克隆物件**
 
 ```javascript
 function clone(origin) {
@@ -248,9 +248,9 @@ function clone(origin) {
 }
 ```
 
-上面代码将原始对象拷贝到一个空对象，就得到了原始对象的克隆。
+上面程式碼將原始物件複製到一個空物件，就得到了原始物件的克隆。
 
-不过，采用这种方法克隆，只能克隆原始对象自身的值，不能克隆它继承的值。如果想要保持继承链，可以采用下面的代码。
+不過，採用這種方法克隆，只能克隆原始物件自身的值，不能克隆它繼承的值。如果想要保持繼承鏈，可以採用下面的程式碼。
 
 ```javascript
 function clone(origin) {
@@ -259,23 +259,23 @@ function clone(origin) {
 }
 ```
 
-**（4）合并多个对象**
+**（4）合併多個物件**
 
-将多个对象合并到某个对象。
+將多個物件合併到某個物件。
 
 ```javascript
 const merge =
   (target, ...sources) => Object.assign(target, ...sources);
 ```
 
-如果希望合并后返回一个新对象，可以改写上面函数，对一个空对象合并。
+如果希望合併後返回一個新物件，可以改寫上面函式，對一個空物件合併。
 
 ```javascript
 const merge =
   (...sources) => Object.assign({}, ...sources);
 ```
 
-**（5）为属性指定默认值**
+**（5）為屬性指定預設值**
 
 ```javascript
 const DEFAULTS = {
@@ -290,9 +290,9 @@ function processContent(options) {
 }
 ```
 
-上面代码中，`DEFAULTS`对象是默认值，`options`对象是用户提供的参数。`Object.assign()`方法将`DEFAULTS`和`options`合并成一个新对象，如果两者有同名属性，则`options`的属性值会覆盖`DEFAULTS`的属性值。
+上面程式碼中，`DEFAULTS`物件是預設值，`options`物件是使用者提供的引數。`Object.assign()`方法將`DEFAULTS`和`options`合併成一個新物件，如果兩者有同名屬性，則`options`的屬性值會覆蓋`DEFAULTS`的屬性值。
 
-注意，由于存在浅拷贝的问题，`DEFAULTS`对象和`options`对象的所有属性的值，最好都是简单类型，不要指向另一个对象。否则，`DEFAULTS`对象的该属性很可能不起作用。
+注意，由於存在淺複製的問題，`DEFAULTS`物件和`options`物件的所有屬性的值，最好都是簡單型別，不要指向另一個物件。否則，`DEFAULTS`物件的該屬性很可能不起作用。
 
 ```javascript
 const DEFAULTS = {
@@ -308,11 +308,11 @@ processContent({ url: {port: 8000} })
 // }
 ```
 
-上面代码的原意是将`url.port`改成 8000，`url.host`不变。实际结果却是`options.url`覆盖掉`DEFAULTS.url`，所以`url.host`就不存在了。
+上面程式碼的原意是將`url.port`改成 8000，`url.host`不變。實際結果卻是`options.url`覆蓋掉`DEFAULTS.url`，所以`url.host`就不存在了。
 
 ## Object.getOwnPropertyDescriptors()
 
-ES5 的`Object.getOwnPropertyDescriptor()`方法会返回某个对象属性的描述对象（descriptor）。ES2017 引入了`Object.getOwnPropertyDescriptors()`方法，返回指定对象所有自身属性（非继承属性）的描述对象。
+ES5 的`Object.getOwnPropertyDescriptor()`方法會返回某個物件屬性的描述物件（descriptor）。ES2017 引入了`Object.getOwnPropertyDescriptors()`方法，返回指定物件所有自身屬性（非繼承屬性）的描述物件。
 
 ```javascript
 const obj = {
@@ -333,9 +333,9 @@ Object.getOwnPropertyDescriptors(obj)
 //      configurable: true } }
 ```
 
-上面代码中，`Object.getOwnPropertyDescriptors()`方法返回一个对象，所有原对象的属性名都是该对象的属性名，对应的属性值就是该属性的描述对象。
+上面程式碼中，`Object.getOwnPropertyDescriptors()`方法返回一個物件，所有原物件的屬性名都是該物件的屬性名，對應的屬性值就是該屬性的描述物件。
 
-该方法的实现非常容易。
+該方法的實現非常容易。
 
 ```javascript
 function getOwnPropertyDescriptors(obj) {
@@ -347,7 +347,7 @@ function getOwnPropertyDescriptors(obj) {
 }
 ```
 
-该方法的引入目的，主要是为了解决`Object.assign()`无法正确拷贝`get`属性和`set`属性的问题。
+該方法的引入目的，主要是為了解決`Object.assign()`無法正確複製`get`屬性和`set`屬性的問題。
 
 ```javascript
 const source = {
@@ -366,9 +366,9 @@ Object.getOwnPropertyDescriptor(target1, 'foo')
 //   configurable: true }
 ```
 
-上面代码中，`source`对象的`foo`属性的值是一个赋值函数，`Object.assign`方法将这个属性拷贝给`target1`对象，结果该属性的值变成了`undefined`。这是因为`Object.assign`方法总是拷贝一个属性的值，而不会拷贝它背后的赋值方法或取值方法。
+上面程式碼中，`source`物件的`foo`屬性的值是一個賦值函式，`Object.assign`方法將這個屬性複製給`target1`物件，結果該屬性的值變成了`undefined`。這是因為`Object.assign`方法總是複製一個屬性的值，而不會複製它背後的賦值方法或取值方法。
 
-这时，`Object.getOwnPropertyDescriptors()`方法配合`Object.defineProperties()`方法，就可以实现正确拷贝。
+這時，`Object.getOwnPropertyDescriptors()`方法配合`Object.defineProperties()`方法，就可以實現正確複製。
 
 ```javascript
 const source = {
@@ -386,7 +386,7 @@ Object.getOwnPropertyDescriptor(target2, 'foo')
 //   configurable: true }
 ```
 
-上面代码中，两个对象合并的逻辑可以写成一个函数。
+上面程式碼中，兩個物件合併的邏輯可以寫成一個函式。
 
 ```javascript
 const shallowMerge = (target, source) => Object.defineProperties(
@@ -395,7 +395,7 @@ const shallowMerge = (target, source) => Object.defineProperties(
 );
 ```
 
-`Object.getOwnPropertyDescriptors()`方法的另一个用处，是配合`Object.create()`方法，将对象属性克隆到一个新对象。这属于浅拷贝。
+`Object.getOwnPropertyDescriptors()`方法的另一個用處，是配合`Object.create()`方法，將物件屬性克隆到一個新物件。這屬於淺複製。
 
 ```javascript
 const clone = Object.create(Object.getPrototypeOf(obj),
@@ -409,9 +409,9 @@ const shallowClone = (obj) => Object.create(
 );
 ```
 
-上面代码会克隆对象`obj`。
+上面程式碼會克隆物件`obj`。
 
-另外，`Object.getOwnPropertyDescriptors()`方法可以实现一个对象继承另一个对象。以前，继承另一个对象，常常写成下面这样。
+另外，`Object.getOwnPropertyDescriptors()`方法可以實現一個物件繼承另一個物件。以前，繼承另一個物件，常常寫成下面這樣。
 
 ```javascript
 const obj = {
@@ -420,7 +420,7 @@ const obj = {
 };
 ```
 
-ES6 规定`__proto__`只有浏览器要部署，其他环境不用部署。如果去除`__proto__`，上面代码就要改成下面这样。
+ES6 規定`__proto__`只有瀏覽器要部署，其他環境不用部署。如果去除`__proto__`，上面程式碼就要改成下面這樣。
 
 ```javascript
 const obj = Object.create(prot);
@@ -436,7 +436,7 @@ const obj = Object.assign(
 );
 ```
 
-有了`Object.getOwnPropertyDescriptors()`，我们就有了另一种写法。
+有了`Object.getOwnPropertyDescriptors()`，我們就有了另一種寫法。
 
 ```javascript
 const obj = Object.create(
@@ -447,7 +447,7 @@ const obj = Object.create(
 );
 ```
 
-`Object.getOwnPropertyDescriptors()`也可以用来实现 Mixin（混入）模式。
+`Object.getOwnPropertyDescriptors()`也可以用來實現 Mixin（混入）模式。
 
 ```javascript
 let mix = (object) => ({
@@ -468,33 +468,33 @@ d.b // "b"
 d.a // "a"
 ```
 
-上面代码返回一个新的对象`d`，代表了对象`a`和`b`被混入了对象`c`的操作。
+上面程式碼返回一個新的物件`d`，代表了物件`a`和`b`被混入了物件`c`的操作。
 
-出于完整性的考虑，`Object.getOwnPropertyDescriptors()`进入标准以后，以后还会新增`Reflect.getOwnPropertyDescriptors()`方法。
+出於完整性的考慮，`Object.getOwnPropertyDescriptors()`進入標準以後，以後還會新增`Reflect.getOwnPropertyDescriptors()`方法。
 
-## `__proto__`属性，Object.setPrototypeOf()，Object.getPrototypeOf()
+## `__proto__`屬性，Object.setPrototypeOf()，Object.getPrototypeOf()
 
-JavaScript 语言的对象继承是通过原型链实现的。ES6 提供了更多原型对象的操作方法。
+JavaScript 語言的物件繼承是透過原型鏈實現的。ES6 提供了更多原型物件的操作方法。
 
-### `__proto__`属性
+### `__proto__`屬性
 
-`__proto__`属性（前后各两个下划线），用来读取或设置当前对象的原型对象（prototype）。目前，所有浏览器（包括 IE11）都部署了这个属性。
+`__proto__`屬性（前後各兩個下劃線），用來讀取或設定當前物件的原型物件（prototype）。目前，所有瀏覽器（包括 IE11）都部署了這個屬性。
 
 ```javascript
-// es5 的写法
+// es5 的寫法
 const obj = {
   method: function() { ... }
 };
 obj.__proto__ = someOtherObj;
 
-// es6 的写法
+// es6 的寫法
 var obj = Object.create(someOtherObj);
 obj.method = function() { ... };
 ```
 
-该属性没有写入 ES6 的正文，而是写入了附录，原因是`__proto__`前后的双下划线，说明它本质上是一个内部属性，而不是一个正式的对外的 API，只是由于浏览器广泛支持，才被加入了 ES6。标准明确规定，只有浏览器必须部署这个属性，其他运行环境不一定需要部署，而且新的代码最好认为这个属性是不存在的。因此，无论从语义的角度，还是从兼容性的角度，都不要使用这个属性，而是使用下面的`Object.setPrototypeOf()`（写操作）、`Object.getPrototypeOf()`（读操作）、`Object.create()`（生成操作）代替。
+該屬性沒有寫入 ES6 的正文，而是寫入了附錄，原因是`__proto__`前後的雙下劃線，說明它本質上是一個內部屬性，而不是一個正式的對外的 API，只是由於瀏覽器廣泛支援，才被加入了 ES6。標準明確規定，只有瀏覽器必須部署這個屬性，其他執行環境不一定需要部署，而且新的程式碼最好認為這個屬性是不存在的。因此，無論從語義的角度，還是從相容性的角度，都不要使用這個屬性，而是使用下面的`Object.setPrototypeOf()`（寫操作）、`Object.getPrototypeOf()`（讀操作）、`Object.create()`（生成操作）代替。
 
-实现上，`__proto__`调用的是`Object.prototype.__proto__`，具体实现如下。
+實現上，`__proto__`呼叫的是`Object.prototype.__proto__`，具體實現如下。
 
 ```javascript
 Object.defineProperty(Object.prototype, '__proto__', {
@@ -524,7 +524,7 @@ function isObject(value) {
 }
 ```
 
-如果一个对象本身部署了`__proto__`属性，该属性的值就是对象的原型。
+如果一個物件本身部署了`__proto__`屬性，該屬性的值就是物件的原型。
 
 ```javascript
 Object.getPrototypeOf({ __proto__: null })
@@ -533,7 +533,7 @@ Object.getPrototypeOf({ __proto__: null })
 
 ### Object.setPrototypeOf()
 
-`Object.setPrototypeOf`方法的作用与`__proto__`相同，用来设置一个对象的原型对象（prototype），返回参数对象本身。它是 ES6 正式推荐的设置原型对象的方法。
+`Object.setPrototypeOf`方法的作用與`__proto__`相同，用來設定一個物件的原型物件（prototype），返回引數物件本身。它是 ES6 正式推薦的設定原型物件的方法。
 
 ```javascript
 // 格式
@@ -543,7 +543,7 @@ Object.setPrototypeOf(object, prototype)
 const o = Object.setPrototypeOf({}, null);
 ```
 
-该方法等同于下面的函数。
+該方法等同於下面的函式。
 
 ```javascript
 function setPrototypeOf(obj, proto) {
@@ -552,7 +552,7 @@ function setPrototypeOf(obj, proto) {
 }
 ```
 
-下面是一个例子。
+下面是一個例子。
 
 ```javascript
 let proto = {};
@@ -567,9 +567,9 @@ obj.y // 20
 obj.z // 40
 ```
 
-上面代码将`proto`对象设为`obj`对象的原型，所以从`obj`对象可以读取`proto`对象的属性。
+上面程式碼將`proto`物件設為`obj`物件的原型，所以從`obj`物件可以讀取`proto`物件的屬性。
 
-如果第一个参数不是对象，会自动转为对象。但是由于返回的还是第一个参数，所以这个操作不会产生任何效果。
+如果第一個引數不是物件，會自動轉為物件。但是由於返回的還是第一個引數，所以這個操作不會產生任何效果。
 
 ```javascript
 Object.setPrototypeOf(1, {}) === 1 // true
@@ -577,7 +577,7 @@ Object.setPrototypeOf('foo', {}) === 'foo' // true
 Object.setPrototypeOf(true, {}) === true // true
 ```
 
-由于`undefined`和`null`无法转为对象，所以如果第一个参数是`undefined`或`null`，就会报错。
+由於`undefined`和`null`無法轉為物件，所以如果第一個引數是`undefined`或`null`，就會報錯。
 
 ```javascript
 Object.setPrototypeOf(undefined, {})
@@ -589,13 +589,13 @@ Object.setPrototypeOf(null, {})
 
 ### Object.getPrototypeOf()
 
-该方法与`Object.setPrototypeOf`方法配套，用于读取一个对象的原型对象。
+該方法與`Object.setPrototypeOf`方法配套，用於讀取一個物件的原型物件。
 
 ```javascript
 Object.getPrototypeOf(obj);
 ```
 
-下面是一个例子。
+下面是一個例子。
 
 ```javascript
 function Rectangle() {
@@ -612,18 +612,18 @@ Object.getPrototypeOf(rec) === Rectangle.prototype
 // false
 ```
 
-如果参数不是对象，会被自动转为对象。
+如果引數不是物件，會被自動轉為物件。
 
 ```javascript
-// 等同于 Object.getPrototypeOf(Number(1))
+// 等同於 Object.getPrototypeOf(Number(1))
 Object.getPrototypeOf(1)
 // Number {[[PrimitiveValue]]: 0}
 
-// 等同于 Object.getPrototypeOf(String('foo'))
+// 等同於 Object.getPrototypeOf(String('foo'))
 Object.getPrototypeOf('foo')
 // String {length: 0, [[PrimitiveValue]]: ""}
 
-// 等同于 Object.getPrototypeOf(Boolean(true))
+// 等同於 Object.getPrototypeOf(Boolean(true))
 Object.getPrototypeOf(true)
 // Boolean {[[PrimitiveValue]]: false}
 
@@ -632,7 +632,7 @@ Object.getPrototypeOf('foo') === String.prototype // true
 Object.getPrototypeOf(true) === Boolean.prototype // true
 ```
 
-如果参数是`undefined`或`null`，它们无法转为对象，所以会报错。
+如果引數是`undefined`或`null`，它們無法轉為物件，所以會報錯。
 
 ```javascript
 Object.getPrototypeOf(null)
@@ -646,7 +646,7 @@ Object.getPrototypeOf(undefined)
 
 ### Object.keys()
 
-ES5 引入了`Object.keys`方法，返回一个数组，成员是参数对象自身的（不含继承的）所有可遍历（enumerable）属性的键名。
+ES5 引入了`Object.keys`方法，返回一個數組，成員是引數物件自身的（不含繼承的）所有可遍歷（enumerable）屬性的鍵名。
 
 ```javascript
 var obj = { foo: 'bar', baz: 42 };
@@ -654,7 +654,7 @@ Object.keys(obj)
 // ["foo", "baz"]
 ```
 
-ES2017 [引入](https://github.com/tc39/proposal-object-values-entries)了跟`Object.keys`配套的`Object.values`和`Object.entries`，作为遍历一个对象的补充手段，供`for...of`循环使用。
+ES2017 [引入](https://github.com/tc39/proposal-object-values-entries)了跟`Object.keys`配套的`Object.values`和`Object.entries`，作為遍歷一個物件的補充手段，供`for...of`迴圈使用。
 
 ```javascript
 let {keys, values, entries} = Object;
@@ -675,7 +675,7 @@ for (let [key, value] of entries(obj)) {
 
 ### Object.values()
 
-`Object.values`方法返回一个数组，成员是参数对象自身的（不含继承的）所有可遍历（enumerable）属性的键值。
+`Object.values`方法返回一個數組，成員是引數物件自身的（不含繼承的）所有可遍歷（enumerable）屬性的鍵值。
 
 ```javascript
 const obj = { foo: 'bar', baz: 42 };
@@ -683,7 +683,7 @@ Object.values(obj)
 // ["bar", 42]
 ```
 
-返回数组的成员顺序，与本章的《属性的遍历》部分介绍的排列规则一致。
+返回陣列的成員順序，與本章的《屬性的遍歷》部分介紹的排列規則一致。
 
 ```javascript
 const obj = { 100: 'a', 2: 'b', 7: 'c' };
@@ -691,16 +691,16 @@ Object.values(obj)
 // ["b", "c", "a"]
 ```
 
-上面代码中，属性名为数值的属性，是按照数值大小，从小到大遍历的，因此返回的顺序是`b`、`c`、`a`。
+上面程式碼中，屬性名為數值的屬性，是按照數值大小，從小到大遍歷的，因此返回的順序是`b`、`c`、`a`。
 
-`Object.values`只返回对象自身的可遍历属性。
+`Object.values`只返回物件自身的可遍歷屬性。
 
 ```javascript
 const obj = Object.create({}, {p: {value: 42}});
 Object.values(obj) // []
 ```
 
-上面代码中，`Object.create`方法的第二个参数添加的对象属性（属性`p`），如果不显式声明，默认是不可遍历的，因为`p`的属性描述对象的`enumerable`默认是`false`，`Object.values`不会返回这个属性。只要把`enumerable`改成`true`，`Object.values`就会返回属性`p`的值。
+上面程式碼中，`Object.create`方法的第二個引數新增的物件屬性（屬性`p`），如果不顯式宣告，預設是不可遍歷的，因為`p`的屬性描述物件的`enumerable`預設是`false`，`Object.values`不會返回這個屬性。只要把`enumerable`改成`true`，`Object.values`就會返回屬性`p`的值。
 
 ```javascript
 const obj = Object.create({}, {p:
@@ -712,23 +712,23 @@ const obj = Object.create({}, {p:
 Object.values(obj) // [42]
 ```
 
-`Object.values`会过滤属性名为 Symbol 值的属性。
+`Object.values`會過濾屬性名為 Symbol 值的屬性。
 
 ```javascript
 Object.values({ [Symbol()]: 123, foo: 'abc' });
 // ['abc']
 ```
 
-如果`Object.values`方法的参数是一个字符串，会返回各个字符组成的一个数组。
+如果`Object.values`方法的引數是一個字串，會返回各個字元組成的一個數組。
 
 ```javascript
 Object.values('foo')
 // ['f', 'o', 'o']
 ```
 
-上面代码中，字符串会先转成一个类似数组的对象。字符串的每个字符，就是该对象的一个属性。因此，`Object.values`返回每个属性的键值，就是各个字符组成的一个数组。
+上面程式碼中，字串會先轉成一個類似陣列的物件。字串的每個字元，就是該物件的一個屬性。因此，`Object.values`返回每個屬性的鍵值，就是各個字元組成的一個數組。
 
-如果参数不是对象，`Object.values`会先将其转为对象。由于数值和布尔值的包装对象，都不会为实例添加非继承的属性。所以，`Object.values`会返回空数组。
+如果引數不是物件，`Object.values`會先將其轉為物件。由於數值和布林值的包裝物件，都不會為例項新增非繼承的屬性。所以，`Object.values`會返回空陣列。
 
 ```javascript
 Object.values(42) // []
@@ -737,7 +737,7 @@ Object.values(true) // []
 
 ### Object.entries()
 
-`Object.entries()`方法返回一个数组，成员是参数对象自身的（不含继承的）所有可遍历（enumerable）属性的键值对数组。
+`Object.entries()`方法返回一個數組，成員是引數物件自身的（不含繼承的）所有可遍歷（enumerable）屬性的鍵值對陣列。
 
 ```javascript
 const obj = { foo: 'bar', baz: 42 };
@@ -745,18 +745,18 @@ Object.entries(obj)
 // [ ["foo", "bar"], ["baz", 42] ]
 ```
 
-除了返回值不一样，该方法的行为与`Object.values`基本一致。
+除了返回值不一樣，該方法的行為與`Object.values`基本一致。
 
-如果原对象的属性名是一个 Symbol 值，该属性会被忽略。
+如果原物件的屬性名是一個 Symbol 值，該屬性會被忽略。
 
 ```javascript
 Object.entries({ [Symbol()]: 123, foo: 'abc' });
 // [ [ 'foo', 'abc' ] ]
 ```
 
-上面代码中，原对象有两个属性，`Object.entries`只输出属性名非 Symbol 值的属性。将来可能会有`Reflect.ownEntries()`方法，返回对象自身的所有属性。
+上面程式碼中，原物件有兩個屬性，`Object.entries`只輸出屬性名非 Symbol 值的屬性。將來可能會有`Reflect.ownEntries()`方法，返回物件自身的所有屬性。
 
-`Object.entries`的基本用途是遍历对象的属性。
+`Object.entries`的基本用途是遍歷物件的屬性。
 
 ```javascript
 let obj = { one: 1, two: 2 };
@@ -769,7 +769,7 @@ for (let [k, v] of Object.entries(obj)) {
 // "two": 2
 ```
 
-`Object.entries`方法的另一个用处是，将对象转为真正的`Map`结构。
+`Object.entries`方法的另一個用處是，將物件轉為真正的`Map`結構。
 
 ```javascript
 const obj = { foo: 'bar', baz: 42 };
@@ -777,17 +777,17 @@ const map = new Map(Object.entries(obj));
 map // Map { foo: "bar", baz: 42 }
 ```
 
-自己实现`Object.entries`方法，非常简单。
+自己實現`Object.entries`方法，非常簡單。
 
 ```javascript
-// Generator函数的版本
+// Generator函式的版本
 function* entries(obj) {
   for (let key of Object.keys(obj)) {
     yield [key, obj[key]];
   }
 }
 
-// 非Generator函数的版本
+// 非Generator函式的版本
 function entries(obj) {
   let arr = [];
   for (let key of Object.keys(obj)) {
@@ -799,7 +799,7 @@ function entries(obj) {
 
 ## Object.fromEntries()
 
-`Object.fromEntries()`方法是`Object.entries()`的逆操作，用于将一个键值对数组转为对象。
+`Object.fromEntries()`方法是`Object.entries()`的逆操作，用於將一個鍵值對陣列轉為物件。
 
 ```javascript
 Object.fromEntries([
@@ -809,7 +809,7 @@ Object.fromEntries([
 // { foo: "bar", baz: 42 }
 ```
 
-该方法的主要目的，是将键值对的数据结构还原为对象，因此特别适合将 Map 结构转为对象。
+該方法的主要目的，是將鍵值對的資料結構還原為物件，因此特別適合將 Map 結構轉為物件。
 
 ```javascript
 // 例一
@@ -827,7 +827,7 @@ Object.fromEntries(map)
 // { foo: true, bar: false }
 ```
 
-该方法的一个用处是配合`URLSearchParams`对象，将查询字符串转为对象。
+該方法的一個用處是配合`URLSearchParams`物件，將查詢字串轉為物件。
 
 ```javascript
 Object.fromEntries(new URLSearchParams('foo=bar&baz=qux'))

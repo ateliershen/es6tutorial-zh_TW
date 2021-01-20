@@ -1,17 +1,17 @@
-# 字符串的扩展
+# 字串的擴充套件
 
-本章介绍 ES6 对字符串的改造和增强，下一章介绍字符串对象的新增方法。
+本章介紹 ES6 對字串的改造和增強，下一章介紹字串物件的新增方法。
 
-## 字符的 Unicode 表示法
+## 字元的 Unicode 表示法
 
-ES6 加强了对 Unicode 的支持，允许采用`\uxxxx`形式表示一个字符，其中`xxxx`表示字符的 Unicode 码点。
+ES6 加強了對 Unicode 的支援，允許採用`\uxxxx`形式表示一個字元，其中`xxxx`表示字元的 Unicode 碼點。
 
 ```javascript
 "\u0061"
 // "a"
 ```
 
-但是，这种表示法只限于码点在`\u0000`~`\uFFFF`之间的字符。超出这个范围的字符，必须用两个双字节的形式表示。
+但是，這種表示法只限於碼點在`\u0000`~`\uFFFF`之間的字元。超出這個範圍的字元，必須用兩個雙位元組的形式表示。
 
 ```javascript
 "\uD842\uDFB7"
@@ -21,9 +21,9 @@ ES6 加强了对 Unicode 的支持，允许采用`\uxxxx`形式表示一个字�
 // " 7"
 ```
 
-上面代码表示，如果直接在`\u`后面跟上超过`0xFFFF`的数值（比如`\u20BB7`），JavaScript 会理解成`\u20BB+7`。由于`\u20BB`是一个不可打印字符，所以只会显示一个空格，后面跟着一个`7`。
+上面程式碼表示，如果直接在`\u`後面跟上超過`0xFFFF`的數值（比如`\u20BB7`），JavaScript 會理解成`\u20BB+7`。由於`\u20BB`是一個不可列印字元，所以只會顯示一個空格，後面跟著一個`7`。
 
-ES6 对这一点做出了改进，只要将码点放入大括号，就能正确解读该字符。
+ES6 對這一點做出了改進，只要將碼點放入大括號，就能正確解讀該字元。
 
 ```javascript
 "\u{20BB7}"
@@ -39,9 +39,9 @@ hell\u{6F} // 123
 // true
 ```
 
-上面代码中，最后一个例子表明，大括号表示法与四字节的 UTF-16 编码是等价的。
+上面程式碼中，最後一個例子表明，大括號表示法與四位元組的 UTF-16 編碼是等價的。
 
-有了这种表示法之后，JavaScript 共有 6 种方法可以表示一个字符。
+有了這種表示法之後，JavaScript 共有 6 種方法可以表示一個字元。
 
 ```javascript
 '\z' === 'z'  // true
@@ -51,9 +51,9 @@ hell\u{6F} // 123
 '\u{7A}' === 'z' // true
 ```
 
-## 字符串的遍历器接口
+## 字串的遍歷器介面
 
-ES6 为字符串添加了遍历器接口（详见《Iterator》一章），使得字符串可以被`for...of`循环遍历。
+ES6 為字串添加了遍歷器介面（詳見《Iterator》一章），使得字串可以被`for...of`迴圈遍歷。
 
 ```javascript
 for (let codePoint of 'foo') {
@@ -64,7 +64,7 @@ for (let codePoint of 'foo') {
 // "o"
 ```
 
-除了遍历字符串，这个遍历器最大的优点是可以识别大于`0xFFFF`的码点，传统的`for`循环无法识别这样的码点。
+除了遍歷字串，這個遍歷器最大的優點是可以識別大於`0xFFFF`的碼點，傳統的`for`迴圈無法識別這樣的碼點。
 
 ```javascript
 let text = String.fromCodePoint(0x20BB7);
@@ -81,65 +81,65 @@ for (let i of text) {
 // "𠮷"
 ```
 
-上面代码中，字符串`text`只有一个字符，但是`for`循环会认为它包含两个字符（都不可打印），而`for...of`循环会正确识别出这一个字符。
+上面程式碼中，字串`text`只有一個字元，但是`for`迴圈會認為它包含兩個字元（都不可列印），而`for...of`迴圈會正確識別出這一個字元。
 
-## 直接输入 U+2028 和 U+2029
+## 直接輸入 U+2028 和 U+2029
 
-JavaScript 字符串允许直接输入字符，以及输入字符的转义形式。举例来说，“中”的 Unicode 码点是 U+4e2d，你可以直接在字符串里面输入这个汉字，也可以输入它的转义形式`\u4e2d`，两者是等价的。
+JavaScript 字串允許直接輸入字元，以及輸入字元的轉義形式。舉例來說，“中”的 Unicode 碼點是 U+4e2d，你可以直接在字串裡面輸入這個漢字，也可以輸入它的轉義形式`\u4e2d`，兩者是等價的。
 
 ```javascript
 '中' === '\u4e2d' // true
 ```
 
-但是，JavaScript 规定有5个字符，不能在字符串里面直接使用，只能使用转义形式。
+但是，JavaScript 規定有5個字元，不能在字串裡面直接使用，只能使用轉義形式。
 
-- U+005C：反斜杠（reverse solidus)
-- U+000D：回车（carriage return）
+- U+005C：反斜槓（reverse solidus)
+- U+000D：回車（carriage return）
 - U+2028：行分隔符（line separator）
 - U+2029：段分隔符（paragraph separator）
-- U+000A：换行符（line feed）
+- U+000A：換行符（line feed）
 
-举例来说，字符串里面不能直接包含反斜杠，一定要转义写成`\\`或者`\u005c`。
+舉例來說，字串裡面不能直接包含反斜槓，一定要轉義寫成`\\`或者`\u005c`。
 
-这个规定本身没有问题，麻烦在于 JSON 格式允许字符串里面直接使用 U+2028（行分隔符）和 U+2029（段分隔符）。这样一来，服务器输出的 JSON 被`JSON.parse`解析，就有可能直接报错。
+這個規定本身沒有問題，麻煩在於 JSON 格式允許字串裡面直接使用 U+2028（行分隔符）和 U+2029（段分隔符）。這樣一來，伺服器輸出的 JSON 被`JSON.parse`解析，就有可能直接報錯。
 
 ```javascript
 const json = '"\u2028"';
-JSON.parse(json); // 可能报错
+JSON.parse(json); // 可能報錯
 ```
 
-JSON 格式已经冻结（RFC 7159），没法修改了。为了消除这个报错，[ES2019](https://github.com/tc39/proposal-json-superset) 允许 JavaScript 字符串直接输入 U+2028（行分隔符）和 U+2029（段分隔符）。
+JSON 格式已經凍結（RFC 7159），沒法修改了。為了消除這個報錯，[ES2019](https://github.com/tc39/proposal-json-superset) 允許 JavaScript 字串直接輸入 U+2028（行分隔符）和 U+2029（段分隔符）。
 
 ```javascript
 const PS = eval("'\u2029'");
 ```
 
-根据这个提案，上面的代码不会报错。
+根據這個提案，上面的程式碼不會報錯。
 
-注意，模板字符串现在就允许直接输入这两个字符。另外，正则表达式依然不允许直接输入这两个字符，这是没有问题的，因为 JSON 本来就不允许直接包含正则表达式。
+注意，模板字串現在就允許直接輸入這兩個字元。另外，正則表示式依然不允許直接輸入這兩個字元，這是沒有問題的，因為 JSON 本來就不允許直接包含正則表示式。
 
 ## JSON.stringify() 的改造
 
-根据标准，JSON 数据必须是 UTF-8 编码。但是，现在的`JSON.stringify()`方法有可能返回不符合 UTF-8 标准的字符串。
+根據標準，JSON 資料必須是 UTF-8 編碼。但是，現在的`JSON.stringify()`方法有可能返回不符合 UTF-8 標準的字串。
 
-具体来说，UTF-8 标准规定，`0xD800`到`0xDFFF`之间的码点，不能单独使用，必须配对使用。比如，`\uD834\uDF06`是两个码点，但是必须放在一起配对使用，代表字符`𝌆`。这是为了表示码点大于`0xFFFF`的字符的一种变通方法。单独使用`\uD834`和`\uDFO6`这两个码点是不合法的，或者颠倒顺序也不行，因为`\uDF06\uD834`并没有对应的字符。
+具體來說，UTF-8 標準規定，`0xD800`到`0xDFFF`之間的碼點，不能單獨使用，必須配對使用。比如，`\uD834\uDF06`是兩個碼點，但是必須放在一起配對使用，代表字元`𝌆`。這是為了表示碼點大於`0xFFFF`的字元的一種變通方法。單獨使用`\uD834`和`\uDFO6`這兩個碼點是不合法的，或者顛倒順序也不行，因為`\uDF06\uD834`並沒有對應的字元。
 
-`JSON.stringify()`的问题在于，它可能返回`0xD800`到`0xDFFF`之间的单个码点。
+`JSON.stringify()`的問題在於，它可能返回`0xD800`到`0xDFFF`之間的單個碼點。
 
 ```javascript
 JSON.stringify('\u{D834}') // "\u{D834}"
 ```
 
-为了确保返回的是合法的 UTF-8 字符，[ES2019](https://github.com/tc39/proposal-well-formed-stringify) 改变了`JSON.stringify()`的行为。如果遇到`0xD800`到`0xDFFF`之间的单个码点，或者不存在的配对形式，它会返回转义字符串，留给应用自己决定下一步的处理。
+為了確保返回的是合法的 UTF-8 字元，[ES2019](https://github.com/tc39/proposal-well-formed-stringify) 改變了`JSON.stringify()`的行為。如果遇到`0xD800`到`0xDFFF`之間的單個碼點，或者不存在的配對形式，它會返回跳脫字元串，留給應用自己決定下一步的處理。
 
 ```javascript
 JSON.stringify('\u{D834}') // ""\\uD834""
 JSON.stringify('\uDF06\uD834') // ""\\udf06\\ud834""
 ```
 
-## 模板字符串
+## 模板字串
 
-传统的 JavaScript 语言，输出模板通常是这样写的（下面使用了 jQuery 的方法）。
+傳統的 JavaScript 語言，輸出模板通常是這樣寫的（下面使用了 jQuery 的方法）。
 
 ```javascript
 $('#result').append(
@@ -150,7 +150,7 @@ $('#result').append(
 );
 ```
 
-上面这种写法相当繁琐不方便，ES6 引入了模板字符串解决这个问题。
+上面這種寫法相當繁瑣不方便，ES6 引入了模板字串解決這個問題。
 
 ```javascript
 $('#result').append(`
@@ -160,31 +160,31 @@ $('#result').append(`
 `);
 ```
 
-模板字符串（template string）是增强版的字符串，用反引号（&#96;）标识。它可以当作普通字符串使用，也可以用来定义多行字符串，或者在字符串中嵌入变量。
+模板字串（template string）是增強版的字串，用反引號（&#96;）標識。它可以當作普通字串使用，也可以用來定義多行字串，或者在字串中嵌入變數。
 
 ```javascript
-// 普通字符串
+// 普通字串
 `In JavaScript '\n' is a line-feed.`
 
-// 多行字符串
+// 多行字串
 `In JavaScript this is
  not legal.`
 
 console.log(`string text line 1
 string text line 2`);
 
-// 字符串中嵌入变量
+// 字串中嵌入變數
 let name = "Bob", time = "today";
 `Hello ${name}, how are you ${time}?`
 ```
 
-上面代码中的模板字符串，都是用反引号表示。如果在模板字符串中需要使用反引号，则前面要用反斜杠转义。
+上面程式碼中的模板字串，都是用反引號表示。如果在模板字串中需要使用反引號，則前面要用反斜槓轉義。
 
 ```javascript
 let greeting = `\`Yo\` World!`;
 ```
 
-如果使用模板字符串表示多行字符串，所有的空格和缩进都会被保留在输出之中。
+如果使用模板字串表示多行字串，所有的空格和縮排都會被保留在輸出之中。
 
 ```javascript
 $('#list').html(`
@@ -195,7 +195,7 @@ $('#list').html(`
 `);
 ```
 
-上面代码中，所有模板字符串的空格和换行，都是被保留的，比如`<ul>`标签前面会有一个换行。如果你不想要这个换行，可以使用`trim`方法消除它。
+上面程式碼中，所有模板字串的空格和換行，都是被保留的，比如`<ul>`標籤前面會有一個換行。如果你不想要這個換行，可以使用`trim`方法消除它。
 
 ```javascript
 $('#list').html(`
@@ -206,13 +206,13 @@ $('#list').html(`
 `.trim());
 ```
 
-模板字符串中嵌入变量，需要将变量名写在`${}`之中。
+模板字串中嵌入變數，需要將變數名寫在`${}`之中。
 
 ```javascript
 function authorize(user, action) {
   if (!user.hasPrivilege(action)) {
     throw new Error(
-      // 传统写法为
+      // 傳統寫法為
       // 'User '
       // + user.name
       // + ' is not authorized to do '
@@ -223,7 +223,7 @@ function authorize(user, action) {
 }
 ```
 
-大括号内部可以放入任意的 JavaScript 表达式，可以进行运算，以及引用对象属性。
+大括號內部可以放入任意的 JavaScript 表示式，可以進行運算，以及引用物件屬性。
 
 ```javascript
 let x = 1;
@@ -240,7 +240,7 @@ let obj = {x: 1, y: 2};
 // "3"
 ```
 
-模板字符串之中还能调用函数。
+模板字串之中還能呼叫函式。
 
 ```javascript
 function fn() {
@@ -251,24 +251,24 @@ function fn() {
 // foo Hello World bar
 ```
 
-如果大括号中的值不是字符串，将按照一般的规则转为字符串。比如，大括号中是一个对象，将默认调用对象的`toString`方法。
+如果大括號中的值不是字串，將按照一般的規則轉為字串。比如，大括號中是一個物件，將預設呼叫物件的`toString`方法。
 
-如果模板字符串中的变量没有声明，将报错。
+如果模板字串中的變數沒有宣告，將報錯。
 
 ```javascript
-// 变量place没有声明
+// 變數place沒有宣告
 let msg = `Hello, ${place}`;
-// 报错
+// 報錯
 ```
 
-由于模板字符串的大括号内部，就是执行 JavaScript 代码，因此如果大括号内部是一个字符串，将会原样输出。
+由於模板字串的大括號內部，就是執行 JavaScript 程式碼，因此如果大括號內部是一個字串，將會原樣輸出。
 
 ```javascript
 `Hello ${'World'}`
 // "Hello World"
 ```
 
-模板字符串甚至还能嵌套。
+模板字串甚至還能巢狀。
 
 ```javascript
 const tmpl = addrs => `
@@ -281,7 +281,7 @@ const tmpl = addrs => `
 `;
 ```
 
-上面代码中，模板字符串的变量之中，又嵌入了另一个模板字符串，使用方法如下。
+上面程式碼中，模板字串的變數之中，又嵌入了另一個模板字串，使用方法如下。
 
 ```javascript
 const data = [
@@ -301,18 +301,18 @@ console.log(tmpl(data));
 // </table>
 ```
 
-如果需要引用模板字符串本身，在需要时执行，可以写成函数。
+如果需要引用模板字串本身，在需要時執行，可以寫成函式。
 
 ```javascript
 let func = (name) => `Hello ${name}!`;
 func('Jack') // "Hello Jack!"
 ```
 
-上面代码中，模板字符串写成了一个函数的返回值。执行这个函数，就相当于执行这个模板字符串了。
+上面程式碼中，模板字串寫成了一個函式的返回值。執行這個函式，就相當於執行這個模板字串了。
 
-## 实例：模板编译
+## 例項：模板編譯
 
-下面，我们来看一个通过模板字符串，生成正式模板的实例。
+下面，我們來看一個透過模板字串，生成正式模板的例項。
 
 ```javascript
 let template = `
@@ -324,11 +324,11 @@ let template = `
 `;
 ```
 
-上面代码在模板字符串之中，放置了一个常规模板。该模板使用`<%...%>`放置 JavaScript 代码，使用`<%= ... %>`输出 JavaScript 表达式。
+上面程式碼在模板字串之中，放置了一個常規模板。該模板使用`<%...%>`放置 JavaScript 程式碼，使用`<%= ... %>`輸出 JavaScript 表示式。
 
-怎么编译这个模板字符串呢？
+怎麼編譯這個模板字串呢？
 
-一种思路是将其转换为 JavaScript 表达式字符串。
+一種思路是將其轉換為 JavaScript 表示式字串。
 
 ```javascript
 echo('<ul>');
@@ -340,7 +340,7 @@ for(let i=0; i < data.supplies.length; i++) {
 echo('</ul>');
 ```
 
-这个转换使用正则表达式就行了。
+這個轉換使用正則表示式就行了。
 
 ```javascript
 let evalExpr = /<%=(.+?)%>/g;
@@ -353,7 +353,7 @@ template = template
 template = 'echo(`' + template + '`);';
 ```
 
-然后，将`template`封装在一个函数里面返回，就可以了。
+然後，將`template`封裝在一個函式裡面返回，就可以了。
 
 ```javascript
 let script =
@@ -372,7 +372,7 @@ let script =
 return script;
 ```
 
-将上面的内容拼装成一个模板编译函数`compile`。
+將上面的內容拼裝成一個模板編譯函式`compile`。
 
 ```javascript
 function compile(template){
@@ -402,7 +402,7 @@ function compile(template){
 }
 ```
 
-`compile`函数的用法如下。
+`compile`函式的用法如下。
 
 ```javascript
 let parse = eval(compile(template));
@@ -414,62 +414,62 @@ div.innerHTML = parse({ supplies: [ "broom", "mop", "cleaner" ] });
 //   </ul>
 ```
 
-## 标签模板
+## 標籤模板
 
-模板字符串的功能，不仅仅是上面这些。它可以紧跟在一个函数名后面，该函数将被调用来处理这个模板字符串。这被称为“标签模板”功能（tagged template）。
+模板字串的功能，不僅僅是上面這些。它可以緊跟在一個函式名後面，該函式將被呼叫來處理這個模板字串。這被稱為“標籤模板”功能（tagged template）。
 
 ```javascript
 alert`hello`
-// 等同于
+// 等同於
 alert(['hello'])
 ```
 
-标签模板其实不是模板，而是函数调用的一种特殊形式。“标签”指的就是函数，紧跟在后面的模板字符串就是它的参数。
+標籤模板其實不是模板，而是函式呼叫的一種特殊形式。“標籤”指的就是函式，緊跟在後面的模板字串就是它的引數。
 
-但是，如果模板字符里面有变量，就不是简单的调用了，而是会将模板字符串先处理成多个参数，再调用函数。
+但是，如果模板字元裡面有變數，就不是簡單的呼叫了，而是會將模板字串先處理成多個引數，再呼叫函式。
 
 ```javascript
 let a = 5;
 let b = 10;
 
 tag`Hello ${ a + b } world ${ a * b }`;
-// 等同于
+// 等同於
 tag(['Hello ', ' world ', ''], 15, 50);
 ```
 
-上面代码中，模板字符串前面有一个标识名`tag`，它是一个函数。整个表达式的返回值，就是`tag`函数处理模板字符串后的返回值。
+上面程式碼中，模板字串前面有一個標識名`tag`，它是一個函式。整個表示式的返回值，就是`tag`函式處理模板字串後的返回值。
 
-函数`tag`依次会接收到多个参数。
+函式`tag`依次會接收到多個引數。
 
 ```javascript
 function tag(stringArr, value1, value2){
   // ...
 }
 
-// 等同于
+// 等同於
 
 function tag(stringArr, ...values){
   // ...
 }
 ```
 
-`tag`函数的第一个参数是一个数组，该数组的成员是模板字符串中那些没有变量替换的部分，也就是说，变量替换只发生在数组的第一个成员与第二个成员之间、第二个成员与第三个成员之间，以此类推。
+`tag`函式的第一個引數是一個數組，該陣列的成員是模板字串中那些沒有變數替換的部分，也就是說，變數替換隻發生在陣列的第一個成員與第二個成員之間、第二個成員與第三個成員之間，以此類推。
 
-`tag`函数的其他参数，都是模板字符串各个变量被替换后的值。由于本例中，模板字符串含有两个变量，因此`tag`会接受到`value1`和`value2`两个参数。
+`tag`函式的其他引數，都是模板字串各個變數被替換後的值。由於本例中，模板字串含有兩個變數，因此`tag`會接受到`value1`和`value2`兩個引數。
 
-`tag`函数所有参数的实际值如下。
+`tag`函式所有引數的實際值如下。
 
-- 第一个参数：`['Hello ', ' world ', '']`
-- 第二个参数: 15
-- 第三个参数：50
+- 第一個引數：`['Hello ', ' world ', '']`
+- 第二個引數: 15
+- 第三個引數：50
 
-也就是说，`tag`函数实际上以下面的形式调用。
+也就是說，`tag`函式實際上以下面的形式呼叫。
 
 ```javascript
 tag(['Hello ', ' world ', ''], 15, 50)
 ```
 
-我们可以按照需要编写`tag`函数的代码。下面是`tag`函数的一种写法，以及运行结果。
+我們可以按照需要編寫`tag`函式的程式碼。下面是`tag`函式的一種寫法，以及執行結果。
 
 ```javascript
 let a = 5;
@@ -494,7 +494,7 @@ tag`Hello ${ a + b } world ${ a * b}`;
 // "OK"
 ```
 
-下面是一个更复杂的例子。
+下面是一個更復雜的例子。
 
 ```javascript
 let total = 30;
@@ -517,9 +517,9 @@ function passthru(literals) {
 msg // "The total is 30 (31.5 with tax)"
 ```
 
-上面这个例子展示了，如何将各个参数按照原来的位置拼合回去。
+上面這個例子展示了，如何將各個引數按照原來的位置拼合回去。
 
-`passthru`函数采用 rest 参数的写法如下。
+`passthru`函式採用 rest 引數的寫法如下。
 
 ```javascript
 function passthru(literals, ...values) {
@@ -534,7 +534,7 @@ function passthru(literals, ...values) {
 }
 ```
 
-“标签模板”的一个重要应用，就是过滤 HTML 字符串，防止用户输入恶意内容。
+“標籤模板”的一個重要應用，就是過濾 HTML 字串，防止使用者輸入惡意內容。
 
 ```javascript
 let message =
@@ -557,28 +557,28 @@ function SaferHTML(templateData) {
 }
 ```
 
-上面代码中，`sender`变量往往是用户提供的，经过`SaferHTML`函数处理，里面的特殊字符都会被转义。
+上面程式碼中，`sender`變數往往是使用者提供的，經過`SaferHTML`函式處理，裡面的特殊字元都會被轉義。
 
 ```javascript
-let sender = '<script>alert("abc")</script>'; // 恶意代码
+let sender = '<script>alert("abc")</script>'; // 惡意程式碼
 let message = SaferHTML`<p>${sender} has sent you a message.</p>`;
 
 message
 // <p>&lt;script&gt;alert("abc")&lt;/script&gt; has sent you a message.</p>
 ```
 
-标签模板的另一个应用，就是多语言转换（国际化处理）。
+標籤模板的另一個應用，就是多語言轉換（國際化處理）。
 
 ```javascript
 i18n`Welcome to ${siteName}, you are visitor number ${visitorNumber}!`
-// "欢迎访问xxx，您是第xxxx位访问者！"
+// "歡迎訪問xxx，您是第xxxx位訪問者！"
 ```
 
-模板字符串本身并不能取代 Mustache 之类的模板库，因为没有条件判断和循环处理功能，但是通过标签函数，你可以自己添加这些功能。
+模板字串本身並不能取代 Mustache 之類的模板庫，因為沒有條件判斷和迴圈處理功能，但是透過標籤函式，你可以自己新增這些功能。
 
 ```javascript
-// 下面的hashTemplate函数
-// 是一个自定义的模板处理函数
+// 下面的hashTemplate函式
+// 是一個自定義的模板處理函式
 let libraryHtml = hashTemplate`
   <ul>
     #for book in ${myBooks}
@@ -588,7 +588,7 @@ let libraryHtml = hashTemplate`
 `;
 ```
 
-除此之外，你甚至可以使用标签模板，在 JavaScript 语言之中嵌入其他语言。
+除此之外，你甚至可以使用標籤模板，在 JavaScript 語言之中嵌入其他語言。
 
 ```javascript
 jsx`
@@ -602,9 +602,9 @@ jsx`
 `
 ```
 
-上面的代码通过`jsx`函数，将一个 DOM 字符串转为 React 对象。你可以在 GitHub 找到`jsx`函数的[具体实现](https://gist.github.com/lygaret/a68220defa69174bdec5)。
+上面的程式碼透過`jsx`函式，將一個 DOM 字串轉為 React 物件。你可以在 GitHub 找到`jsx`函式的[具體實現](https://gist.github.com/lygaret/a68220defa69174bdec5)。
 
-下面则是一个假想的例子，通过`java`函数，在 JavaScript 代码之中运行 Java 代码。
+下面則是一個假想的例子，透過`java`函式，在 JavaScript 程式碼之中執行 Java 程式碼。
 
 ```javascript
 java`
@@ -617,34 +617,34 @@ class HelloWorldApp {
 HelloWorldApp.main();
 ```
 
-模板处理函数的第一个参数（模板字符串数组），还有一个`raw`属性。
+模板處理函式的第一個引數（模板字串陣列），還有一個`raw`屬性。
 
 ```javascript
 console.log`123`
 // ["123", raw: Array[1]]
 ```
 
-上面代码中，`console.log`接受的参数，实际上是一个数组。该数组有一个`raw`属性，保存的是转义后的原字符串。
+上面程式碼中，`console.log`接受的引數，實際上是一個數組。該陣列有一個`raw`屬性，儲存的是轉義後的原字串。
 
-请看下面的例子。
+請看下面的例子。
 
 ```javascript
 tag`First line\nSecond line`
 
 function tag(strings) {
   console.log(strings.raw[0]);
-  // strings.raw[0] 为 "First line\\nSecond line"
-  // 打印输出 "First line\nSecond line"
+  // strings.raw[0] 為 "First line\\nSecond line"
+  // 列印輸出 "First line\nSecond line"
 }
 ```
 
-上面代码中，`tag`函数的第一个参数`strings`，有一个`raw`属性，也指向一个数组。该数组的成员与`strings`数组完全一致。比如，`strings`数组是`["First line\nSecond line"]`，那么`strings.raw`数组就是`["First line\\nSecond line"]`。两者唯一的区别，就是字符串里面的斜杠都被转义了。比如，strings.raw 数组会将`\n`视为`\\`和`n`两个字符，而不是换行符。这是为了方便取得转义之前的原始模板而设计的。
+上面程式碼中，`tag`函式的第一個引數`strings`，有一個`raw`屬性，也指向一個數組。該陣列的成員與`strings`陣列完全一致。比如，`strings`陣列是`["First line\nSecond line"]`，那麼`strings.raw`陣列就是`["First line\\nSecond line"]`。兩者唯一的區別，就是字串裡面的斜槓都被轉義了。比如，strings.raw 陣列會將`\n`視為`\\`和`n`兩個字元，而不是換行符。這是為了方便取得轉義之前的原始模板而設計的。
 
-## 模板字符串的限制
+## 模板字串的限制
 
-前面提到标签模板里面，可以内嵌其他语言。但是，模板字符串默认会将字符串转义，导致无法嵌入其他语言。
+前面提到標籤模板裡面，可以內嵌其他語言。但是，模板字串預設會將字串轉義，導致無法嵌入其他語言。
 
-举例来说，标签模板里面可以嵌入 LaTEX 语言。
+舉例來說，標籤模板裡面可以嵌入 LaTEX 語言。
 
 ```javascript
 function latex(strings) {
@@ -653,18 +653,18 @@ function latex(strings) {
 
 let document = latex`
 \newcommand{\fun}{\textbf{Fun!}}  // 正常工作
-\newcommand{\unicode}{\textbf{Unicode!}} // 报错
-\newcommand{\xerxes}{\textbf{King!}} // 报错
+\newcommand{\unicode}{\textbf{Unicode!}} // 報錯
+\newcommand{\xerxes}{\textbf{King!}} // 報錯
 
-Breve over the h goes \u{h}ere // 报错
+Breve over the h goes \u{h}ere // 報錯
 `
 ```
 
-上面代码中，变量`document`内嵌的模板字符串，对于 LaTEX 语言来说完全是合法的，但是 JavaScript 引擎会报错。原因就在于字符串的转义。
+上面程式碼中，變數`document`內嵌的模板字串，對於 LaTEX 語言來說完全是合法的，但是 JavaScript 引擎會報錯。原因就在於字串的轉義。
 
-模板字符串会将`\u00FF`和`\u{42}`当作 Unicode 字符进行转义，所以`\unicode`解析时报错；而`\x56`会被当作十六进制字符串转义，所以`\xerxes`会报错。也就是说，`\u`和`\x`在 LaTEX 里面有特殊含义，但是 JavaScript 将它们转义了。
+模板字串會將`\u00FF`和`\u{42}`當作 Unicode 字元進行轉義，所以`\unicode`解析時報錯；而`\x56`會被當作十六進位制字串轉義，所以`\xerxes`會報錯。也就是說，`\u`和`\x`在 LaTEX 裡面有特殊含義，但是 JavaScript 將它們轉義了。
 
-为了解决这个问题，ES2018 [放松](https://tc39.github.io/proposal-template-literal-revision/)了对标签模板里面的字符串转义的限制。如果遇到不合法的字符串转义，就返回`undefined`，而不是报错，并且从`raw`属性上面可以得到原始字符串。
+為了解決這個問題，ES2018 [放鬆](https://tc39.github.io/proposal-template-literal-revision/)了對標籤模板裡面的字串轉義的限制。如果遇到不合法的字串轉義，就返回`undefined`，而不是報錯，並且從`raw`屬性上面可以得到原始字串。
 
 ```javascript
 function tag(strs) {
@@ -674,10 +674,10 @@ function tag(strs) {
 tag`\unicode and \u{55}`
 ```
 
-上面代码中，模板字符串原本是应该报错的，但是由于放松了对字符串转义的限制，所以不报错了，JavaScript 引擎将第一个字符设置为`undefined`，但是`raw`属性依然可以得到原始字符串，因此`tag`函数还是可以对原字符串进行处理。
+上面程式碼中，模板字串原本是應該報錯的，但是由於放鬆了對字串轉義的限制，所以不報錯了，JavaScript 引擎將第一個字元設定為`undefined`，但是`raw`屬性依然可以得到原始字串，因此`tag`函式還是可以對原字串進行處理。
 
-注意，这种对字符串转义的放松，只在标签模板解析字符串时生效，不是标签模板的场合，依然会报错。
+注意，這種對字串轉義的放鬆，只在標籤模板解析字串時生效，不是標籤模板的場合，依然會報錯。
 
 ```javascript
-let bad = `bad escape sequence: \unicode`; // 报错
+let bad = `bad escape sequence: \unicode`; // 報錯
 ```
